@@ -1,8 +1,9 @@
 {
-  "name": "Pragati-2025 Server",
+  "name": "pragati_2025_server",
   "version": "1.0.0",
   "description": "Backend Server Code for Pragati 2025",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "dev": "nodemon server.js"
   },

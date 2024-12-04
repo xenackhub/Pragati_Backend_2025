@@ -1,53 +1,60 @@
-const express = require("express");
-require("dotenv").config();
-const cors = require("cors");
-const cluster = require("cluster");
-const os = require("os");
-const fs = require("fs");
-const helmet = require("helmet");
+import "dotenv/config.js";
 
-const numCPU = os.availableParallelism();
+import { appConfig } from "./config/config.js";
+
+// Imports for Express, CORS, Helmet
+import express, { json } from "express";
+import cors from "cors";
+import helmet from "helmet";
+
+// Multi-Processing.
+import cluster from "cluster";
 
 // Imports for database initialization
-const createConnection = require("./db/initializeConnection.js");
-const initDatabase = require("./db/schema/initDatabase.js");
+import initDatabase from "./db/schema/initDatabase.js"
+
+// import function to create log directories.
+import { initLog } from "./logs/initLog.js";
 
 const app = express();
 app.use(cors());
 app.use(helmet());
-app.use(express.json());
+app.use(json());
 
 if (cluster.isPrimary) {
-  console.log(`[LOG]: Parent ${process.pid} is Running.`);
-  console.log(`[LOG]: Forking ${numCPU} Processes.`);
-  for (let i = 0; i < numCPU; i++) {
+  console.info(`[LOG]: Parent ${process.pid} is Running.`);
+
+  // Initialize the log directories.
+  initLog();
+
+  // Initialize the database with the schema.
+  try {
+    await initDatabase(appConfig.db.pragati.database);
+    await initDatabase(appConfig.db.transactions.database);
+  } catch (err) {
+    console.error(`[ERROR]: Error in Initializing Database.`);
+    console.error(err);
+  }
+
+  // Fork the processes.
+  console.log(`[LOG]: Forking ${appConfig.numCPU} Processes.`);
+  for (let i = 0; i < appConfig.numCPU; i++) {
     cluster.fork();
   }
 
-  cluster.on('exit', (worker, code, signal)=>{
-    console.log('worker %d died (%s). restarting...', worker.process.pid, signal || code);
+  // If a worker dies, fork a new one.
+  cluster.on('exit', (worker, code, signal) => {
+    console.info('worker %d died (%s). restarting...', worker.process.pid, signal || code);
     cluster.fork();
   });
 
-  (async () => {
-    try {
-        const[pragatiDB, pragatiTransactionsDB] = await createConnection();
-
-        initDatabase(pragatiDB, "Pragati");
-        initDatabase(pragatiTransactionsDB, "pragatiTransactions");
-    } catch (err) {
-        console.error("[ERROR]: Application encountered an error", err);
-    }
-  })();
-
 } else {
-    const port = process.env.SERVER_PORT || 5000;
-  app.listen(port, (err) => {
+  app.listen(appConfig.PORT, (err) => {
     if (err) {
-      console.log(`[ERROR]: Error in Starting Server !!`, err);
+      console.error(`[ERROR]: Error in Starting Server !!`, err);
     } else {
-      console.log(
-        `[LOG]: Server ${process.pid} Listening in Port ${process.env.PORT}`
+      console.info(
+        `[LOG]: Server ${process.pid} Listening in Port ${appConfig.PORT}`
       );
     }
   });

@@ -9,8 +9,8 @@ const helmet = require("helmet");
 const numCPU = os.availableParallelism();
 
 // Imports for database initialization
-const [pragatiDB, pragatiTransactionsDB] = require("./db/initializeConnection.js");
-const initDatabase = require("./database/schema/initDatabase.js");
+const createConnection = require("./db/initializeConnection.js");
+const initDatabase = require("./db/schema/initDatabase.js");
 
 const app = express();
 app.use(cors());
@@ -23,6 +23,8 @@ if (cluster.isPrimary) {
   for (let i = 0; i < numCPU; i++) {
     cluster.fork();
   }
+
+  const[pragatiDB, pragatiTransactionsDB] = createConnection();
 
   initDatabase(pragatiDB, "Pragati");
   initDatabase(pragatiTransactionsDB, "pragathiTransactions");

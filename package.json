@@ -4,7 +4,7 @@
   "description": "Backend Server Code for Pragati 2025",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon server.js"
   },
   "author": "Thanus Kumarr, Naganathan, Saran",
   "license": "ISC",
@@ -18,6 +18,5 @@
     "mysql2": "^3.11.3",
     "nodemon": "^3.1.7",
     "os": "^0.1.2"
-  },
-  "type": "module"
+  }
 }

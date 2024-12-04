@@ -1,43 +1,35 @@
-const fs = require('fs');
+import { readFile } from 'fs';
+import { appConfig } from '../../config/config.js';
 
-const initDatabase = (db, dbName) => {
-    if (dbName == "Pragati") {
+import poolConnectToDb from '../poolConnection.js';
+
+const initDatabase = async (dbName) => {
+    const [pragatiDb, transactionsDb] = poolConnectToDb();
+    if (dbName == appConfig.db.pragati.database) {
+        const db_conn = await pragatiDb.promise().getConnection();
         try {
-            fs.readFile('./db/schema/pragatiSchema.sql', 'utf8', (err, data) => {
+            readFile('./db/schema/pragatiSchema.sql', 'utf8', async (err, data) => {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                 }
                 else {
-                    db.query(data, (err, result) => {
-                        if (err) {
-                            console.log(`[ERROR]: ${dbName} Database Initialization Failed.`);
-                            console.log(err);
-                        }
-                        else {
-                            console.log(`[INFO]: ${dbName} Database Initialized Successfully.`);
-                        }
-                    });
+                    await db_conn.query(data);
+                    console.info(`[LOG]: Database ${dbName} Initialized.`);
                 }
             });
         } catch (err) {
             console.error(err);
         }
-    } else if (dbName ==  "pragatiTransactions") {
+    } else if (dbName == appConfig.db.transactions.database) {
+        const db_conn = await transactionsDb.promise().getConnection();
         try {
-            fs.readFile('./db/Schema/transactionSchema.sql', 'utf8', (err, data) => {
+            readFile('./db/Schema/transactionSchema.sql', 'utf8', async (err, data) => {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                 }
                 else {
-                    db.query(data, (err, result) => {
-                        if (err) {
-                            console.log(`[ERROR]: ${dbName} Database Initialization Failed.`);
-                            console.log(err);
-                        }
-                        else {
-                            console.log(`[INFO]: ${dbName} Database Initialized Successfully.`);
-                        }
-                    });
+                    await db_conn.query(data);
+                    console.info(`[LOG]: Database ${dbName} Initialized.`);
                 }
             });
         } catch (err) {
@@ -47,4 +39,4 @@ const initDatabase = (db, dbName) => {
 };
 
 
-module.exports = initDatabase;
+export default initDatabase;

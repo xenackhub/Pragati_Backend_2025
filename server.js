@@ -24,10 +24,21 @@ if (cluster.isPrimary) {
     cluster.fork();
   }
 
-  const[pragatiDB, pragatiTransactionsDB] = createConnection();
+  cluster.on('exit', (worker, code, signal)=>{
+    console.log('worker %d died (%s). restarting...', worker.process.pid, signal || code);
+    cluster.fork();
+  });
 
-  initDatabase(pragatiDB, "Pragati");
-  initDatabase(pragatiTransactionsDB, "pragathiTransactions");
+  (async () => {
+    try {
+        const[pragatiDB, pragatiTransactionsDB] = await createConnection();
+
+        initDatabase(pragatiDB, "Pragati");
+        initDatabase(pragatiTransactionsDB, "pragatiTransactions");
+    } catch (err) {
+        console.error("[ERROR]: Application encountered an error", err);
+    }
+  })();
 
 } else {
     const port = process.env.SERVER_PORT || 5000;

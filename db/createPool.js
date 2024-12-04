@@ -4,7 +4,7 @@ const connectionLimit = 15;
 const pragatiDB_Pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: process.env.PRAGATI_DB_PWD,
+    password: process.env.DB_PWD,
     database: 'pragati',
     waitForConnections: true,
     connectionLimit: connectionLimit,
@@ -14,7 +14,7 @@ const pragatiDB_Pool = mysql.createPool({
 const transactionsDB_Pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: process.env.TRANSACTIONS_DB_PWD,
+    password: process.env.DB_PWD,
     database: 'pragatiTransactions',
     waitForConnections: true,
     connectionLimit: connectionLimit,

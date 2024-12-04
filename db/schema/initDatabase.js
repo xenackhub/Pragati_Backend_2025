@@ -3,7 +3,7 @@ const fs = require('fs');
 const initDatabase = (db, dbName) => {
     if (dbName == "Pragati") {
         try {
-            fs.readFile('./pragatiSchema.sql', 'utf8', (err, data) => {
+            fs.readFile('./db/schema/pragatiSchema.sql', 'utf8', (err, data) => {
                 if (err) {
                     console.log(err);
                 }
@@ -22,9 +22,9 @@ const initDatabase = (db, dbName) => {
         } catch (err) {
             console.error(err);
         }
-    } else if (dbName ==  "pragathiTransactions") {
+    } else if (dbName ==  "pragatiTransactions") {
         try {
-            fs.readFile('./transactionSchema.sql', 'utf8', (err, data) => {
+            fs.readFile('./db/Schema/transactionSchema.sql', 'utf8', (err, data) => {
                 if (err) {
                     console.log(err);
                 }

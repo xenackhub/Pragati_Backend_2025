@@ -4,7 +4,7 @@ const createConnection = () => {
     const pragatiDB = mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: process.env.PRAGATI_DB_PWD,
+        password: process.env.DB_PWD,
         database: 'pragati',
         multipleStatements: true
     });
@@ -12,7 +12,7 @@ const createConnection = () => {
     const pragatiTransactionsDB = mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: process.env.TRANSACTIONS_DB_PWD,
+        password: process.env.DB_PWD,
         database: 'pragatiTransactions',
         multipleStatements: true
     });

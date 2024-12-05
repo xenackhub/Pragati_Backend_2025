@@ -1,5 +1,3 @@
-import "dotenv/config.js";
-
 import { appConfig } from "./config/config.js";
 
 // Imports for Express, CORS, Helmet
@@ -28,7 +26,7 @@ app.use(helmet());
 app.use(json());
 
 if (cluster.isPrimary) {
-  console.info(`[LOG]: Parent ${process.pid} is Running.`);
+  console.info(`[LOG]: Parent ${process.pid} is Running. ${process.env.DB_PWD}`);
 
   // Initialize the log directories.
   initLog();

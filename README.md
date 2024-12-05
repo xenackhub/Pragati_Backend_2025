@@ -55,14 +55,3 @@ CREATE DATABASE pragati_transactions_2025;
 
 ---
 
-## Contributors
-
-`Ashwin Narayanan S`
-`Tharun Kumarr A`
-`Naganathan`
-`Saran Dharshan SP`
-`Akshay KS`
-`Kavinesh P`
-`Saran Hiruthik`
-
---- 

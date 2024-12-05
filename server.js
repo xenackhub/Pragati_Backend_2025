@@ -1,4 +1,5 @@
 import "dotenv/config.js";
+import env from './config/validateEnv';
 
 import { appConfig } from "./config/config.js";
 

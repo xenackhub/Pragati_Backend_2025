@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `userData` (
   `degree` VARCHAR(100) NOT NULL,
   `needAccommodation` BOOL DEFAULT FALSE,
   `emailType` BOOL DEFAULT TRUE NOT NULL,   -- Represents if email is amrita mail or individual mail
-  `accountStatus` CHAR(1) NOT NULL CHECK(`accountStatus` IN ('-1','0','1')),  -- '-1':Blocked  '0':Not verified  '1':Verified
+  `accountStatus` CHAR(1) NOT NULL CHECK(`accountStatus` IN ('0','1','2')),  -- '0':Blocked  '1':Not verified  '2':Verified
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   CONSTRAINT FOREIGN KEY (`roleID`) REFERENCES `userRole` (`roleID`) ON DELETE SET NULL
@@ -117,8 +117,8 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `eventName` VARCHAR(255) NOT NULL,
   `imageUrl` VARCHAR(255) NOT NULL,
   `eventFee` INT NOT NULL,
-  `eventDescription` TEXT NOT NULL,
-  `eventDescSmall` TEXT,
+  `eventDescription` VARCHAR(5000) NOT NULL,
+  `eventDescSmall` VARCHAR(1000),
   `presenterID` INT,
   `isGroup` BOOL DEFAULT FALSE,
   `eventDate` CHAR(1) NOT NULL CHECK(`eventDate` IN ('1','2','3')),  -- the day of the events, so that the original date can be changed

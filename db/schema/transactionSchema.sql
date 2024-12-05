@@ -24,13 +24,16 @@
 DROP TABLE IF EXISTS `transactionData`;
 CREATE TABLE IF NOT EXISTS `transactionData` (
   `transactionID` INT AUTO_INCREMENT PRIMARY KEY,
+  `txnID` VARCHAR(255) NOT NULL UNIQUE,
+  `mihpayuid` VARCHAR(255),
   `userID` INT NOT NULL,
   `eventID` INT NOT NULL,
   `amount` INT NOT NULL,
   `userEmail` VARCHAR(255) NOT NULL, 
   `userName` VARCHAR(255) NOT NULL,
   `phoneNumber` VARCHAR(15) NOT NULL,
-  `transactionStatus` CHAR(1) NOT NULL CHECK(`transactionStatus` IN ('-1','0','1')),  -- '-1':Failed  '0':Pending  '1':Complete
+  `transactionStatus` CHAR(1) NOT NULL CHECK(`transactionStatus` IN ('0','1','2')),  -- '0':Failed  '1':Pending  '2':Complete
+  `productInfo` VARCHAR(5000) NOT NULL,
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

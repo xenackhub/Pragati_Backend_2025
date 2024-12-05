@@ -37,7 +37,18 @@ CREATE DATABASE pragati_transactions_2025;
 
 ### 4. Configure Environment Variables
 
-(Editing required)
+Create a `.env` file in the root directory of the project and add the following key-value pairs. Replace placeholders with actual values. Ensure there are no spaces or quotes, and values are entered as plain text.
+
+```env
+# Server Port Number
+SERVER_PORT=<PORT_IN_WHICH_YOU_WANT_THE_BACKEND_TO_RUN_IN>
+
+# Database Credentials
+DB_PWD=<YOUR_MYSQL_DB_PASSWORD>
+
+# Secret for JWT Token Source Verification
+SECRET_KEY=<YOUR_SECRET_KEY>
+```
 
 ### 5. Start the Server
 

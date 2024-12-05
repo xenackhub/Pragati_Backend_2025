@@ -10,6 +10,12 @@ import helmet from "helmet";
 // Multi-Processing.
 import cluster from "cluster";
 
+// Import existsSync for checking the presence of privateKey and publicKey
+import { existsSync } from "fs";
+
+// Import generateKey for RSA Encryption Key Generation
+import { generateKey } from "./RSA/generateKey.js";
+
 // Imports for database initialization
 import initDatabase from "./db/schema/initDatabase.js"
 
@@ -34,6 +40,10 @@ if (cluster.isPrimary) {
   } catch (err) {
     console.error(`[ERROR]: Error in Initializing Database.`);
     console.error(err);
+  }
+
+  if (!existsSync("./RSA/privateKey.pem") || !existsSync("./RSA/publicKey.pem")) {
+    await generateKey();
   }
 
   // Fork the processes.

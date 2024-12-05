@@ -1,7 +1,12 @@
 import "dotenv/config.js";
-import env from './config/validateEnv';
-
 import { appConfig } from "./config/config.js";
+import { validateEnv } from "./config/new.js";
+
+if(!validate()){
+  console.error("[ERROR]: env varaiables validator failed!!")
+}
+
+
 
 // Imports for Express, CORS, Helmet
 import express, { json } from "express";

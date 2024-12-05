@@ -16,7 +16,7 @@ export const tokenValidator = async(req, res, next) => {
         return;
     }
 
-    const publicKey = readFileSync('RSA/publicKey.pem');
+    const publicKey = readFileSync('RSA/publicKey.pem', 'utf8');
     try {
         const payloadData = await jwt.verify(webToken, publicKey, { algorithms: ['RS256'] });
         if(payloadData["SECRET_TOKEN"] == secretKey){

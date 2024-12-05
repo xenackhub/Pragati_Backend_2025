@@ -2,7 +2,7 @@ import { writeFileSync, appendFileSync } from "fs";
 import crypto from "crypto";
 
 export const generateKey = async () => {
-    const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519', {
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
         modulusLength: 2048,
         publicKeyEncoding: {
             type: 'spki',

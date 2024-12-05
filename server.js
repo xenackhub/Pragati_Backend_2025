@@ -1,12 +1,6 @@
 import "dotenv/config.js";
 import { appConfig } from "./config/config.js";
-import { validateEnv } from "./config/new.js";
-
-if(!validate()){
-  console.error("[ERROR]: env varaiables validator failed!!")
-}
-
-
+import { validateEnv } from "./config/envValidator.js";
 
 // Imports for Express, CORS, Helmet
 import express, { json } from "express";
@@ -36,6 +30,12 @@ app.use(json());
 if (cluster.isPrimary) {
   console.info(`[LOG]: Parent ${process.pid} is Running.`);
 
+  // Validate the environment variables.
+  if(!validateEnv()){
+    console.error("[ERROR]: env varaiables validator failed!!")
+    process.exit(1);
+  }
+
   // Initialize the log directories.
   initLog();
 
@@ -46,6 +46,7 @@ if (cluster.isPrimary) {
   } catch (err) {
     console.error(`[ERROR]: Error in Initializing Database.`);
     console.error(err);
+    process.exit(1);
   }
 
   if (!existsSync("./RSA/privateKey.pem") || !existsSync("./RSA/publicKey.pem")) {
@@ -68,6 +69,7 @@ if (cluster.isPrimary) {
   app.listen(appConfig.PORT, (err) => {
     if (err) {
       console.error(`[ERROR]: Error in Starting Server !!`, err);
+      process.exit(1);
     } else {
       console.info(
         `[LOG]: Server ${process.pid} Listening in Port ${appConfig.PORT}`

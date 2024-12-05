@@ -58,7 +58,7 @@ SECRET_KEY=<YOUR_SECRET_KEY>
   npm run dev
   ```
 
- **For development** (without live reload):
+- **For development** (without live reload):
 
   ```bash
   npm start

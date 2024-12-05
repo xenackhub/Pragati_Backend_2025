@@ -29,6 +29,7 @@
 
 DROP TABLE IF EXISTS `registrationData`;
 DROP TABLE IF EXISTS `accommodationData`;
+DROP TABLE IF EXISTS `groupEventTeamSizeData`;
 DROP TABLE IF EXISTS `groupDetail`;
 DROP TABLE IF EXISTS `userData`;
 DROP TABLE IF EXISTS `otpTable`;
@@ -129,6 +130,17 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   CONSTRAINT FOREIGN KEY (`presenterID`) REFERENCES `presenterData` (`presenterID`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- table for storing the size of team allowed for group events ------------------------------------
+
+CREATE TABLE IF NOT EXISTS `groupEventTeamSizeData` (
+  `eventID` INT NOT NULL,
+  `minTeamSize` INT NOT NULL,
+  `maxTeamSize` INT NOT NULL,
+  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+  CONSTRAINT FOREIGN KEY (`eventID`) REFERENCES `eventData` (`eventID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

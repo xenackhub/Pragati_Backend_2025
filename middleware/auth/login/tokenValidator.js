@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 import { readFileSync } from "fs";
+import { appConfig } from "../../../config/config";
 
-const secretKey = '925d6213ca342801d7d5d93767b55e94b8dffa4ab1c6d80ae792aeb8b947328a17623cc98644d912c2a87ae64f6ed27cbc16d3e6b12ca236bcac25ee08415cc9832d77aa9554fdbf2d3782545a2768a5284c06c2fddcd06fdb52f4301740fd50d2429da1fe064bbd08a339fa5935ef2a5eafc379ec5d7741f1a72c7c148c08ef';
+const secretKey = appConfig.tokenSecretKey;
 
 export const tokenValidator = async(req, res, next) => {
     const tokenHeader = req.headers.authorization;
@@ -11,7 +12,7 @@ export const tokenValidator = async(req, res, next) => {
 
     if(tokenHeader == null || webToken == null){
         res.status(401).send({
-            MSG: "No Token. Unauthorized Access."
+            MESSAGE: "No Token. Unauthorized Access."
         });
         return;
     }
@@ -26,15 +27,13 @@ export const tokenValidator = async(req, res, next) => {
             return;
         }
         else {
-            res.status(401).send({
-                MSG: "Unauthorized Access."
+            return res.status(401).send({
+                MESSAGE: "Unauthorized Access."
             });
-            return;
         }
     } catch (error) {
-        res.status(401).send({
-            MSG: "Unauthorized Access"
+        return res.status(401).send({
+            MESSAGE: "Unauthorized Access"
         });
-        return;
     }
 }

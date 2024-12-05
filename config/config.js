@@ -27,4 +27,5 @@ export const appConfig = {
             multipleStatements: true
         }
     },
+    tokenSecretKey: process.env.SECRET_KEY
 }

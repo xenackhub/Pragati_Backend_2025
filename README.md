@@ -1,6 +1,6 @@
 # Pragati Backend 2025
 
-Backend server for **Pragati 2025**, providing APIs for platform management and secure transaction handling. The server leverages multi-processing for optimized performance and robust database configuration.
+Backend server for **Pragati 2025**.
 
 ---
 
@@ -37,7 +37,7 @@ CREATE DATABASE pragati_transactions_2025;
 
 ### 4. Configure Environment Variables
 
-
+(Editing required)
 
 ### 5. Start the Server
 
@@ -57,12 +57,12 @@ CREATE DATABASE pragati_transactions_2025;
 
 ## Contributors
 
-- **Ashwin Narayanan S**
-- **Tharun Kumarr A**
-- **Naganathan**
-- **Saran Dharshan SP**
-- **Akshay KS**
-- **Kavinesh P**
-- **Saran Hiruthik**
+`Ashwin Narayanan S`
+`Tharun Kumarr A`
+`Naganathan`
+`Saran Dharshan SP`
+`Akshay KS`
+`Kavinesh P`
+`Saran Hiruthik`
 
 --- 

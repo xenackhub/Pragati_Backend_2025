@@ -19,7 +19,7 @@ export const tokenValidator = async(req, res, next) => {
 
     const publicKey = readFileSync('RSA/publicKey.pem', 'utf8');
     try {
-        const payloadData = await jwt.verify(webToken, publicKey, { algorithms: ['RS256'] });
+        const payloadData = jwt.verify(webToken, publicKey, { algorithms: ['RS256'] });
         if(payloadData["SECRET_TOKEN"] == secretKey){
             req.body.userEmail = payloadData["userEmail"];
             req.body.userID = payloadData["userID"];

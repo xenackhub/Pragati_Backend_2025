@@ -16,7 +16,7 @@ Backend server for **Pragati 2025**.
 ### 1. Clone the Repository
 
 ```bash
-git clone <REPOSITORY_URL>
+git clone https://github.com/Naganathan05/Pragati_Backend_2025.git
 cd Pragati_Backend_2025
 ```
 
@@ -58,7 +58,7 @@ SECRET_KEY=<YOUR_SECRET_KEY>
   npm run dev
   ```
 
-- **For production**:
+ **For development** (without live reload):
 
   ```bash
   npm start

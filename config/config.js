@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config({path:".env.local"});
-
 import { availableParallelism } from "os";
 
 const numCPU = availableParallelism();

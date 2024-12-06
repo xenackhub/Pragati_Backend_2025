@@ -75,20 +75,6 @@ CREATE TABLE IF NOT EXISTS `userData` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
--- table for group information ----------------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `groupDetail` (
-  `registrationID` INT NOT NULL,
-  `userID` INT NOT NULL,
-  `roleDescription` VARCHAR(255) DEFAULT NULL,
-  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-  PRIMARY KEY (`registrationID`, `userID`),
-  CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE SET NULL,
-  CONSTRAINT FOREIGN KEY (`registrationID`) REFERENCES `registrationData` (`registrationID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
 -- table for temporary otp storage (Engine:in-memory storage) -----------------------------------------
 
 CREATE TABLE IF NOT EXISTS `otpTable` (
@@ -118,9 +104,8 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `isPerHeadFee` BOOL DEFAULT FALSE,
   `godName` VARCHAR(50) NOT NULL,
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 
 -- table for registration details ------------------------------------------------------------------
@@ -148,6 +133,20 @@ CREATE TABLE IF NOT EXISTS `registrationData` (
 -- 5 -> EVENT WAS CANCELLED, waiting for refund.
 -- 6 -> EVENT WAS CANCELLED, refund done.
 -- 7 -> EVENT WAS CANCELLED, refund also rejected.
+
+
+-- table for group information ----------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `groupDetail` (
+  `registrationID` INT NOT NULL,
+  `userID` INT NOT NULL,
+  `roleDescription` VARCHAR(255) DEFAULT NULL,
+  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+  PRIMARY KEY (`registrationID`, `userID`),
+  CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE CASCADE,
+  CONSTRAINT FOREIGN KEY (`registrationID`) REFERENCES `registrationData` (`registrationID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 -- table for event organizer details  -------------------------------------------------------------------

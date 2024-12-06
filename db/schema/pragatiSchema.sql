@@ -28,8 +28,6 @@
 */
 
 DROP TABLE IF EXISTS `registrationData`;
-DROP TABLE IF EXISTS `accommodationData`;
-DROP TABLE IF EXISTS `groupEventTeamSizeData`;
 DROP TABLE IF EXISTS `groupDetail`;
 DROP TABLE IF EXISTS `userData`;
 DROP TABLE IF EXISTS `otpTable`;
@@ -41,7 +39,6 @@ DROP TABLE IF EXISTS `eventData`;
 DROP TABLE IF EXISTS `organizerData`;
 DROP TABLE IF EXISTS `tagData`;
 DROP TABLE IF EXISTS `clubData`;
-DROP TABLE IF EXISTS `presenterData`;
 
 -- table for user role ---------------------------------------------------------------------------
 
@@ -67,7 +64,9 @@ CREATE TABLE IF NOT EXISTS `userData` (
   `userDepartment` VARCHAR(255) NOT NULL,
   `academicYear` INT NOT NULL,
   `degree` VARCHAR(100) NOT NULL,
-  `needAccommodation` BOOL DEFAULT FALSE,
+  `needAccommodationDay1` BOOL DEFAULT FALSE,
+  `needAccommodationDay2` BOOL DEFAULT FALSE,
+  `needAccommodationDay3` BOOL DEFAULT FALSE,
   `emailType` BOOL DEFAULT TRUE NOT NULL,   -- Represents if email is amrita mail or individual mail
   `accountStatus` CHAR(1) NOT NULL CHECK(`accountStatus` IN ('0','1','2')),  -- '0':Blocked  '1':Not verified  '2':Verified
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -79,13 +78,14 @@ CREATE TABLE IF NOT EXISTS `userData` (
 -- table for group information ----------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `groupDetail` (
-  `groupID` INT AUTO_INCREMENT PRIMARY KEY,
-  `leaderID` INT,
-  `groupName` VARCHAR(255) NOT NULL,
-  `numOfMembers` INT NOT NULL,
+  `registrationID` INT NOT NULL,
+  `userID` INT NOT NULL,
+  `roleDescription` VARCHAR(255) DEFAULT NULL,
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-  CONSTRAINT FOREIGN KEY (`leaderID`) REFERENCES `userData` (`userID`) ON DELETE SET NULL
+  PRIMARY KEY (`registrationID`, `userID`),
+  CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE SET NULL,
+  CONSTRAINT FOREIGN KEY (`registrationID`) REFERENCES `registrationData` (`registrationID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -99,17 +99,6 @@ CREATE TABLE IF NOT EXISTS `otpTable` (
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
 
 
--- table for event presenter's details -------------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `presenterData` (
-  `presenterID` INT AUTO_INCREMENT PRIMARY KEY,
-  `presenterName` VARCHAR(255) NOT NULL,
-  `phoneNumber` VARCHAR(15),
-  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
 -- table for event data --------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `eventData` (
@@ -119,8 +108,9 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `eventFee` INT NOT NULL,
   `eventDescription` VARCHAR(5000) NOT NULL,
   `eventDescSmall` VARCHAR(1000),
-  `presenterID` INT,
   `isGroup` BOOL DEFAULT FALSE,
+  `maxTeamSize` INT DEFAULT 1 NOT NULL,
+  `minTeamSize` INT DEFAULT 1 NOT NULL,
   `eventDate` CHAR(1) NOT NULL CHECK(`eventDate` IN ('1','2','3')),  -- the day of the events, so that the original date can be changed
   `eventStatus` CHAR(1) DEFAULT '1' CHECK(`eventStatus` IN ('0','1','2')), -- Blocked, Open, Full
   `numRegistrations` INT DEFAULT 0,
@@ -129,19 +119,8 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `godName` VARCHAR(50) NOT NULL,
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-  CONSTRAINT FOREIGN KEY (`presenterID`) REFERENCES `presenterData` (`presenterID`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- table for storing the size of team allowed for group events ------------------------------------
-
-CREATE TABLE IF NOT EXISTS `groupEventTeamSizeData` (
-  `eventID` INT NOT NULL,
-  `minTeamSize` INT NOT NULL,
-  `maxTeamSize` INT NOT NULL,
-  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-  CONSTRAINT FOREIGN KEY (`eventID`) REFERENCES `eventData` (`eventID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 -- table for registration details ------------------------------------------------------------------
@@ -150,14 +129,25 @@ CREATE TABLE IF NOT EXISTS `registrationData` (
   `registrationID` INT AUTO_INCREMENT PRIMARY KEY,
   `eventID` INT,
   `transactionID` INT NOT NULL,
-  `groupID` INT,
+  `amountPaid` INT NOT NULL DEFAULT 0,
+  `totalMembers` INT NOT NULL DEFAULT 1,
+  `teamName` VARCHAR(255) DEFAULT NULL,
   `userID` INT,
+  `registrationStatus` CHAR(1) NOT NULL DEFAULT "1",
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   CONSTRAINT FOREIGN KEY (`eventID`) REFERENCES `eventData` (`eventID`) ON DELETE SET NULL,
-  CONSTRAINT FOREIGN KEY (`groupID`) REFERENCES `groupDetail` (`groupID`) ON DELETE SET NULL,
-  CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE SET NULL
+  CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE SET NULL,
+  CONSTRAINT CHECK (registrationStatus IN ("1", "2", "3", "4", "5", "6", "7"))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- registrationStatus:
+-- 1 -> REGISTRATION INITIATED. PAYMENT PENDING
+-- 2 -> REGISTERED. PAYED.
+-- 3 -> USER CANCELLED REGISTRATION.
+-- 4 -> EVENT WAS CANCELLED. NO REFUND.
+-- 5 -> EVENT WAS CANCELLED, waiting for refund.
+-- 6 -> EVENT WAS CANCELLED, refund done.
+-- 7 -> EVENT WAS CANCELLED, refund also rejected.
 
 
 -- table for event organizer details  -------------------------------------------------------------------
@@ -228,15 +218,3 @@ CREATE TABLE IF NOT EXISTS `clubEventMapping` (
   CONSTRAINT FOREIGN KEY (`clubID`) REFERENCES `clubData` (`clubID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
--- table for accommodation details ------------------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `accommodationData` (
-  `userID` INT PRIMARY KEY,
-  `firstDay` BOOL,
-  `secondDay` BOOL,
-  `thirdDay` BOOL,
-  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-  CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -28,7 +28,7 @@ app.use(helmet());
 app.use(json());
 
 if (cluster.isPrimary) {
-  console.info(`[LOG]: Parent ${process.pid} is Running.}`);
+  console.info(`[LOG]: Parent ${process.pid} is Running.`);
 
   // Initialize the log directories.
   initLog();

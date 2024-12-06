@@ -27,8 +27,8 @@
   ===========================================================================
 */
 
-DROP TABLE IF EXISTS `registrationData`;
 DROP TABLE IF EXISTS `groupDetail`;
+DROP TABLE IF EXISTS `registrationData`;
 DROP TABLE IF EXISTS `userData`;
 DROP TABLE IF EXISTS `otpTable`;
 DROP TABLE IF EXISTS `userRole`;

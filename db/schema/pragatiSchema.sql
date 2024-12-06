@@ -80,16 +80,17 @@ CREATE TABLE IF NOT EXISTS `userData` (
 CREATE TABLE IF NOT EXISTS `otpTable` (
   `userID` INT NOT NULL,
   `otp` CHAR(4),
+  `expiryTime` TIMESTAMP NOT NULL DEFAULT ( createdAt + INTERVAL 5 MINUTE ),
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE CASCADE
-) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
+);
 
 
 -- table for event data --------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `eventData` (
   `eventID` INT AUTO_INCREMENT PRIMARY KEY,
-  `eventName` VARCHAR(255) NOT NULL,
+  `eventName` VARCHAR(255) UNIQUE NOT NULL,
   `imageUrl` VARCHAR(255) NOT NULL,
   `eventFee` INT NOT NULL,
   `eventDescription` VARCHAR(5000) NOT NULL,

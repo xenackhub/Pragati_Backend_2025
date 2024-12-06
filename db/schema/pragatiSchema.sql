@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `userData` (
   `needAccommodationDay1` BOOL DEFAULT FALSE,
   `needAccommodationDay2` BOOL DEFAULT FALSE,
   `needAccommodationDay3` BOOL DEFAULT FALSE,
-  `emailType` BOOL DEFAULT TRUE NOT NULL,   -- Represents if email is amrita mail or individual mail
+  `isAmrita` BOOL DEFAULT TRUE NOT NULL,   -- Represents if email is amrita mail or individual mail
   `accountStatus` CHAR(1) NOT NULL CHECK(`accountStatus` IN ('0','1','2')),  -- '0':Blocked  '1':Not verified  '2':Verified
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `eventData` (
 CREATE TABLE IF NOT EXISTS `registrationData` (
   `registrationID` INT AUTO_INCREMENT PRIMARY KEY,
   `eventID` INT,
-  `transactionID` INT NOT NULL,
+  `txnID` VARCHAR(255) NOT NULL UNIQUE,
   `amountPaid` INT NOT NULL DEFAULT 0,
   `totalMembers` INT NOT NULL DEFAULT 1,
   `teamName` VARCHAR(255) DEFAULT NULL,

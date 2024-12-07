@@ -11,6 +11,7 @@ const initDatabase = async (dbName) => {
             readFile('./db/schema/pragatiSchema.sql', 'utf8', async (err, data) => {
                 if (err) {
                     console.error(err);
+                    return;
                 }
                 else {
                     await db_conn.query(data);
@@ -19,13 +20,18 @@ const initDatabase = async (dbName) => {
             });
         } catch (err) {
             console.error(err);
+            return;
+        }
+        finally {
+            db_conn.release(); // Ensure the connection is always released
         }
     } else if (dbName == appConfig.db.transactions.database) {
         const db_conn = await transactionsDb.promise().getConnection();
         try {
-            readFile('./db/Schema/transactionSchema.sql', 'utf8', async (err, data) => {
+            readFile('./db/schema/transactionSchema.sql', 'utf8', async (err, data) => {
                 if (err) {
                     console.error(err);
+                    return ;
                 }
                 else {
                     await db_conn.query(data);
@@ -34,6 +40,10 @@ const initDatabase = async (dbName) => {
             });
         } catch (err) {
             console.error(err);
+            return;
+        }
+        finally {
+            db_conn.release(); // Ensure the connection is always released
         }
     }
 };

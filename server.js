@@ -20,7 +20,7 @@ import { generateKey } from "./RSA/generateKey.js";
 import initDatabase from "./db/schema/initDatabase.js"
 
 // import function to create log directories.
-import { initLog } from "./logs/initLog.js";
+import { initLog } from "./utilities/logInit.js";
 
 // import router for API routing
 import router from "./routes/mainRoute.js";

@@ -22,10 +22,21 @@ import initDatabase from "./db/schema/initDatabase.js"
 // import function to create log directories.
 import { initLog } from "./logs/initLog.js";
 
+// import router for API routing
+import router from "./routes/mainRoute.js";
+
 const app = express();
 app.use(cors());
 app.use(helmet());
 app.use(json());
+
+// test endpoint for checking the availability of server
+app.get('/api/test',(req, res)=>{
+  return res.status(200).json({MESSAGE:"Server is running ◪_◪"})
+})
+
+// using routes extending the '/api' path
+app.use('/api',router);
 
 if (cluster.isPrimary) {
   console.info(`[LOG]: Parent ${process.pid} is Running.`);

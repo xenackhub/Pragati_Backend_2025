@@ -35,5 +35,6 @@ CREATE TABLE IF NOT EXISTS `transactionData` (
   `transactionStatus` CHAR(1) NOT NULL CHECK(`transactionStatus` IN ('0','1','2')),  -- '0':Failed  '1':Pending  '2':Complete
   `productInfo` VARCHAR(5000) NOT NULL,
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  `expiryTime` TIMESTAMP NOT NULL DEFAULT ( createdAt + INTERVAL 15 MINUTE ),
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);

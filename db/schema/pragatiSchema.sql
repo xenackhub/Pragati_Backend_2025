@@ -29,8 +29,8 @@
 
 DROP TABLE IF EXISTS `groupDetail`;
 DROP TABLE IF EXISTS `registrationData`;
-DROP TABLE IF EXISTS `userData`;
 DROP TABLE IF EXISTS `otpTable`;
+DROP TABLE IF EXISTS `userData`;
 DROP TABLE IF EXISTS `userRole`;
 DROP TABLE IF EXISTS `organizerEventMapping`;
 DROP TABLE IF EXISTS `tagEventMapping`;
@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `userRole` (
     `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+insert into `userrole` (`createdAt`, `roleID`, `roleName`) values ('2024-12-07 14:31:36', 1, 'User');
 
 -- Table for user data -----------------------------------------------------------------------------
 
@@ -74,22 +75,27 @@ CREATE TABLE IF NOT EXISTS `userData` (
   CONSTRAINT FOREIGN KEY (`roleID`) REFERENCES `userRole` (`roleID`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+insert into `userdata` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '1', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '8838517013', 1, 'CB.EN.U4CSE22447', 'CSE', 'thanuskumaara@gmail.com', 1, 'Thanus', 'Thanus2025');
+insert into `userdata` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '1', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '1111111111', 1, 'CB.EN.U4CSE22240', 'CSE', 'naganathan1555@gmail.com', 2, 'Naganathan', 'Naga2025');
+insert into `userdata` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '1', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '5045678555', 1, 'CB.EN.U4AIE220', 'AIE', 'sarandharshanpushparaj@gmail.com',3, 'Saran', 'Saran2025');
+insert into `userdata` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '1', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '7894561235', 1, 'CB.EN.U4CSE21008', 'CSE', 'ashrockzzz2003@gmail.com', 4, 'Ashwin', 'Ashrockz');
 
 -- table for temporary otp storage (Engine:in-memory storage) -----------------------------------------
 
 CREATE TABLE IF NOT EXISTS `otpTable` (
   `userID` INT NOT NULL,
   `otp` CHAR(4),
+  `expiryTime` TIMESTAMP NOT NULL DEFAULT ( createdAt + INTERVAL 5 MINUTE ),
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE CASCADE
-) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
+);
 
 
 -- table for event data --------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `eventData` (
   `eventID` INT AUTO_INCREMENT PRIMARY KEY,
-  `eventName` VARCHAR(255) NOT NULL,
+  `eventName` VARCHAR(255) UNIQUE NOT NULL,
   `imageUrl` VARCHAR(255) NOT NULL,
   `eventFee` INT NOT NULL,
   `eventDescription` VARCHAR(5000) NOT NULL,

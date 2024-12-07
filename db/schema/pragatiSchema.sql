@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `userRole` (
     `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+insert into `userrole` (`createdAt`, `roleID`, `roleName`) values ('2024-12-07 14:31:36', 1, 'User');
 
 -- Table for user data -----------------------------------------------------------------------------
 
@@ -74,6 +75,10 @@ CREATE TABLE IF NOT EXISTS `userData` (
   CONSTRAINT FOREIGN KEY (`roleID`) REFERENCES `userRole` (`roleID`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+insert into `userdata` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '1', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '8838517013', 1, 'CB.EN.U4CSE22447', 'CSE', 'thanuskumaara@gmail.com', 1, 'Thanus', 'Thanus2025');
+insert into `userdata` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '1', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '1111111111', 1, 'CB.EN.U4CSE22240', 'CSE', 'naganathan1555@gmail.com', 2, 'Naganathan', 'Naga2025');
+insert into `userdata` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '1', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '5045678555', 1, 'CB.EN.U4AIE220', 'AIE', 'sarandharshanpushparaj@gmail.com',3, 'Saran', 'Saran2025');
+insert into `userdata` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '1', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '7894561235', 1, 'CB.EN.U4CSE21008', 'CSE', 'ashrockzzz2003@gmail.com', 4, 'Ashwin', 'Ashrockz');
 
 -- table for temporary otp storage (Engine:in-memory storage) -----------------------------------------
 

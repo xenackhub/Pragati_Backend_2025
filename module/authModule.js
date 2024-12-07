@@ -8,36 +8,28 @@ import {
 import { isUserExistsByEmail } from "../utilities/dbUtilities.js";
 import { createToken } from "../middleware/auth/login/tokenGenerator.js";
 
+const [pragatiDb, _] = poolConnectToDb();
+const db = await pragatiDb.promise().getConnection();
+
 const authModule = {
   login: async function (email, password) {
-    const [pragatiDb, transactionsDb] = poolConnectToDb();
-    const db = await pragatiDb.promise().getConnection();
     try {
-      // check if user is present in the database
-      if (!(await isUserExistsByEmail(email))) {
+      // returns details of user if exists, else null
+      const userData = isUserExistsByEmail(email, db)
+      if (userData == null) {
         return setResponseBadRequest("User not found!");
       }
-
-      // Query to select user
-      await db.query("LOCK TABLES userData READ");
-      const [userData] = await db.query(
-        "SELECT userID, userEmail, roleID FROM userData WHERE userEmail = ? AND userPassword = ?",
-        [email, password]
-      );
-      console.log(userData);
-      await db.query("UNLOCK TABLES");
-
-      // user is not found
-      if (userData.length == 0) {
+      if (userData[0].userPassword != password) {
         return setResponseBadRequest("Incorrect password for given user..");
       }
+      
       const token = createToken({
         userID: userData[0].userID,
         userEmail: userData[0].userEmail,
         roleID: userData[0].roleID,
       });
       return setResponseOk("Login successful", {
-        userID: userData[0].userID,
+        roleID: userData[0].roleID,
         TOKEN: token,
       });
     } catch (err) {

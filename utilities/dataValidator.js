@@ -36,11 +36,6 @@ const validateAcademicYear = (year) => {
   return Number.isInteger(year) && year > 2018 && year < 2028;
 };
 
-// Function to validate boolean fields
-const validateBoolean = (value) => {
-  return typeof value === "boolean";
-};
-
 // Function to validate signup data
 const validateSignupData = (data) => {
 
@@ -85,7 +80,7 @@ const validateSignupData = (data) => {
   }
 
   // Validate isAmrita if provided
-  if (data.isAmrita !== undefined && !validateBoolean(data.isAmrita)) {
+  if (typeof data.isAmrita !="string" && (data.isAmrita !="0" || data.isAmrita != "1")) {
     return "Invalid value for isAmrita.";
   }
   return null;

@@ -93,6 +93,8 @@ const authController = {
             academicYear,
             degree,
             isAmrita,
+            accountStatus:1,
+            roleID:1,
           });
           return res.status(response.responseCode).json(response.responseBody);
         } catch (err) {

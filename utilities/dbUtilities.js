@@ -1,5 +1,3 @@
-import poolConnectToDb from "../db/poolConnection.js";
-
 // Check if a user exists by email
 const isUserExistsByEmail = async function (email,db) {
   try {

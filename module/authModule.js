@@ -15,14 +15,15 @@ const authModule = {
   login: async function (email, password) {
     try {
       // returns details of user if exists, else null
-      const userData = isUserExistsByEmail(email, db)
+      const userData = await isUserExistsByEmail(email, db)
+      console.log(userData)
       if (userData == null) {
         return setResponseBadRequest("User not found!");
       }
       if (userData[0].userPassword != password) {
         return setResponseBadRequest("Incorrect password for given user..");
       }
-      
+
       const token = createToken({
         userID: userData[0].userID,
         userEmail: userData[0].userEmail,

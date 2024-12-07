@@ -7,6 +7,7 @@ import {
 } from "../utilities/response.js";
 import { isUserExistsByEmail } from "../utilities/dbUtilities.js";
 import { createToken } from "../middleware/auth/login/tokenGenerator.js";
+import { logError } from "../utilities/errorLogger.js";
 
 const [pragatiDb, _] = poolConnectToDb();
 const db = await pragatiDb.promise().getConnection();
@@ -37,6 +38,55 @@ const authModule = {
       return setResponseInternalError();
     }
   },
+
+  signup : async function (userData) {
+    const {
+      userEmail,
+      userPassword,
+      userName,
+      rollNumber,
+      phoneNumber,
+      collegeName,
+      collegeCity,
+      userDepartment,
+      academicYear,
+      degree,
+      isAmrita,
+      accountStatus,
+      roleID,
+    } = userData;
+  
+    try {
+      const query = `
+        INSERT INTO userData 
+          (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita, accountStatus, roleID)
+        VALUES 
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+  
+      const values = [
+        userEmail,
+        userPassword,
+        userName,
+        rollNumber,
+        phoneNumber,
+        collegeName,
+        collegeCity,
+        userDepartment,
+        academicYear,
+        degree,
+        isAmrita,
+        accountStatus,
+        roleID,
+      ];
+  
+      const [result] = await db.query(query, values);
+      return result;
+    } catch (err) {
+      console.error("[ERROR]: Error in createUser: ", err);
+      throw new Error("Failed to create user.");
+    }
+  }
 };
 
 export default authModule;

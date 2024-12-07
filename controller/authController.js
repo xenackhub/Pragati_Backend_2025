@@ -9,6 +9,7 @@ import {
 
 // authorization module for database access
 import authModule from "../module/authModule.js";
+import { logError } from "../utilities/errorLogger.js";
 
 const authController = {
   /*

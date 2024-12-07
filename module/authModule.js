@@ -7,6 +7,7 @@ import {
 } from "../utilities/response.js";
 import { isUserExistsByEmail } from "../utilities/dbUtilities.js";
 import { createToken } from "../middleware/auth/login/tokenGenerator.js";
+import { logError } from "../utilities/errorLogger.js";
 
 const [pragatiDb, _] = poolConnectToDb();
 const db = await pragatiDb.promise().getConnection();

@@ -16,7 +16,6 @@ const authModule = {
     try {
       // returns details of user if exists, else null
       const userData = await isUserExistsByEmail(email, db)
-      console.log(userData)
       if (userData == null) {
         return setResponseBadRequest("User not found!");
       }
@@ -34,7 +33,7 @@ const authModule = {
         TOKEN: token,
       });
     } catch (err) {
-      console.log("[ERROR]: Error in authModule:login ", err);
+      logError(err, "authModule:login", "db");
       return setResponseInternalError();
     }
   },

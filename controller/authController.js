@@ -1,5 +1,5 @@
 // helper functions for data validation and consistent response
-import { validateEmail, validatePassword } from "../utilities/authValidator.js";
+import { validateEmail, validatePassword } from "../utilities/dataValidator.js";
 import {
   setResponseOk,
   setResponseBadRequest,
@@ -34,7 +34,7 @@ const authController = {
       const response = await authModule.login(email, password);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
-      console.log("[ERROR]: Error in authController:login ", err);
+      logError(err, "authController:login", "db");
       const response = setResponseInternalError();
       return res.status(response.responseCode).json(response.responseBody);
     }

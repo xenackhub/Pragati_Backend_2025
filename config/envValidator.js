@@ -4,7 +4,9 @@ const validateEnv = () => {
     const rules = {
         SERVER_PORT: 'number',
         DB_PWD: 'string',
-        SECRET_KEY: 'string'
+        SECRET_KEY: 'string',
+        PRAGATI_DB_NAME: 'string', 
+        TXN_DB_NAME: 'string',     
     };
     const isValid = Object.entries(rules).every(([key, type]) => {
         const value = process.env[key];

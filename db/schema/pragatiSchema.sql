@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `userData` (
   `userName` VARCHAR(255) NOT NULL,
   `rollNumber` VARCHAR(50) NOT NULL,
   `phoneNumber` VARCHAR(15) NOT NULL,
-  `roleID` INT,
+  `roleID` INT DEFAULT 1,
   `collegeName` VARCHAR(255) NOT NULL, 
   `collegeCity` VARCHAR(255) NOT NULL,
   `userDepartment` VARCHAR(255) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `userData` (
   `needAccommodationDay2` BOOL DEFAULT FALSE,
   `needAccommodationDay3` BOOL DEFAULT FALSE,
   `isAmrita` BOOL DEFAULT TRUE NOT NULL,   -- Represents if email is amrita mail or individual mail
-  `accountStatus` CHAR(1) NOT NULL CHECK(`accountStatus` IN ('0','1','2')),  -- '0':Blocked  '1':Not verified  '2':Verified
+  `accountStatus` CHAR(1) DEFAULT '1' NOT NULL CHECK(`accountStatus` IN ('0','1','2')),  -- '0':Blocked  '1':Not verified  '2':Verified
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   CONSTRAINT FOREIGN KEY (`roleID`) REFERENCES `userRole` (`roleID`) ON DELETE SET NULL

@@ -73,35 +73,33 @@ const authController = {
       degree,
       isAmrita,
     } = req.body;
-        // Validate input data
-        const validationErrors = validateSignupData(req.body);
-        if (validationErrors != null) {
-          const response = setResponseBadRequest(validationErrors);
-          return res.status(response.responseCode).json(response.responseBody);
-        }
-    
-        try {
-          const response = await authModule.signup({
-            userEmail,
-            userPassword,
-            userName,
-            rollNumber,
-            phoneNumber,
-            collegeName,
-            collegeCity,
-            userDepartment,
-            academicYear,
-            degree,
-            isAmrita,
-            accountStatus:1,
-            roleID:1,
-          });
-          return res.status(response.responseCode).json(response.responseBody);
-        } catch (err) {
-          logError(err, "authController:signup", "db");
-          const response = setResponseInternalError();
-          return res.status(response.responseCode).json(response.responseBody);
-      }
+    // Validate input data
+    const validationErrors = validateSignupData(req.body);
+    if (validationErrors != null) {
+      const response = setResponseBadRequest(validationErrors);
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+
+    try {
+      const response = await authModule.signup({
+        email,
+        password,
+        userName,
+        rollNumber,
+        phoneNumber,
+        collegeName,
+        collegeCity,
+        userDepartment,
+        academicYear,
+        degree,
+        isAmrita,
+      });
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (err) {
+      logError(err, "authController:signup", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
   },
 
     /*

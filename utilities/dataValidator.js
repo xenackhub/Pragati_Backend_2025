@@ -37,17 +37,19 @@ const validateOTP = (otp) => {
 
 
 const validatePhoneNumber = (phoneNumber) => {
-  return typeof phoneNumber === "string" && validator.isMobilePhone(phoneNumber, 'any');
+  return (
+    typeof phoneNumber === "string" &&
+    validator.isMobilePhone(phoneNumber, "en-IN")
+  );
 };
 
 // Function to validate academic year
 const validateAcademicYear = (year) => {
-  return Number.isInteger(year) && year > 2018 && year < 2028;
+  return Number.isInteger(year);
 };
 
 // Function to validate signup data
 const validateSignupData = (data) => {
-
   if (!validateEmail(data.email)) {
     return "Invalid or missing email.";
   }
@@ -60,7 +62,10 @@ const validateSignupData = (data) => {
     return "Invalid or missing userName.";
   }
 
-  if (typeof data.rollNumber !== "string" || data.rollNumber.trim().length === 0) {
+  if (
+    typeof data.rollNumber !== "string" ||
+    data.rollNumber.trim().length === 0
+  ) {
     return "Invalid or missing rollNumber.";
   }
 
@@ -68,15 +73,24 @@ const validateSignupData = (data) => {
     return "Invalid or missing phoneNumber.";
   }
 
-  if (typeof data.collegeName !== "string" || data.collegeName.trim().length === 0) {
+  if (
+    typeof data.collegeName !== "string" ||
+    data.collegeName.trim().length === 0
+  ) {
     return "Invalid or missing collegeName.";
   }
 
-  if (typeof data.collegeCity !== "string" || data.collegeCity.trim().length === 0) {
+  if (
+    typeof data.collegeCity !== "string" ||
+    data.collegeCity.trim().length === 0
+  ) {
     return "Invalid or missing collegeCity.";
   }
 
-  if (typeof data.userDepartment !== "string" || data.userDepartment.trim().length === 0) {
+  if (
+    typeof data.userDepartment !== "string" ||
+    data.userDepartment.trim().length === 0
+  ) {
     return "Invalid or missing userDepartment.";
   }
 
@@ -89,10 +103,11 @@ const validateSignupData = (data) => {
   }
 
   // Validate isAmrita if provided
-  // if (typeof data.isAmrita !="string" && (data.isAmrita !="0" || data.isAmrita != "1")) {
-  //   return "Invalid value for isAmrita.";
-  // }
-  return null;
+  if (
+    typeof data.isAmrita != "Boolean" ||
+    (data.isAmrita != false && data.isAmrita != true)
+  )
+    return null;
 };
 
 export { validateEmail, validatePassword, validateSignupData, validateOTP };

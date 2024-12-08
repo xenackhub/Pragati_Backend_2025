@@ -66,7 +66,7 @@ const authModule = {
         db.release();
         return setResponseBadRequest("User Email already exists!!");
       }
-
+      // TODO: OTP and send mail here..
       const query = `
         INSERT INTO userData 
           (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita)

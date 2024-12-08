@@ -56,7 +56,7 @@ const authController = {
       "needAccommodationDay1" : "boolean",
       "needAccommodationDay2" : "boolean",
       "needAccommodationDay3" : "boolean",
-      "isAmrita" : "string"
+      "isAmrita" : "bool"
   }
 */
   signup: async (req, res) => {

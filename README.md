@@ -44,7 +44,10 @@ Create a `.env` file in the root directory of the project and add the following 
 SERVER_PORT=<PORT_IN_WHICH_YOU_WANT_THE_BACKEND_TO_RUN_IN>
 
 # Database Credentials
+DB_USERNAME=<YOUR_MYSQL_DB_USERNAME>
 DB_PWD=<YOUR_MYSQL_DB_PASSWORD>
+PRAGATI_DB_NAME=<NAME_OF_THE_DATABASE_FOR_PRAGATI>
+TXN_DB_NAME=<NAME_OF_THE_DATABASE_FOR_TRANSACTIONS>
 
 # Secret for JWT Token Source Verification
 SECRET_KEY=<YOUR_SECRET_KEY>

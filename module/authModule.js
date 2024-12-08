@@ -38,6 +38,7 @@ const authModule = {
         TOKEN: token,
       });
     } catch (err) {
+      console.log("[ERROR]: Error in Login Module: ", err);
       logError(err, "authModule:login", "db");
       return setResponseInternalError();
     } finally {
@@ -120,6 +121,7 @@ const authModule = {
       await db.commit();
       return setResponseOk("Sign up successful", otpToken);
     } catch (err) {
+      console.log("[ERROR]: Error in SignUp Module: ", err);
       if(transactionStarted === 1) {
         await db.rollback();
       }

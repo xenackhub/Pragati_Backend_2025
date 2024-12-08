@@ -72,7 +72,7 @@ if (cluster.isPrimary) {
 
   // If a worker dies, fork a new one.
   cluster.on('exit', (worker, code, signal) => {
-    console.info('worker %d died (%s). restarting...', worker.process.pid, signal || code);
+    console.info('Worker with PID: %d Died (%s). Restarting...', worker.process.pid, signal || code);
     cluster.fork();
   });
 

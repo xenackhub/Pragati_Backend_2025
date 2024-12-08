@@ -10,13 +10,13 @@ export const otpTokenValidator = async(req, res, next) => {
 
     // TODO: Have to add a validator for the Web Token.
 
-    if(tokenHeader == null || webToken == null){
+    if(tokenHeader == null || otpToken == null){
         return res.status(401).send({
             MESSAGE: "No OTP Token. Unauthorized Access."
         });
     }
 
-    const publicKey = readFileSync('RSA/publicKey.pem', 'utf8');
+    const publicKey = readFileSync('middleware/encryptionKeys/publicKey.pem', 'utf8');
     try {
         const payloadData = jwt.verify(otpToken, publicKey, { algorithms: ['RS256'] });
         if(payloadData["SECRET_TOKEN"] == secretKey){

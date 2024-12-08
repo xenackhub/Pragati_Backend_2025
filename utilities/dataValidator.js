@@ -50,11 +50,11 @@ const validateAcademicYear = (year) => {
 
 // Function to validate signup data
 const validateSignupData = (data) => {
-  if (!validateEmail(data.email)) {
+  if (!validateEmail(data.userEmail)) {
     return "Invalid or missing email.";
   }
 
-  if (!validatePassword(data.password)) {
+  if (!validatePassword(data.userPassword)) {
     return "Invalid or missing password.";
   }
 

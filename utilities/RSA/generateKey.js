@@ -15,8 +15,8 @@ export const generateKey = async () => {
     });
 
     try {
-        writeFileSync('./RSA/privateKey.pem', privateKey);
-        writeFileSync('./RSA/publicKey.pem', publicKey);
+        writeFileSync('./middleware/encryptionKeys/privateKey.pem', privateKey);
+        writeFileSync('./middleware/encryptionKeys/publicKey.pem', publicKey);
         console.log("[LOG]: RSA Encryption Keys Generated Succussfully");
     } catch (error) {
         console.log("[ERROR]: Error in Generating RSA Keys", error);

@@ -37,7 +37,7 @@ const sendMail = async (mailOption, logContext, userEmail) => {
 
 export const sendRegistrationOTP = async (userName, OTP, userEmail) => {
     const mailSubject = "Pragati 2025 - Account Registration - [OTP Verification]";
-    const registrationMailOption = new mailOptions(userEmail, mailSubject, TEMPLATE_OTP(userName, OTP));
+    const registrationMailOption = new mailOptions(userEmail, mailSubject, TEMPLATE_OTP(OTP, userName));
     await sendMail(registrationMailOption, "Account Registration OTP", userEmail);
 }
 

@@ -7,11 +7,11 @@ import {
   setResponseInternalError,
 } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
-import { generateOTP } from "../middleware/OTP/otpGenerator.js";
+import { generateOTP } from "../utilities/OTP/otpGenerator.js";
 import { isUserExistsByEmail } from "../utilities/dbUtilities.js";
 import { createToken } from "../middleware/auth/tokenGenerator.js";
 import { createOTPToken } from "../middleware/OTP/otpTokenGenerator.js";
-import { sendForgotPasswordOtp } from "../utilities/mailer/mailer.js"
+import { sendForgotPasswordOtp, sendRegistrationOTP } from "../utilities/mailer/mailer.js"
 
 const authModule = {
   login: async function (email, password) {
@@ -48,8 +48,8 @@ const authModule = {
 
   signup: async function (userData) {
     const {
-      email,
-      password,
+      userEmail,
+      userPassword,
       userName,
       rollNumber,
       phoneNumber,
@@ -65,21 +65,24 @@ const authModule = {
     const db = await pragatiDb.promise().getConnection();
 
     try {
-      const emailExist = await isUserExistsByEmail(email, db);
+      var transactionStarted = 0;
+      const emailExist = await isUserExistsByEmail(userEmail, db);
       if (emailExist != null) {
         return setResponseBadRequest("User Email already exists!!");
       }
-      // TODO: OTP and send mail here..
+
+      await db.beginTransaction();
+
       const query = `
         INSERT INTO userData 
-          (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita)
+          (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita, accountStatus)
         VALUES 
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const values = [
-        email,
-        password,
+        userEmail,
+        userPassword,
         userName,
         rollNumber,
         phoneNumber,
@@ -89,12 +92,37 @@ const authModule = {
         academicYear,
         degree,
         isAmrita,
+        1,
       ];
+
+      transactionStarted = 1;
       await db.query("LOCK TABLES userData WRITE");
-      const [result] = await db.query(query, values);
-      await db.query("UNLOCK TABLES");
-      return setResponseOk("Sign up successful", result);
+      const [userData] = await db.query(query, values);
+      
+      const OTP = generateOTP();
+      const otpToken = await createOTPToken({
+        "userEmail": userEmail,
+        "userID": userData.insertId
+      });
+
+      const otpHashed = crypto.createHash('sha256').update(OTP).digest('hex');
+      const expiryTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
+
+      await db.query("LOCK TABLES otpTable WRITE;");
+
+      await db.query("INSERT INTO otpTable (userID, otp, expiryTime) VALUES (?, ?, ?)", 
+        [userData.insertId, otpHashed, expiryTime]
+      );
+
+      // Awaiting for mail to be sent will stop the process for a long time. So ignoring it.
+      sendRegistrationOTP(userName, OTP, userEmail);
+
+      await db.commit();
+      return setResponseOk("Sign up successful", otpToken);
     } catch (err) {
+      if(transactionStarted === 1) {
+        await db.rollback();
+      }
       logError(err, "authModule:signup", "db");
       return setResponseInternalError();
     } finally {

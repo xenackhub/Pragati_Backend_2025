@@ -14,7 +14,7 @@ import cluster from "cluster";
 import { existsSync } from "fs";
 
 // Import generateKey for RSA Encryption Key Generation
-import { generateKey } from "./RSA/generateKey.js";
+import { generateKey } from "./utilities/RSA/generateKey.js";
 
 // Imports for database initialization
 import initDatabase from "./db/schema/initDatabase.js"
@@ -60,7 +60,7 @@ if (cluster.isPrimary) {
     process.exit(1);
   }
 
-  if (!existsSync("./RSA/privateKey.pem") || !existsSync("./RSA/publicKey.pem")) {
+  if (!existsSync("./middleware/encryptionKeys/privateKey.pem") || !existsSync("./middleware/encryptionKeys/publicKey.pem")) {
     await generateKey();
   }
 

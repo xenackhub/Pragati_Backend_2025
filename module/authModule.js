@@ -9,18 +9,19 @@ import { isUserExistsByEmail } from "../utilities/dbUtilities.js";
 import { createToken } from "../middleware/auth/login/tokenGenerator.js";
 import { logError } from "../utilities/errorLogger.js";
 
-const [pragatiDb, _] = poolConnectToDb();
-const db = await pragatiDb.promise().getConnection();
-
 const authModule = {
   login: async function (email, password) {
+    const [pragatiDb, _] = poolConnectToDb();
+    const db = await pragatiDb.promise().getConnection();
     try {
       // returns details of user if exists, else null
-      const userData = await isUserExistsByEmail(email, db)
+      const userData = await isUserExistsByEmail(email, db);
       if (userData == null) {
+        db.release();
         return setResponseBadRequest("User not found!");
       }
       if (userData[0].userPassword != password) {
+        db.release();
         return setResponseBadRequest("Incorrect password for given user..");
       }
 
@@ -29,17 +30,19 @@ const authModule = {
         userEmail: userData[0].userEmail,
         roleID: userData[0].roleID,
       });
+      db.release();
       return setResponseOk("Login successful", {
         roleID: userData[0].roleID,
         TOKEN: token,
       });
     } catch (err) {
       logError(err, "authModule:login", "db");
+      db.release();
       return setResponseInternalError();
     }
   },
 
-  signup : async function (userData) {
+  signup: async function (userData) {
     const {
       email,
       password,
@@ -52,23 +55,25 @@ const authModule = {
       academicYear,
       degree,
       isAmrita,
-      accountStatus,
-      roleID,
     } = userData;
-    
-  
+
+    const [pragatiDb, _] = poolConnectToDb();
+    const db = await pragatiDb.promise().getConnection();
+
     try {
-      const emailExist = await isUserExistsByEmail(email,db);
-      if (emailExist!=null){
-        return setResponseBadRequest("User Email already exists!!")
+      const emailExist = await isUserExistsByEmail(email, db);
+      if (emailExist != null) {
+        db.release();
+        return setResponseBadRequest("User Email already exists!!");
       }
+
       const query = `
         INSERT INTO userData 
-          (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita, accountStatus, roleID)
+          (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita)
         VALUES 
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
-  
+
       const values = [
         email,
         password,
@@ -81,22 +86,21 @@ const authModule = {
         academicYear,
         degree,
         isAmrita,
-        accountStatus,
-        roleID,
       ];
       await db.query("LOCK TABLES userData WRITE");
       const [result] = await db.query(query, values);
       await db.query("UNLOCK TABLES");
-      return setResponseOk("Sign up successful",result);
-      
+      db.release();
+      return setResponseOk("Sign up successful", result);
     } catch (err) {
-      console.error("[ERROR]: Error in createUser: ", err);
-      throw new Error("Failed to create user.");
-    } 
-    finally{
+      logError(err, "authModule:signup", "db");
+      db.release();
+      return setResponseInternalError();
+    } finally {
+      db.release();
       await db.query("UNLOCK TABLES");
     }
-  }
+  },
 };
 
 export default authModule;

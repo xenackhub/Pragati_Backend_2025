@@ -28,12 +28,12 @@ const validatePassword = (password) => {
 };
 
 const validatePhoneNumber = (phoneNumber) => {
-  return typeof phoneNumber === "string" && validator.isMobilePhone(phoneNumber, 'any');
+  return typeof phoneNumber === "string" && validator.isMobilePhone(phoneNumber, 'en-IN');
 };
 
 // Function to validate academic year
 const validateAcademicYear = (year) => {
-  return Number.isInteger(year) && year > 2018 && year < 2028;
+  return Number.isInteger(year);
 };
 
 // Function to validate signup data

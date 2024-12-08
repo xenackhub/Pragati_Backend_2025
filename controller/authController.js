@@ -40,7 +40,7 @@ const authController = {
       return res.status(response.responseCode).json(response.responseBody);
     }
   },
-    /*
+/*
   Signup request body
   {
       "email": "string",
@@ -56,9 +56,9 @@ const authController = {
       "needAccommodationDay1" : "boolean",
       "needAccommodationDay2" : "boolean",
       "needAccommodationDay3" : "boolean",
-      "isAmrita" : "boolean"
+      "isAmrita" : "string"
   }
-  */
+*/
   signup: async (req, res) => {
     const {
       email,
@@ -93,8 +93,6 @@ const authController = {
             academicYear,
             degree,
             isAmrita,
-            accountStatus:1,
-            roleID:1,
           });
           return res.status(response.responseCode).json(response.responseBody);
         } catch (err) {

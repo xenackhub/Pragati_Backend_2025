@@ -4,3 +4,4 @@ node_modules
 package-lock.json
 /RSA/privateKey.pem
 /RSA/publicKey.pem
+logs

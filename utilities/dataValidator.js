@@ -80,7 +80,7 @@ const validateSignupData = (data) => {
   }
 
   // Validate isAmrita if provided
-  if (typeof data.isAmrita !="boolean" && (data.isAmrita !=false || data.isAmrita != true)) {
+  if (typeof data.isAmrita != "boolean" && (data.isAmrita != false || data.isAmrita != true)) {
     return "Invalid value for isAmrita.";
   }
   return null;

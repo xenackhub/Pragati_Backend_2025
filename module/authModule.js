@@ -17,11 +17,9 @@ const authModule = {
       // returns details of user if exists, else null
       const userData = await isUserExistsByEmail(email, db);
       if (userData == null) {
-        db.release();
         return setResponseBadRequest("User not found!");
       }
       if (userData[0].userPassword != password) {
-        db.release();
         return setResponseBadRequest("Incorrect password for given user..");
       }
 
@@ -30,15 +28,17 @@ const authModule = {
         userEmail: userData[0].userEmail,
         roleID: userData[0].roleID,
       });
-      db.release();
+
       return setResponseOk("Login successful", {
         roleID: userData[0].roleID,
         TOKEN: token,
       });
     } catch (err) {
       logError(err, "authModule:login", "db");
-      db.release();
       return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
     }
   },
 
@@ -63,7 +63,6 @@ const authModule = {
     try {
       const emailExist = await isUserExistsByEmail(email, db);
       if (emailExist != null) {
-        db.release();
         return setResponseBadRequest("User Email already exists!!");
       }
       // TODO: OTP and send mail here..
@@ -90,15 +89,13 @@ const authModule = {
       await db.query("LOCK TABLES userData WRITE");
       const [result] = await db.query(query, values);
       await db.query("UNLOCK TABLES");
-      db.release();
       return setResponseOk("Sign up successful", result);
     } catch (err) {
       logError(err, "authModule:signup", "db");
-      db.release();
       return setResponseInternalError();
     } finally {
-      db.release();
       await db.query("UNLOCK TABLES");
+      db.release();
     }
   },
 };

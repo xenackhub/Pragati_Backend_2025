@@ -134,11 +134,7 @@ const authController = {
     }
   */
   resetPassword: async (req, res) => {
-    const { userEmail, otp, userPassword } = req.body;
-    if(!validateEmail(userEmail)){
-      const response = setResponseBadRequest("Email is not found or Invalid");
-      return res.status(response.responseCode).json(response.responseBody);
-    }
+    const { otp, userPassword, userID } = req.body;
 
     if(!validatePassword(userPassword)) {
       const response = setResponseBadRequest("Invalid Password");
@@ -151,7 +147,7 @@ const authController = {
     }
 
     try {
-      const response = await authModule.resetPassword(otp, userEmail, userPassword);
+      const response = await authModule.resetPassword(otp, userID, userPassword);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (error) {
       logError(error, "authController : Reset Password", "db");

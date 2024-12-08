@@ -20,7 +20,6 @@ export const otpTokenValidator = async(req, res, next) => {
     try {
         const payloadData = jwt.verify(otpToken, publicKey, { algorithms: ['RS256'] });
         if(payloadData["SECRET_TOKEN"] == secretKey){
-            req.body.userEmail = payloadData["userEmail"];
             req.body.userID = payloadData["userID"];
             next();
             return;

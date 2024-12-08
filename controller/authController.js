@@ -13,11 +13,11 @@ import { logError } from "../utilities/errorLogger.js";
 
 const authController = {
   /*
-  Login request body
-  {
-      "userEmail": "string",
-      "userPassword": "string"
-  }
+    Login request body
+    {
+        "userEmail": "string",
+        "userPassword": "string"
+    }
   */
   login: async (req, res) => {
     const { userEmail, userPassword } = req.body;
@@ -40,24 +40,25 @@ const authController = {
       return res.status(response.responseCode).json(response.responseBody);
     }
   },
-    /*
-  Signup request body
-  {
-      "userEmail": "string",
-      "userPassword": "string",
-      "userName": "string",
-      "rollNumber": "string",
-      "phoneNumber": "string",
-      "collegeName": "string",
-      "collegeCity": "string",
-      "userDepartment": "string",
-      "academicYear": number,
-      "degree": "string",
-      "needAccommodationDay1" : "boolean",
-      "needAccommodationDay2" : "boolean",
-      "needAccommodationDay3" : "boolean",
-      "isAmrita" : "boolean"
-  }
+
+  /*
+    Signup request body
+    {
+        "userEmail": "string",
+        "userPassword": "string",
+        "userName": "string",
+        "rollNumber": "string",
+        "phoneNumber": "string",
+        "collegeName": "string",
+        "collegeCity": "string",
+        "userDepartment": "string",
+        "academicYear": number,
+        "degree": "string",
+        "needAccommodationDay1" : "boolean",
+        "needAccommodationDay2" : "boolean",
+        "needAccommodationDay3" : "boolean",
+        "isAmrita" : "boolean"
+    }
   */
   signup: async (req, res) => {
     const {
@@ -82,8 +83,8 @@ const authController = {
 
     try {
       const response = await authModule.signup({
-        email,
-        password,
+        userEmail,
+        userPassword,
         userName,
         rollNumber,
         phoneNumber,
@@ -102,11 +103,11 @@ const authController = {
     }
   },
 
-    /*
-  Forgot Password request body
-  {
-      "userEmail": "string"
-  }
+  /*
+    Forgot Password request body
+    {
+        "userEmail": "string"
+    }
   */
   forgotPassword: async (req, res) => {
     const { userEmail } = req.body;

@@ -13,9 +13,6 @@ import { createToken } from "../middleware/auth/tokenGenerator.js";
 import { createOTPToken } from "../middleware/OTP/otpTokenGenerator.js";
 import { sendForgotPasswordOtp } from "../utilities/mailer/mailer.js"
 
-const [pragatiDb, _] = poolConnectToDb();
-const db = await pragatiDb.promise().getConnection();
-
 const authModule = {
   login: async function (email, password) {
     const [pragatiDb, _] = poolConnectToDb();
@@ -107,6 +104,8 @@ const authModule = {
   },
 
   forgotPassword: async function (userEmail) {
+    const [pragatiDb, _] = poolConnectToDb();
+    const db = await pragatiDb.promise().getConnection();
     try {
       const userData = await isUserExistsByEmail(userEmail, db);
       var transactionStarted = 0;
@@ -162,6 +161,8 @@ const authModule = {
   },
 
   resetPassword: async function (OTP, userEmail, newPassword) {
+    const [pragatiDb, _] = poolConnectToDb();
+    const db = await pragatiDb.promise().getConnection();
     try {
       const userData = await isUserExistsByEmail(userEmail, db);
       var transactionStarted = 0;

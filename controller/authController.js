@@ -40,6 +40,29 @@ const authController = {
       return res.status(response.responseCode).json(response.responseBody);
     }
   },
+
+  /*
+  Forgot Password request body
+  {
+      "email": "string"
+  }
+  */
+  forgotPassword: async (req, res) => {
+    const { email } = req.body;
+    if(!validateEmail(email)) {
+      const response = setResponseBadRequest("Email is not found or invalid");
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+
+    try {
+      const response = await authModule.forgotPassword(email);
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (err) {
+      logError(err, "authController:Forgot Password", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  }
 };
 
 export default authController;

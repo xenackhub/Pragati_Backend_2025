@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { readFileSync } from "fs";
-import { appConfig } from "../../../config/config.js";
+import { appConfig } from "../../config/config.js";
 
 const secretKey = appConfig.tokenSecretKey;
 
@@ -11,10 +11,9 @@ export const tokenValidator = async(req, res, next) => {
     // TODO: Have to add a validator for the Web Token.
 
     if(tokenHeader == null || webToken == null){
-        res.status(401).send({
+        return res.status(401).send({
             MESSAGE: "No Token. Unauthorized Access."
         });
-        return;
     }
 
     const publicKey = readFileSync('RSA/publicKey.pem', 'utf8');

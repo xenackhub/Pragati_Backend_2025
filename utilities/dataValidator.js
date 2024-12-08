@@ -27,4 +27,63 @@ const validatePassword = (password) => {
   return false;
 };
 
-export { validateEmail, validatePassword };
+const validatePhoneNumber = (phoneNumber) => {
+  return typeof phoneNumber === "string" && validator.isMobilePhone(phoneNumber, 'any');
+};
+
+// Function to validate academic year
+const validateAcademicYear = (year) => {
+  return Number.isInteger(year) && year > 2018 && year < 2028;
+};
+
+// Function to validate signup data
+const validateSignupData = (data) => {
+
+  if (!validateEmail(data.email)) {
+    return "Invalid or missing email.";
+  }
+
+  if (!validatePassword(data.password)) {
+    return "Invalid or missing password.";
+  }
+
+  if (typeof data.userName !== "string" || data.userName.trim().length === 0) {
+    return "Invalid or missing userName.";
+  }
+
+  if (typeof data.rollNumber !== "string" || data.rollNumber.trim().length === 0) {
+    return "Invalid or missing rollNumber.";
+  }
+
+  if (!validatePhoneNumber(data.phoneNumber)) {
+    return "Invalid or missing phoneNumber.";
+  }
+
+  if (typeof data.collegeName !== "string" || data.collegeName.trim().length === 0) {
+    return "Invalid or missing collegeName.";
+  }
+
+  if (typeof data.collegeCity !== "string" || data.collegeCity.trim().length === 0) {
+    return "Invalid or missing collegeCity.";
+  }
+
+  if (typeof data.userDepartment !== "string" || data.userDepartment.trim().length === 0) {
+    return "Invalid or missing userDepartment.";
+  }
+
+  if (!validateAcademicYear(data.academicYear)) {
+    return "Invalid or missing academicYear.";
+  }
+
+  if (typeof data.degree !== "string" || data.degree.trim().length === 0) {
+    return "Invalid or missing degree.";
+  }
+
+  // Validate isAmrita if provided
+  if (typeof data.isAmrita !="string" && (data.isAmrita !="0" || data.isAmrita != "1")) {
+    return "Invalid value for isAmrita.";
+  }
+  return null;
+};
+
+export { validateEmail, validatePassword, validateSignupData };

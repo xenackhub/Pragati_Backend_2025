@@ -43,6 +43,65 @@ const authModule = {
     }
   },
 
+  signup : async function (userData) {
+    const {
+      email,
+      password,
+      userName,
+      rollNumber,
+      phoneNumber,
+      collegeName,
+      collegeCity,
+      userDepartment,
+      academicYear,
+      degree,
+      isAmrita,
+      accountStatus,
+      roleID,
+    } = userData;
+    
+  
+    try {
+      const emailExist = await isUserExistsByEmail(email,db);
+      if (emailExist!=null){
+        return setResponseBadRequest("User Email already exists!!")
+      }
+      const query = `
+        INSERT INTO userData 
+          (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita, accountStatus, roleID)
+        VALUES 
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+  
+      const values = [
+        email,
+        password,
+        userName,
+        rollNumber,
+        phoneNumber,
+        collegeName,
+        collegeCity,
+        userDepartment,
+        academicYear,
+        degree,
+        isAmrita,
+        accountStatus,
+        roleID,
+      ];
+      await db.query("LOCK TABLES userData WRITE");
+      const [result] = await db.query(query, values);
+      await db.query("UNLOCK TABLES");
+      return setResponseOk("Sign up successful",result);
+      
+    } catch (err) {
+      console.error("[ERROR]: Error in createUser: ", err);
+      throw new Error("Failed to create user.");
+    } 
+    finally{
+      await db.query("UNLOCK TABLES");
+    }
+  }
+
   forgotPassword: async function (userEmail) {
     try {
       const userData = await isUserExistsByEmail(userEmail, db);

@@ -8,7 +8,7 @@ export const appConfig = {
     db: {
         pragati: {
             host: 'localhost',
-            user: 'root',
+            user: process.env.DB_USERNAME || 'root',
             password: process.env.DB_PWD || 'password',
             database: 'pragati_2025',
             waitForConnections: true,
@@ -18,7 +18,7 @@ export const appConfig = {
         },
         transactions: {
             host: 'localhost',
-            user: 'root',
+            user: process.env.DB_USERNAME || 'root',
             password: process.env.DB_PWD || 'password',
             database: 'pragati_transactions_2025',
             waitForConnections: true,

@@ -100,7 +100,7 @@ const authModule = {
     finally{
       await db.query("UNLOCK TABLES");
     }
-  }
+  },
 
   forgotPassword: async function (userEmail) {
     try {

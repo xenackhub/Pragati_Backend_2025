@@ -27,6 +27,15 @@ const validatePassword = (password) => {
   return false;
 };
 
+// Function that Validates OTP 
+const validateOTP = (otp) => {
+  if (typeof (otp) === 'string' && otp != null && otp.length > 0 && otp.length <= 255) {
+    return true;
+  }
+  return false;
+};
+
+
 const validatePhoneNumber = (phoneNumber) => {
   return typeof phoneNumber === "string" && validator.isMobilePhone(phoneNumber, 'any');
 };
@@ -80,10 +89,10 @@ const validateSignupData = (data) => {
   }
 
   // Validate isAmrita if provided
-  if (typeof data.isAmrita !="string" && (data.isAmrita !="0" || data.isAmrita != "1")) {
-    return "Invalid value for isAmrita.";
-  }
+  // if (typeof data.isAmrita !="string" && (data.isAmrita !="0" || data.isAmrita != "1")) {
+  //   return "Invalid value for isAmrita.";
+  // }
   return null;
 };
 
-export { validateEmail, validatePassword, validateSignupData };
+export { validateEmail, validatePassword, validateSignupData, validateOTP };

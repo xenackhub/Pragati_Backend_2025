@@ -1,5 +1,5 @@
 // helper functions for data validation and consistent response
-import { validateEmail, validatePassword,validateSignupData  } from "../utilities/dataValidator.js";
+import { validateEmail, validatePassword,validateSignupData, validateOTP  } from "../utilities/dataValidator.js";
 import {
   setResponseOk,
   setResponseBadRequest,
@@ -15,24 +15,24 @@ const authController = {
   /*
   Login request body
   {
-      "email": "string",
-      "password": "string"
+      "userEmail": "string",
+      "userPassword": "string"
   }
   */
   login: async (req, res) => {
-    const { email, password } = req.body;
-    if (!validateEmail(email)) {
+    const { userEmail, userPassword } = req.body;
+    if (!validateEmail(userEmail)) {
       const response = setResponseBadRequest("Email is not found or invalid");
       return res.status(response.responseCode).json(response.responseBody);
     }
-    if (!validatePassword(password)) {
+    if (!validatePassword(userPassword)) {
       const response = setResponseBadRequest(
         "Password is not found or invalid"
       );
       return res.status(response.responseCode).json(response.responseBody);
     }
     try {
-      const response = await authModule.login(email, password);
+      const response = await authModule.login(userEmail, userPassword);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "authController:login", "db");
@@ -43,8 +43,8 @@ const authController = {
     /*
   Signup request body
   {
-      "email": "string",
-      "password": "string",
+      "userEmail": "string",
+      "userPassword": "string",
       "userName": "string",
       "rollNumber": "string",
       "phoneNumber": "string",
@@ -61,8 +61,8 @@ const authController = {
   */
   signup: async (req, res) => {
     const {
-      email,
-      password,
+      userEmail,
+      userPassword,
       userName,
       rollNumber,
       phoneNumber,
@@ -82,134 +82,8 @@ const authController = {
     
         try {
           const response = await authModule.signup({
-            email,
-            password,
-            userName,
-            rollNumber,
-            phoneNumber,
-            collegeName,
-            collegeCity,
-            userDepartment,
-            academicYear,
-            degree,
-            isAmrita,
-            accountStatus:1,
-            roleID:1,
-          });
-          return res.status(response.responseCode).json(response.responseBody);
-        } catch (err) {
-          logError(err, "authController:signup", "db");
-          const response = setResponseInternalError();
-          return res.status(response.responseCode).json(response.responseBody);
-      }
-  },
-    /*
-  Signup request body
-  {
-      "email": "string",
-      "password": "string",
-      "userName": "string",
-      "rollNumber": "string",
-      "phoneNumber": "string",
-      "collegeName": "string",
-      "collegeCity": "string",
-      "userDepartment": "string",
-      "academicYear": number,
-      "degree": "string",
-      "needAccommodationDay1" : "boolean",
-      "needAccommodationDay2" : "boolean",
-      "needAccommodationDay3" : "boolean",
-      "isAmrita" : "boolean"
-  }
-  */
-  signup: async (req, res) => {
-    const {
-      email,
-      password,
-      userName,
-      rollNumber,
-      phoneNumber,
-      collegeName,
-      collegeCity,
-      userDepartment,
-      academicYear,
-      degree,
-      isAmrita,
-    } = req.body;
-        // Validate input data
-        const validationErrors = validateSignupData(req.body);
-        if (validationErrors != null) {
-          const response = setResponseBadRequest(validationErrors);
-          return res.status(response.responseCode).json(response.responseBody);
-        }
-    
-        try {
-          const response = await authModule.signup({
-            email,
-            password,
-            userName,
-            rollNumber,
-            phoneNumber,
-            collegeName,
-            collegeCity,
-            userDepartment,
-            academicYear,
-            degree,
-            isAmrita,
-            accountStatus:1,
-            roleID:1,
-          });
-          return res.status(response.responseCode).json(response.responseBody);
-        } catch (err) {
-          logError(err, "authController:signup", "db");
-          const response = setResponseInternalError();
-          return res.status(response.responseCode).json(response.responseBody);
-      }
-  },
-    /*
-  Signup request body
-  {
-      "email": "string",
-      "password": "string",
-      "userName": "string",
-      "rollNumber": "string",
-      "phoneNumber": "string",
-      "collegeName": "string",
-      "collegeCity": "string",
-      "userDepartment": "string",
-      "academicYear": number,
-      "degree": "string",
-      "needAccommodationDay1" : "boolean",
-      "needAccommodationDay2" : "boolean",
-      "needAccommodationDay3" : "boolean",
-      "isAmrita" : "boolean"
-  }
-  */
-  signup: async (req, res) => {
-    const {
-      email,
-      password,
-      userName,
-      rollNumber,
-      phoneNumber,
-      collegeName,
-      collegeCity,
-      userDepartment,
-      academicYear,
-      degree,
-      isAmrita,
-    } = req.body;
-        // Validate input data
-        const validationErrors = validateSignupData(req.body);
-        if (validationErrors != null) {
-          const response = setResponseBadRequest(validationErrors);
-          return res.status(response.responseCode).json(response.responseBody);
-        }
-    
-        try {
-          const response = await authModule.signup({
-            email,
-            password,
+            userEmail,
+            userPassword,
             userName,
             rollNumber,
             phoneNumber,
@@ -230,21 +104,21 @@ const authController = {
       }
   },
 
-  /*
+    /*
   Forgot Password request body
   {
-      "email": "string"
+      "userEmail": "string"
   }
   */
   forgotPassword: async (req, res) => {
-    const { email } = req.body;
-    if(!validateEmail(email)) {
-      const response = setResponseBadRequest("Email is not found or invalid");
+    const { userEmail } = req.body;
+    if(!validateEmail(userEmail)) {
+      const response = setResponseBadRequest("Email is not found or Invalid");
       return res.status(response.responseCode).json(response.responseBody);
     }
 
     try {
-      const response = await authModule.forgotPassword(email);
+      const response = await authModule.forgotPassword(userEmail);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "authController:Forgot Password", "db");
@@ -253,24 +127,35 @@ const authController = {
     }
   },
 
-    /*
-  Forgot Password request body
-  {
-      "email": "string"
-  }
+  /*
+    {
+      "userEmail": "string",
+      "otp": "string",
+      "userPassword": "string"
+    }
   */
-  forgotPassword: async (req, res) => {
-    const { email } = req.body;
-    if(!validateEmail(email)) {
-      const response = setResponseBadRequest("Email is not found or invalid");
+  resetPassword: async (req, res) => {
+    const { userEmail, otp, userPassword } = req.body;
+    if(!validateEmail(userEmail)){
+      const response = setResponseBadRequest("Email is not found or Invalid");
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+
+    if(!validatePassword(userPassword)) {
+      const response = setResponseBadRequest("Invalid Password");
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+
+    if(!validateOTP(otp)){
+      const response = setResponseBadRequest("Invalid OTP");
       return res.status(response.responseCode).json(response.responseBody);
     }
 
     try {
-      const response = await authModule.forgotPassword(email);
+      const response = await authModule.resetPassword(otp, userEmail, userPassword);
       return res.status(response.responseCode).json(response.responseBody);
-    } catch (err) {
-      logError(err, "authController:Forgot Password", "db");
+    } catch (error) {
+      logError(error, "authController : Reset Password", "db");
       const response = setResponseInternalError();
       return res.status(response.responseCode).json(response.responseBody);
     }

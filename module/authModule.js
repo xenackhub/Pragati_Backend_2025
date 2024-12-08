@@ -123,7 +123,6 @@ const authModule = {
 
       await db.query("DELETE FROM otpTable WHERE userID = ?", [userData[0].userID]);
       const OTP = generateOTP();
-      console.log("Generated OTP: ", OTP);
 
       const otpToken = await createOTPToken({
         "userEmail": userData[0].userEmail,
@@ -157,6 +156,50 @@ const authModule = {
       db.release();
     }
   },
+
+  resetPassword: async function (OTP, userEmail, newPassword) {
+    try {
+      const userData = await isUserExistsByEmail(userEmail, db);
+      var transactionStarted = 0;
+      if(userData == null) {
+        return setResponseBadRequest("User Not Found !");
+      }
+
+      if(userData[0].accountStatus === '0'){
+        return setResponseBadRequest("Account Blocked by Admin !");
+      } else if(userData[0].accountStatus === '1'){
+        return setResponseBadRequest("Account Not Verified");
+      }
+       
+      await db.beginTransaction();
+      await db.query("LOCK TABLES userData WRITE, otpTable WRITE;");
+
+      transactionStarted = 1;
+      
+      const validOTP = await db.query("DELETE FROM otpTable WHERE userID = ? AND otp = ? AND expiryTime > NOW()", 
+        [userData[0].userID, OTP]
+      );
+
+      if(validOTP[0].affectedRows === 0) {
+        return setResponseBadRequest("Invalid OTP");
+      }
+
+      await db.query("UPDATE userData SET userPassword = ? WHERE userID = ?",
+        [newPassword, userData[0].userID]
+      );
+      return setResponseOk("Password Reset Succussful");
+    } catch (error) {
+      if(transactionStarted === 1){
+        await db.rollback();
+      }
+      console.log("[ERROR]: Error in Reset Password Module", error);
+      logError(err, "authModule:Reset Password", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  }
 };
 
 export default authModule;

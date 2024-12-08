@@ -29,7 +29,7 @@ const sendMail = async (mailOption, logContext, userEmail) => {
             console.log("[ERROR]: Error in Mailer", error);
             appendFileSync('./logs/mailer.log', `${logPrefix} Mailer - [ERROR]: ${error}\n`);
         } else {
-            console.log(`${logContext} Mail sent: ${userEmail}`);
+            console.log(`[LOG]: ${logContext} Mail sent: ${userEmail}`);
             appendFileSync('./logs/mailer.log', `${logPrefix} - ${logContext} Mailer - [MESSAGE]: ${logContext} Mail sent: ${mailOption.to}\n`);
         }
     });

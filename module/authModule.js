@@ -1,5 +1,4 @@
 import crypto from "crypto";
-import poolConnectToDb from "../db/poolConnection.js";
 import {
   setResponseOk,
   setResponseBadRequest,
@@ -13,10 +12,10 @@ import { validateOTP } from "../utilities/OTP/validateOTP.js";
 import { generateOTP } from "../utilities/OTP/otpGenerator.js";
 import { isUserExistsByEmail, checkValidUser } from "../utilities/dbUtilities.js";
 import { sendForgotPasswordOtp, sendRegistrationOTP } from "../utilities/mailer/mailer.js"
+import { pragatiDb } from "../db/poolConnection.js";
 
 const authModule = {
   login: async function (email, password) {
-    const [pragatiDb, _] = poolConnectToDb();
     const db = await pragatiDb.promise().getConnection();
     try {
       // returns details of user if exists, else null
@@ -63,7 +62,6 @@ const authModule = {
       isAmrita,
     } = userData;
 
-    const [pragatiDb, _] = poolConnectToDb();
     const db = await pragatiDb.promise().getConnection();
 
     try {
@@ -145,7 +143,6 @@ const authModule = {
   },
 
   verifyUser: async function (userID, OTP) {
-    const [pragatiDb, _] = poolConnectToDb();
     const db = await pragatiDb.promise().getConnection();
     try {
       var transactionStarted = 0;
@@ -208,7 +205,6 @@ const authModule = {
   },
 
   forgotPassword: async function (userEmail) {
-    const [pragatiDb, _] = poolConnectToDb();
     const db = await pragatiDb.promise().getConnection();
     try {
       var transactionStarted = 0;
@@ -275,7 +271,6 @@ const authModule = {
   },
 
   resetPassword: async function (userID, OTP, newPassword) {
-    const [pragatiDb, _] = poolConnectToDb();
     const db = await pragatiDb.promise().getConnection();
     try {
       var transactionStarted = 0;

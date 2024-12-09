@@ -5,6 +5,7 @@ import {
   setResponseBadRequest,
   setResponseUnauth,
   setResponseInternalError,
+  setResponseTimedOut
 } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 import { generateOTP } from "../utilities/OTP/otpGenerator.js";
@@ -113,15 +114,16 @@ const authModule = {
       }, "OTP");
 
       const otpHashed = crypto.createHash('sha256').update(OTP).digest('hex');
-      const expiryTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
 
       // Mailer Module called to send Registration Verification OTP.
       await sendRegistrationOTP(userName, OTP, userEmail);
 
       // Insert OTP value into otpTable.
       await db.query("LOCK TABLES otpTable WRITE;");
-      await db.query("INSERT INTO otpTable (userID, otp, expiryTime) VALUES (?, ?, ?)", 
-        [userData.insertId, otpHashed, expiryTime]
+      await db.query(`
+        INSERT INTO otpTable (userID, otp, expiryTime) 
+        VALUES (?, ?, CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)`, 
+        [userData.insertId, otpHashed]
       );
 
       // Commit Transaction and return response.
@@ -177,11 +179,12 @@ const authModule = {
       await db.query("DELETE FROM otpTable WHERE userID = ?", [userData[0].userID]);
 
       const otpHashed = crypto.createHash('sha256').update(OTP).digest('hex');
-      const expiryTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
-      
+
       // Insert new OTP value for the User into otpTable.
-      await db.query("INSERT INTO otpTable (userID, otp, expiryTime) VALUES (?, ?, ?)", 
-        [userData[0].userID, otpHashed, expiryTime]
+      await db.query(`
+        INSERT INTO otpTable (userID, otp, expiryTime) 
+        VALUES (?, ?, CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)`, 
+        [userData[0].userID, otpHashed]
       );
 
       // Transaction Committed.
@@ -228,15 +231,28 @@ const authModule = {
       // Denotes that server entered the Transaction -> Needs Rollback incase of error.
       transactionStarted = 1;
       
-      // Record for the user with given OTP values is searched and deleted from otpTable.
-      const validOTP = await db.query("DELETE FROM otpTable WHERE userID = ? AND otp = ? AND expiryTime > NOW()", 
+      // Fetch the record for the user with the given OTP values.
+      const [otpRecord] = await db.query(`
+        SELECT * FROM otpTable 
+        WHERE userID = ? AND otp = ?`, 
         [userID, OTP]
       );
 
-      // Invalid OTP as no OTP value matched record can be found in the otpTable.
-      if(validOTP[0].affectedRows === 0) {
+      if (otpRecord.length === 0) {
         return setResponseBadRequest("Invalid OTP");
+      } else {
+        // Record found, check expiry time.
+        const isExpired = await db.query(`
+          DELETE FROM otpTable 
+          WHERE userID = ? AND otp = ? AND expiryTime > NOW()`, 
+          [userID, OTP]
+        );
+
+        if (isExpired[0].affectedRows === 0) {
+          return setResponseTimedOut("OTP Expired. Retry !");
+        } 
       }
+
 
       // Updated the password field to new value for the user.
       await db.query("UPDATE userData SET userPassword = ? WHERE userID = ?",

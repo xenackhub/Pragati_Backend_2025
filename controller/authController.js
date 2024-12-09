@@ -128,7 +128,6 @@ const authController = {
 
   /*
     {
-      "userEmail": "string",
       "otp": "string",
       "userPassword": "string"
     }

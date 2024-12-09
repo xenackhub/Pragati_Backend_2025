@@ -37,6 +37,9 @@ CREATE DATABASE pragati_transactions_2025;
 
 ### 4. Configure Environment Variables
 
+> [!Important]
+> Just for the sake of security, the `.env` file is not included in the repository. You need to create one yourself. For mailer credentials, only people involved in development of routes that require mailer service have access. Others, please enter dummy values to avoid errors.
+
 Create a `.env` file in the root directory of the project and add the following key-value pairs. Replace placeholders with actual values. Ensure there are no spaces or quotes, and values are entered as plain text.
 
 ```env
@@ -51,6 +54,16 @@ TXN_DB_NAME=<NAME_OF_THE_DATABASE_FOR_TRANSACTIONS>
 
 # Secret for JWT Token Source Verification
 SECRET_KEY=<YOUR_SECRET_KEY>
+
+# Secret for OTP Token Source Verification
+OTP_SECRET_KEY=<YOUR_SECRET_KEY>
+
+# Mailer Creds
+MAILER_SERVICE=<MAILER_SERVICE_NAME>
+MAILER_HOST=<MAILER_HOSTNAME>
+MAILER_PORT=<MAILER_PORT>
+MAILER_USER=<MAILER_EMAIL>
+MAILER_PASS=<MAILER_PASSWORD>
 ```
 
 ### 5. Start the Server

@@ -29,7 +29,7 @@ const setResponseInternalError = (data = {}) => {
 
 const setResponseUnauth = (data = {}) => {
   response.responseCode = 401;
-  response.responseBody.MESSAGE = "Unatorised Access Denied !!";
+  response.responseBody.MESSAGE = "Unauthorised Access Denied !!";
   response.responseBody.DATA = data;
   return response;
 };

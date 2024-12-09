@@ -34,9 +34,17 @@ const setResponseUnauth = (data = {}) => {
   return response;
 };
 
+const setResponseTimedOut = (message, data = {}) => {
+  response.responseCode = 408;
+  response.responseBody.MESSAGE = message;
+  response.responseBody.DATA = data;
+  return response;
+}
+
 export {
   setResponseOk,
   setResponseBadRequest,
   setResponseUnauth,
   setResponseInternalError,
+  setResponseTimedOut
 };

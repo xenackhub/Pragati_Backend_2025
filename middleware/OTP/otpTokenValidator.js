@@ -1,27 +1,25 @@
 import jwt from "jsonwebtoken";
 import { readFileSync } from "fs";
-import { appConfig } from "../../../config/config.js";
+import { appConfig } from "../../config/config.js";
 
-const secretKey = appConfig.tokenSecretKey;
+const secretKey = appConfig.otpTokenSecretKey;
 
-export const tokenValidator = async(req, res, next) => {
+export const otpTokenValidator = async(req, res, next) => {
     const tokenHeader = req.headers.authorization;
-    const webToken = tokenHeader && tokenHeader.split(' ')[1];
+    const otpToken = tokenHeader && tokenHeader.split(' ')[1];
 
     // TODO: Have to add a validator for the Web Token.
 
-    if(tokenHeader == null || webToken == null){
-        res.status(401).send({
-            MESSAGE: "No Token. Unauthorized Access."
+    if(tokenHeader == null || otpToken == null){
+        return res.status(401).send({
+            MESSAGE: "No OTP Token. Unauthorized Access."
         });
-        return;
     }
 
-    const publicKey = readFileSync('RSA/publicKey.pem', 'utf8');
+    const publicKey = readFileSync('middleware/encryptionKeys/publicKey.pem', 'utf8');
     try {
-        const payloadData = jwt.verify(webToken, publicKey, { algorithms: ['RS256'] });
+        const payloadData = jwt.verify(otpToken, publicKey, { algorithms: ['RS256'] });
         if(payloadData["SECRET_TOKEN"] == secretKey){
-            req.body.userEmail = payloadData["userEmail"];
             req.body.userID = payloadData["userID"];
             next();
             return;

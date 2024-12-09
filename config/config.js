@@ -3,8 +3,10 @@ import { availableParallelism } from "os";
 const numCPU = availableParallelism();
 
 export const appConfig = {
-    PORT: process.env.SERVER_PORT || 5000,
     numCPU: numCPU,
+    PORT: process.env.SERVER_PORT || 5000,
+    tokenSecretKey: process.env.SECRET_KEY,
+    otpTokenSecretKey: process.env.OTP_SECRET_KEY,
     db: {
         pragati: {
             host: 'localhost',
@@ -27,5 +29,20 @@ export const appConfig = {
             multipleStatements: true
         }
     },
-    tokenSecretKey: process.env.SECRET_KEY
+    mailer: {
+        obj: {
+            service: process.env.MAILER_SERVICE,
+            host: process.env.MAILER_HOST,
+            port: process.env.MAILER_PORT,
+            tls: {
+                ciphers: 'SSLv3',
+                rejectUnauthorized: false,
+            },
+            auth: {
+                user: process.env.MAILER_USER,
+                pass: process.env.MAILER_PASS
+            }
+        },
+        name: 'Pragati 2025'
+    },
 }

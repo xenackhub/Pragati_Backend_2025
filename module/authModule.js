@@ -1,13 +1,17 @@
+import crypto from "crypto";
 import poolConnectToDb from "../db/poolConnection.js";
 import {
   setResponseOk,
   setResponseBadRequest,
   setResponseUnauth,
   setResponseInternalError,
+  setResponseTimedOut
 } from "../utilities/response.js";
-import { isUserExistsByEmail } from "../utilities/dbUtilities.js";
-import { createToken } from "../middleware/auth/login/tokenGenerator.js";
 import { logError } from "../utilities/errorLogger.js";
+import { generateOTP } from "../utilities/OTP/otpGenerator.js";
+import { isUserExistsByEmail, checkValidUser } from "../utilities/dbUtilities.js";
+import { createToken } from "../middleware/tokenGenerator.js";
+import { sendForgotPasswordOtp, sendRegistrationOTP } from "../utilities/mailer/mailer.js"
 
 const authModule = {
   login: async function (email, password) {
@@ -27,13 +31,14 @@ const authModule = {
         userID: userData[0].userID,
         userEmail: userData[0].userEmail,
         roleID: userData[0].roleID,
-      });
+      }, "User");
 
       return setResponseOk("Login successful", {
         roleID: userData[0].roleID,
         TOKEN: token,
       });
     } catch (err) {
+      console.log("[ERROR]: Error in Login Module: ", err);
       logError(err, "authModule:login", "db");
       return setResponseInternalError();
     } finally {
@@ -44,8 +49,8 @@ const authModule = {
 
   signup: async function (userData) {
     const {
-      email,
-      password,
+      userEmail,
+      userPassword,
       userName,
       rollNumber,
       phoneNumber,
@@ -61,11 +66,20 @@ const authModule = {
     const db = await pragatiDb.promise().getConnection();
 
     try {
-      const emailExist = await isUserExistsByEmail(email, db);
+      var transactionStarted = 0;
+      const emailExist = await isUserExistsByEmail(userEmail, db);
       if (emailExist != null) {
         return setResponseBadRequest("User Email already exists!!");
       }
-      // TODO: OTP and send mail here..
+
+      /*
+      Started a transaction to ensure atomical writes to userData Table and otpTable.
+      If any one of the write resulted in error, DB will be rolled back to the start of transaction
+      which avoids any partial change to the DB.
+      */
+
+      await db.beginTransaction();
+
       const query = `
         INSERT INTO userData 
           (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita)
@@ -74,8 +88,8 @@ const authModule = {
       `;
 
       const values = [
-        email,
-        password,
+        userEmail,
+        userPassword,
         userName,
         rollNumber,
         phoneNumber,
@@ -84,13 +98,43 @@ const authModule = {
         userDepartment,
         academicYear,
         degree,
-        isAmrita,
+        isAmrita
       ];
+
+      // Denotes that server entered the Transaction -> Needs rollback incase of error.
+      transactionStarted = 1;
+
+      // Insert record into userData.
       await db.query("LOCK TABLES userData WRITE");
-      const [result] = await db.query(query, values);
-      await db.query("UNLOCK TABLES");
-      return setResponseOk("Sign up successful", result);
+      const [userData] = await db.query(query, values);
+      
+      const OTP = generateOTP();
+      const otpToken = createToken({
+        "userID": userData.insertId
+      }, "OTP");
+
+      const otpHashed = crypto.createHash('sha256').update(OTP).digest('hex');
+
+      // Mailer Module called to send Registration Verification OTP.
+      await sendRegistrationOTP(userName, OTP, userEmail);
+
+      // Insert OTP value into otpTable.
+      await db.query("LOCK TABLES otpTable WRITE;");
+      await db.query(`
+        INSERT INTO otpTable (userID, otp, expiryTime) 
+        VALUES (?, ?, CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)`, 
+        [userData.insertId, otpHashed]
+      );
+
+      // Commit Transaction and return response.
+      await db.commit();
+      return setResponseOk("Sign up successful", otpToken);
     } catch (err) {
+      console.log("[ERROR]: Error in SignUp Module: ", err);
+      if(transactionStarted === 1) {
+        await db.rollback();
+      }
+
       logError(err, "authModule:signup", "db");
       return setResponseInternalError();
     } finally {
@@ -98,6 +142,138 @@ const authModule = {
       db.release();
     }
   },
+
+  forgotPassword: async function (userEmail) {
+    const [pragatiDb, _] = poolConnectToDb();
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      var transactionStarted = 0;
+      const response = await checkValidUser(userEmail, db, "userEmail", null);
+      if(response.responseCode === 401){
+        return setResponseBadRequest(response.responseBody);
+      }
+
+      const userData = response.responseData;
+      
+      /*
+      Started a transaction to ensure atomical writes to otpTable.
+      If any one of the write resulted in error, DB will be rolled back to the start of transaction
+      which avoids any partial change to the DB.
+      */
+
+      await db.beginTransaction();
+      await db.query("LOCK TABLE otpTable WRITE");
+
+      // Denotes that server entered the Transaction -> Needs rollback incase of error.
+      transactionStarted = 1;
+
+      const OTP = generateOTP();
+      const otpToken = createToken({
+        "userID": userData[0].userID
+      }, "OTP");
+
+      // Mailer Service called to send Forgot Password OTP.
+      await sendForgotPasswordOtp(userData[0].userName, OTP, userEmail);
+
+      // Delete old OTP value for the user from otpTable.
+      await db.query("DELETE FROM otpTable WHERE userID = ?", [userData[0].userID]);
+
+      const otpHashed = crypto.createHash('sha256').update(OTP).digest('hex');
+
+      // Insert new OTP value for the User into otpTable.
+      await db.query(`
+        INSERT INTO otpTable (userID, otp, expiryTime) 
+        VALUES (?, ?, CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)`, 
+        [userData[0].userID, otpHashed]
+      );
+
+      // Transaction Committed.
+      await db.commit();
+      return setResponseOk("Check Email for Password Reset OTP",{
+        TOKEN: otpToken
+      });
+      
+    } catch (error) {
+
+      // Transaction  Rolledback only if there is error and the server has entered the Transaction.
+      if(transactionStarted === 1){
+        await db.rollback();
+      }
+
+      console.log("[ERROR]: Error in Forgot Password Module: ", error);
+      logError(err, "authModule:Forgot Password", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
+
+  resetPassword: async function (OTP, userID, newPassword) {
+    const [pragatiDb, _] = poolConnectToDb();
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      var transactionStarted = 0;
+      const response = await checkValidUser(null, db, "userID", userID);
+      if(response.responseCode === 401){
+        return setResponseBadRequest(response.responseBody);
+      }
+
+      /*
+      Started a transaction to ensure atomical writes to otpTable and userData Table.
+      If any one of the write resulted in error, DB will be rolled back to the start of transaction
+      which avoids any partial change to the DB.
+      */
+       
+      await db.beginTransaction();
+      await db.query("LOCK TABLES userData WRITE, otpTable WRITE;");
+
+      // Denotes that server entered the Transaction -> Needs Rollback incase of error.
+      transactionStarted = 1;
+      
+      // Fetch the record for the user with the given OTP values.
+      const [otpRecord] = await db.query(`
+        SELECT * FROM otpTable 
+        WHERE userID = ? AND otp = ?`, 
+        [userID, OTP]
+      );
+
+      if (otpRecord.length === 0) {
+        return setResponseBadRequest("Invalid OTP");
+      } else {
+        // Record found, check expiry time.
+        const isExpired = await db.query(`
+          DELETE FROM otpTable 
+          WHERE userID = ? AND otp = ? AND expiryTime > NOW()`, 
+          [userID, OTP]
+        );
+
+        if (isExpired[0].affectedRows === 0) {
+          return setResponseTimedOut("OTP Expired. Retry !");
+        } 
+      }
+
+
+      // Updated the password field to new value for the user.
+      await db.query("UPDATE userData SET userPassword = ? WHERE userID = ?",
+        [newPassword, userID]
+      );
+      return setResponseOk("Password Reset Succussful");
+    } catch (error) {
+
+      // Transaction  Rolledback only if there is error and the server has entered the Transaction.
+      if(transactionStarted === 1){
+        await db.rollback();
+      }
+      
+      console.log("[ERROR]: Error in Reset Password Module", error);
+      logError(err, "authModule:Reset Password", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  }
 };
 
 export default authModule;

@@ -17,6 +17,41 @@ const isUserExistsByEmail = async function (email,db) {
   }
 };
 
+const checkValidUser = async function(userEmail, db, category, userID){
+  const response = {
+    responseCode: 200,
+    responseBody: "User Data Fetched",
+    responseData: null
+  };
+
+  try {
+    let userData = null;
+    if(category === "userEmail") userData = await isUserExistsByEmail(userEmail, db);
+    else if(category === "userID") userData = await isUserExistsByUserID(userID, db);
+    if(userData == null){
+      response.responseCode = 401;
+      response.responseBody = "User Not Found";
+      return response;
+    }
+
+    if(userData[0].accountStatus === '0'){
+      response.responseCode = 401;
+      response.responseBody = "Account Blocked by Admin !";
+      return response;
+    } else if(userData[0].accountStatus === '1'){
+      response.responseCode = 401;
+      response.responseBody = "Account Not Verified";
+      return response;
+    }
+
+    response.responseData = userData;
+    return response;
+  } catch (error) {
+    console.error("[ERROR]: Error in checkValidUser Utility: ", error);
+    throw new Error("Database query failed.");
+  }
+};
+
 // Check if a user exists by userID
 const isUserExistsByUserID = async function (userID,db) {
   try {
@@ -36,4 +71,4 @@ const isUserExistsByUserID = async function (userID,db) {
   }
 };
 
-export { isUserExistsByEmail, isUserExistsByUserID };
+export { isUserExistsByEmail, isUserExistsByUserID, checkValidUser };

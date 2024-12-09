@@ -27,6 +27,15 @@ const validatePassword = (password) => {
   return false;
 };
 
+// Function that Validates OTP 
+const validateOTP = (otp) => {
+  if (typeof (otp) === 'string' && otp != null && otp.length > 0 && otp.length <= 255) {
+    return true;
+  }
+  return false;
+};
+
+
 const validatePhoneNumber = (phoneNumber) => {
   return (
     typeof phoneNumber === "string" &&
@@ -41,11 +50,11 @@ const validateAcademicYear = (year) => {
 
 // Function to validate signup data
 const validateSignupData = (data) => {
-  if (!validateEmail(data.email)) {
+  if (!validateEmail(data.userEmail)) {
     return "Invalid or missing email.";
   }
 
-  if (!validatePassword(data.password)) {
+  if (!validatePassword(data.userPassword)) {
     return "Invalid or missing password.";
   }
 
@@ -101,4 +110,4 @@ const validateSignupData = (data) => {
     return null;
 };
 
-export { validateEmail, validatePassword, validateSignupData };
+export { validateEmail, validatePassword, validateSignupData, validateOTP };

@@ -28,9 +28,14 @@ const validatePassword = (password) => {
   return false;
 };
 
-// Function that Validates OTP 
+// Function that Validates OTP
 const validateOTP = (otp) => {
-  if (typeof (otp) === 'string' && otp != null && otp.length > 0 && otp.length <= 255) {
+  if (
+    typeof otp === "string" &&
+    otp != null &&
+    otp.length > 0 &&
+    otp.length <= 255
+  ) {
     return true;
   }
   return false;
@@ -97,11 +102,13 @@ const validateSignupData = (data) => {
 
   // Validate isAmrita if provided
   if (
-    data.isAmrita === null || typeof data.isAmrita != "boolean" ||
-    (data.isAmrita != false && data.isAmrita != true)
+    data.isAmrita === null ||
+    typeof data.isAmrita != "boolean" ||
+    (data.isAmrita !== false && data.isAmrita !== true)
   ) {
     return "Invalid isAmrita Value";
   }
+  return null;
   return null;
 };
 

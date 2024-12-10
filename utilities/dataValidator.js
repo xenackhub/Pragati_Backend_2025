@@ -27,19 +27,32 @@ const validatePassword = (password) => {
   return false;
 };
 
-// Function that Validates OTP 
+// Function that Validates OTP
 const validateOTP = (otp) => {
-  if (typeof (otp) === 'string' && otp != null && otp.length > 0 && otp.length <= 255) {
+  if (
+    typeof otp === "string" &&
+    otp != null &&
+    otp.length > 0 &&
+    otp.length <= 255
+  ) {
     return true;
   }
   return false;
 };
 
-
 const validatePhoneNumber = (phoneNumber) => {
   return (
     typeof phoneNumber === "string" &&
     validator.isMobilePhone(phoneNumber, "en-IN")
+  );
+};
+
+// Function to  validate standard MySQL VARCHAR(255)
+const validateBasicString = (string, len = 255) => {
+  return (
+    typeof string == "string" &&
+    string !== null &&
+    validator.isLength(string.trim(), { min: 1, max: len })
   );
 };
 
@@ -104,12 +117,96 @@ const validateSignupData = (data) => {
 
   // Validate isAmrita if provided
   if (
-    data.isAmrita === null || typeof data.isAmrita != "boolean" ||
-    (data.isAmrita != false && data.isAmrita != true)
-  ){
+    data.isAmrita === null ||
+    typeof data.isAmrita != "boolean" ||
+    (data.isAmrita !== false && data.isAmrita !== true)
+  ) {
     return "Invalid isAmrita Value";
   }
-    return null;
+  return null;
 };
 
-export { validateEmail, validatePassword, validateSignupData, validateOTP };
+const validateAddEventsData = (eventData) => {
+  if (!validateBasicString(eventData.eventName)) {
+    return "Invalid event name";
+  }
+  if (
+    !validateBasicString(eventData.imageUrl) ||
+    validator.isURL(eventData.imageUrl)
+  ) {
+    return "Invalid image url";
+  }
+  if (typeof data.eventFee != "number" || data.eventFee === null) {
+    return "Invalid event fee";
+  }
+  if (!validateBasicString(eventData.eventName)) {
+    return "Invalid event name";
+  }
+  if (!validateBasicString(eventData.eventDescription, 5000)) {
+    return "Invalid description of event";
+  }
+  if (!validateBasicString(eventData.eventDescription, 1000)) {
+    return "Invalid short description of event";
+  }
+  if (
+    eventData.isGroup === null ||
+    typeof eventData.isGroup != "boolean" ||
+    (eventData.isGroup !== false && eventData.isGroup !== true)
+  ) {
+    return "Invalid type or value for isGroup";
+  } else {
+    if (eventData.isGroup === true) {
+      if (
+        typeof eventData.maxTeamSize != "number" ||
+        eventData.maxTeamSize === null ||
+        typeof eventData.minTeamSize != "number" ||
+        eventData.minTeamSize === null
+      ) {
+        return "Invalid input for team size!";
+      }
+    }
+  }
+  if (!validateBasicString(eventData.eventDate, 1)) {
+    return "Invalid event date";
+  }
+  if (
+    typeof eventData.maxRegistrations != "number" ||
+    eventData.maxRegistrations === null
+  ) {
+    return "Invalid max registration count";
+  }
+  if (
+    eventData.isPerHeadFee === null ||
+    typeof eventData.isPerHeadFee != "boolean" ||
+    (eventData.isPerHeadFee !== false && eventData.isPerHeadFee !== true)
+  ) {
+    return "Incorrect type for isPerHeadFee";
+  }
+  if (!validateBasicString(eventData.godName, 50)) {
+    return "Invalid god name";
+  }
+  if (
+    !Array.isArray(eventData.tagIDs) ||
+    eventData.tagIDs.length === 0 ||
+    !eventData.tagIDs.every(
+      (tag) => typeof tag === "number" && Number.isInteger(tag)
+    )
+  ) {
+    return "Empty tag list or invalid entries";
+  }
+  if (
+    !Array.isArray(eventData.organizerIDs) ||
+    eventData.organizerIDs.length === 0 ||
+    !eventData.organizerIDs.every(
+      (org) => typeof org === "number" && Number.isInteger(org)
+    )
+  ) {
+    return "Empty organizer list or invalid entries";
+  }
+  if (typeof eventData.clubID != "number" || eventData.clubID === null) {
+    return "Invalid or empty club ID";
+  }
+  return null;
+};
+
+export { validateEmail, validatePassword, validateSignupData, validateOTP, validateAddEventsData };

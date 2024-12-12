@@ -7,10 +7,7 @@ const userModule = {
     editOrganizer: async function(organizerID, data) {
       const db = await pragatiDb.promise().getConnection();
       try {
-        const query = `
-          UPDATE organizerData 
-          SET organizerName = ?, phoneNumber = ?, updatedAt = CURRENT_TIMESTAMP
-          WHERE organizerID = ?`;
+        const query = `UPDATE organizerData SET organizerName = ?, phoneNumber = ?, updatedAt = CURRENT_TIMESTAMP WHERE organizerID = ?`;
   
         const [result] = await db.query(query, [data.organizerName, data.phoneNumber, organizerID]);
         if (result.affectedRows === 0) {

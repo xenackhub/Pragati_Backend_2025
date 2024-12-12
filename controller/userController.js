@@ -14,8 +14,18 @@ const userController = {
     editOrganizer: async (req, res) => {
         const { organizerID, organizerName, phoneNumber } = req.body;
     
-        if (!organizerID || !organizerName || !phoneNumber) {
-            const response = setResponseBadRequest("Invalid or missing organizer data.");
+        if (!organizerID) {
+            const response = setResponseBadRequest("Invalid or missing organizer ID.");
+            return res.status(response.responseCode).json(response.responseBody);
+        }
+
+        if (!organizerName) {
+            const response = setResponseBadRequest("Invalid or missing organizer name.");
+            return res.status(response.responseCode).json(response.responseBody);
+        }
+
+        if (!phoneNumber) {
+            const response = setResponseBadRequest("Invalid or missing organizer phone number.");
             return res.status(response.responseCode).json(response.responseBody);
         }
     

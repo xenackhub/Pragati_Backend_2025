@@ -112,4 +112,12 @@ const validateSignupData = (data) => {
     return null;
 };
 
-export { validateEmail, validatePassword, validateSignupData, validateOTP };
+export const validateTagData = (data) => {
+  if (!data || typeof data.tagName !== "string" || data.tagName.trim() === "") {
+    return "Invalid tag name";
+  }
+  return null;
+};
+
+
+export { validateEmail, validatePassword, validateSignupData, validateOTP ,validateTagData};

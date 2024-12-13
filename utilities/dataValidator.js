@@ -112,4 +112,32 @@ const validateSignupData = (data) => {
     return null;
 };
 
-export { validateEmail, validatePassword, validateSignupData, validateOTP };
+
+// Validate organizer ID (must be a positive integer)
+const validateOrganizerID = (organizerID) => {
+  return Number.isInteger(organizerID) && organizerID > 0;
+};
+
+// Validate organizer name (string with length between 3 and 100)
+const validateOrganizerName = (organizerName) => {
+  return (typeof organizerName === "string");
+};
+
+
+// Function to validate organizer data
+const validateOrganizerData = (data) => {
+
+  if (!validateOrganizerID(data.organizerID)) {
+    return "Invalid or missing organizer ID."
+  }
+
+  if (!validateOrganizerName(data.organizerName)) {
+    return "Invalid or missing organizer name.";
+  }
+
+  if (!validatePhoneNumber(data.phoneNumber)) {
+    return "Invalid or missing organizer phone number.";
+  }
+};
+
+export { validateEmail, validatePassword, validateSignupData, validateOTP, validateOrganizerData };

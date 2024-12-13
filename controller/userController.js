@@ -1,6 +1,7 @@
 import {setResponseOk,  setResponseBadRequest, setResponseInternalError, } from "../utilities/response.js";
 import userModule from "../module/userModule.js";
 import { logError } from "../utilities/errorLogger.js";
+import { validateOrganizerData } from "../utilities/dataValidator.js";
 
 const userController = {
     /* 
@@ -12,25 +13,17 @@ const userController = {
         }
     */
     editOrganizer: async (req, res) => {
-        const { organizerID, organizerName, phoneNumber } = req.body;
+        const organizerData = req.body;
     
-        if (!organizerID) {
-            const response = setResponseBadRequest("Invalid or missing organizer ID.");
-            return res.status(response.responseCode).json(response.responseBody);
-        }
-
-        if (!organizerName) {
-            const response = setResponseBadRequest("Invalid or missing organizer name.");
-            return res.status(response.responseCode).json(response.responseBody);
-        }
-
-        if (!phoneNumber) {
-            const response = setResponseBadRequest("Invalid or missing organizer phone number.");
+        // Validate organizer data
+        const validationError = validateOrganizerData(organizerData);
+        if (validationError) {
+            const response = setResponseBadRequest(validationError);
             return res.status(response.responseCode).json(response.responseBody);
         }
     
         try {
-            const response = await userModule.editOrganizer(organizerID, { organizerName, phoneNumber });
+            const response = await userModule.editOrganizer(organizerData.organizerID, organizerData);
             return res.status(response.responseCode).json(response.responseBody);
         } catch (error) {
             logError(error, "userController:editOrganizer", "db");

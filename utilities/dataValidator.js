@@ -113,12 +113,12 @@ const validateSignupData = (data) => {
 };
 
 
-// Validate organizer ID (must be a positive integer)
+// Validate organizer ID 
 const validateOrganizerID = (organizerID) => {
   return Number.isInteger(organizerID) && organizerID > 0;
 };
 
-// Validate organizer name (string with length between 3 and 100)
+// Validate organizer name
 const validateOrganizerName = (organizerName) => {
   return (typeof organizerName === "string");
 };

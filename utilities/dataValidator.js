@@ -132,11 +132,11 @@ const validateAddEventsData = (eventData) => {
   }
   if (
     !validateBasicString(eventData.imageUrl) ||
-    validator.isURL(eventData.imageUrl)
+    !validator.isURL(eventData.imageUrl)
   ) {
     return "Invalid image url";
   }
-  if (typeof data.eventFee != "number" || data.eventFee === null) {
+  if (typeof eventData.eventFee != "number" || eventData.eventFee === null) {
     return "Invalid event fee";
   }
   if (!validateBasicString(eventData.eventName)) {
@@ -209,4 +209,10 @@ const validateAddEventsData = (eventData) => {
   return null;
 };
 
-export { validateEmail, validatePassword, validateSignupData, validateOTP, validateAddEventsData };
+export {
+  validateEmail,
+  validatePassword,
+  validateSignupData,
+  validateOTP,
+  validateAddEventsData,
+};

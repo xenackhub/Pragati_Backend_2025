@@ -1,6 +1,8 @@
-import eventModule from "../module/eventModule";
-import { validateAddEventsData } from "../utilities/dataValidator";
-import { setResponseBadRequest } from "../utilities/response";
+import eventModule from "../module/eventModule.js";
+import { validateAddEventsData } from "../utilities/dataValidator.js";
+import { setResponseBadRequest } from "../utilities/response.js";
+import { logError } from "../utilities/errorLogger.js";
+import { setResponseInternalError } from "../utilities/response.js";
 
 const eventController = {
   /*
@@ -54,6 +56,31 @@ const eventController = {
     if (isGroup === true) {
       maxTeamSize = req.body.maxTeamSize || 1;
       minTeamSize = req.body.minTeamSize || 1;
+    }
+    try {
+      // not passing sending req.body.userID as it will be checked during login itself
+      const response = await eventModule.addEvent(
+        eventName,
+        imageUrl,
+        eventFee,
+        eventDescription,
+        eventDescSmall,
+        isGroup,
+        eventDate,
+        maxRegistrations,
+        isPerHeadFee,
+        godName,
+        organizerIDs,
+        tagIDs,
+        clubID,
+        minTeamSize,
+        maxTeamSize
+      );
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (err) {
+      logError(err, "eventController:addEvent", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
     }
   },
 };

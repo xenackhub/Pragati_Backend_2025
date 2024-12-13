@@ -1,3 +1,5 @@
+import { logError } from "./errorLogger.js";
+
 // Check if a user exists by email
 const isUserExistsByEmail = async function (email, db) {
   try {
@@ -13,7 +15,6 @@ const isUserExistsByEmail = async function (email, db) {
     throw new Error("Database query failed.");
   } finally {
     await db.query("UNLOCK TABLES");
-    db.release();
   }
 };
 
@@ -74,8 +75,62 @@ const isUserExistsByUserID = async function (userID, db) {
     throw new Error("Database query failed.");
   } finally {
     await db.query("UNLOCK TABLES");
-    db.release();
   }
 };
 
-export { isUserExistsByEmail, isUserExistsByUserID, checkValidUser };
+const checkTagIDsExists = async function (tagIDs, db) {
+  try {
+    const [result] = await db.query(
+      "SELECT tagID FROM tagData WHERE tagID IN (?)",
+      [tagIDs]
+    );
+    if (result.length != tagIDs.length) {
+      return "Some or all tag IDs not found in database";
+    }
+    return null;
+  } catch (err) {
+    logError(err, "checkTagIDsExists", "db");
+    return "Error Occured";
+  }
+};
+
+const checkOrganizerIDsExists = async function (organizerIDs, db) {
+  try {
+    const [result] = await db.query(
+      "SELECT organizerID FROM organizerData WHERE organizerID IN (?)",
+      [organizerIDs]
+    );
+    if (result.length != organizerIDs.length) {
+      return "Some or all organizer IDs not found in database";
+    }
+    return null;
+  } catch (err) {
+    logError(err, "checkOrganizerIDsExists", "db");
+    return "Error Occured";
+  }
+};
+
+const checkClubIDsExists = async function (clubIDs, db) {
+  try {
+    const [result] = await db.query(
+      "SELECT clubID FROM clubData WHERE clubID IN (?)",
+      [clubIDs]
+    );
+    if (result.length != clubIDs.length) {
+      return "Some or all club IDs not found in database";
+    }
+    return null;
+  } catch (err) {
+    logError(err, "checkClubIDsExists", "db");
+    return "Error Occured";
+  }
+};
+
+export {
+  isUserExistsByEmail,
+  isUserExistsByUserID,
+  checkValidUser,
+  checkTagIDsExists,
+  checkOrganizerIDsExists,
+  checkClubIDsExists,
+};

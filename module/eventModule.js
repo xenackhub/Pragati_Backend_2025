@@ -54,6 +54,10 @@ const eventModule = {
       ];
       const [insertData] = await db.query(query, values);
       const eventID = insertData.insertId;
+      if(eventID==null) {
+        await db.rollback();
+        return setResponseInternalError("Could not add event properly");
+      }
 
       // Insert into organizerEventMapping table using a single query
       const organizerValues = organizerIDs.map((organizerID) => [

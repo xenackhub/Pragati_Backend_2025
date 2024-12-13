@@ -126,7 +126,7 @@ const validateSignupData = (data) => {
   return null;
 };
 
-const validateAddEventsData = (eventData) => {
+const validateAddEventData = (eventData) => {
   if (!validateBasicString(eventData.eventName)) {
     return "Invalid event name";
   }
@@ -136,16 +136,17 @@ const validateAddEventsData = (eventData) => {
   ) {
     return "Invalid image url";
   }
-  if (typeof eventData.eventFee != "number" || eventData.eventFee === null) {
+  if (
+    typeof eventData.eventFee != "number" ||
+    eventData.eventFee === null ||
+    eventData.eventFee <= 0
+  ) {
     return "Invalid event fee";
-  }
-  if (!validateBasicString(eventData.eventName)) {
-    return "Invalid event name";
   }
   if (!validateBasicString(eventData.eventDescription, 5000)) {
     return "Invalid description of event";
   }
-  if (!validateBasicString(eventData.eventDescription, 1000)) {
+  if (!validateBasicString(eventData.eventDescSmall, 1000)) {
     return "Invalid short description of event";
   }
   if (
@@ -154,16 +155,18 @@ const validateAddEventsData = (eventData) => {
     (eventData.isGroup !== false && eventData.isGroup !== true)
   ) {
     return "Invalid type or value for isGroup";
-  } else {
-    if (eventData.isGroup === true) {
-      if (
-        typeof eventData.maxTeamSize != "number" ||
-        eventData.maxTeamSize === null ||
-        typeof eventData.minTeamSize != "number" ||
-        eventData.minTeamSize === null
-      ) {
-        return "Invalid input for team size!";
-      }
+  }
+  if (eventData.isGroup === true) {
+    if (
+      typeof eventData.maxTeamSize != "number" ||
+      eventData.maxTeamSize === null ||
+      typeof eventData.minTeamSize != "number" ||
+      eventData.minTeamSize === null ||
+      eventData.minTeamSize > eventData.maxTeamSize ||
+      eventData.minTeamSize < 1 ||
+      eventData.maxTeamSize < 1
+    ) {
+      return "Invalid input for team size!";
     }
   }
   if (!validateBasicString(eventData.eventDate, 1)) {
@@ -171,7 +174,8 @@ const validateAddEventsData = (eventData) => {
   }
   if (
     typeof eventData.maxRegistrations != "number" ||
-    eventData.maxRegistrations === null
+    eventData.maxRegistrations === null || 
+    eventData.maxRegistrations < 0
   ) {
     return "Invalid max registration count";
   }
@@ -214,5 +218,5 @@ export {
   validatePassword,
   validateSignupData,
   validateOTP,
-  validateAddEventsData,
+  validateAddEventData,
 };

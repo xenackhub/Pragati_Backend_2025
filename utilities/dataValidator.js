@@ -112,7 +112,7 @@ const validateSignupData = (data) => {
     return null;
 };
 
-export const validateTagData = (data) => {
+  const validateTagData = (data) => {
   if (!data || typeof data.tagName !== "string" || data.tagName.trim() === "") {
     return "Invalid tag name";
   }

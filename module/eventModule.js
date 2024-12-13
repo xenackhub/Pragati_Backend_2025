@@ -7,6 +7,7 @@ import {
 } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 import { pragatiDb } from "../db/poolConnection.js";
+import { checkClubIDsExists, checkOrganizerIDsExists, checkTagIDsExists } from "../utilities/dbUtilities.js";
 
 const eventModule = {
   addEvent: async function (
@@ -59,33 +60,54 @@ const eventModule = {
         return setResponseInternalError("Could not add event properly");
       }
 
+      // Checking if organizer IDs are present in the database
+      const organizersExists = await checkOrganizerIDsExists(organizerIDs, db) ;
+      if(organizersExists!==null){
+        await db.rollback();
+        return setResponseBadRequest(organizersExists);
+      }
+
       // Insert into organizerEventMapping table using a single query
       const organizerValues = organizerIDs.map((organizerID) => [
         organizerID,
         eventID,
       ]);
-
       await db.query(
         `INSERT INTO organizerEventMapping (organizerID, eventID)
         VALUES ?`,
         [organizerValues]
       );
 
+      // Checking if tag IDs are present in the database
+      const tagExists = await checkTagIDsExists(tagIDs, db) ;
+      if(tagExists!==null){
+        console.log("Error tag IDs not found")
+        await db.rollback();
+        return setResponseBadRequest(tagExists);
+      }
+
       // Insert into tagEventMapping table using a single query
       const tagEventMapping = tagIDs.map((tagID) => [tagID, eventID]);
-
       await db.query(
         `INSERT INTO tagEventMapping (tagID, eventID)
         VALUES ?`,
         [tagEventMapping]
       );
 
+      // Checking if club IDs are present in the database
+      const clubsExists = await checkClubIDsExists([clubID], db);
+      if(clubsExists!==null){
+        console.log("Error Club not found")
+        await db.rollback();
+        return setResponseBadRequest(clubsExists);
+      }
+
       // Insert into clubEventMapping table
       await db.query(
         `INSERT INTO clubEventMapping (clubID, eventID) values (?,?)`,
         [clubID, eventID]
       );
-
+      console.log("Complete")
       await db.commit();
       return setResponseOk("Event added successfully");
     } catch (err) {

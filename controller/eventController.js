@@ -1,5 +1,5 @@
 import eventModule from "../module/eventModule.js";
-import { validateAddEventData } from "../utilities/dataValidator.js";
+import { validateAddEventData } from "../utilities/validators/eventValidator.js";
 import { setResponseBadRequest } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 import { setResponseInternalError } from "../utilities/response.js";

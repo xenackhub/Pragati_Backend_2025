@@ -112,6 +112,4 @@ const validateSignupData = (data) => {
     return null;
 };
 
-
-
 export { validateEmail, validatePassword, validateSignupData, validateOTP};

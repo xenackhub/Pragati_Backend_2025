@@ -1,5 +1,5 @@
 import eventModule from "../module/eventModule.js";
-import { validateAddEventsData } from "../utilities/dataValidator.js";
+import { validateAddEventData } from "../utilities/dataValidator.js";
 import { setResponseBadRequest } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 import { setResponseInternalError } from "../utilities/response.js";
@@ -43,7 +43,7 @@ const eventController = {
     } = req.body;
 
     //validating the req.body
-    const errors = validateAddEventsData(req.body);
+    const errors = validateAddEventData(req.body);
     if (errors != null) {
       const response = setResponseBadRequest(errors);
       return res.status(response.responseCode).json(response.responseBody);

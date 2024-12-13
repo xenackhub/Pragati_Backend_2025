@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { tokenValidator } from "../middleware/auth/tokenValidator";
-import eventController from "../controller/eventController";
+import { tokenValidator } from "../middleware/auth/tokenValidator.js";
+import eventController from "../controller/eventController.js";
 
 const eventRouter = Router();
 eventRouter.use(tokenValidator);

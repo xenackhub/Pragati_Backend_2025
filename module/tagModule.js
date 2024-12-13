@@ -3,6 +3,7 @@ import { setResponseOk, setResponseInternalError, setResponseBadRequest } from "
 
 const tagModule = {
   addTag: async (tagName, tagAbbrevation) => {
+    const db = await pragatiDb.promise().getConnection();
     try {
       const [result] = await pragatiDb.execute(
         "INSERT INTO tagData (tagName, tagAbbrevation) VALUES (?, ?)",

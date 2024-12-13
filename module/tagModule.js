@@ -3,8 +3,10 @@ import { setResponseOk, setResponseInternalError, setResponseBadRequest } from "
 
 const tagModule = {
   addTag: async (tagName, tagAbbrevation) => {
+    const db = await pragatiDb.promise().getConnection();
     try {
-      const [result] = await pragatiDb.execute(
+      await db.query("LOCK TABLES tagData WRITE");
+      const [result] = await db.query(
         "INSERT INTO tagData (tagName, tagAbbrevation) VALUES (?, ?)",
         [tagName, tagAbbrevation]
       );
@@ -14,43 +16,69 @@ const tagModule = {
         tagAbbrevation,
       });
     } catch (err) {
-      throw new Error("Error adding tag");
+      console.error("Error adding tag:", err.message);
+      return setResponseInternalError("Error adding tag");
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
     }
   },
 
   getAllTags: async () => {
+    const db = await pragatiDb.promise().getConnection();
     try {
-      const [rows] = await pragatiDb.execute("SELECT * FROM tagData");
+      await db.query("LOCK TABLES tagData READ");
+      const [rows] = await db.query("SELECT * FROM tagData");
       return setResponseOk("Tags fetched successfully", rows);
     } catch (err) {
-      throw new Error("Error fetching tags");
+      console.error("Error fetching tags:", err.message);
+      return setResponseInternalError("Error fetching tags");
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
     }
   },
 
   removeTag: async (id) => {
+    const db = await pragatiDb.promise().getConnection();
     try {
-      const [result] = await pragatiDb.execute("DELETE FROM tagData WHERE tagID = ?", [id]);
-      if (result.affectedRows === 0) return setResponseBadRequest("Tag not found");
+      await db.query("LOCK TABLES tagData WRITE");
+      const [result] = await db.query("DELETE FROM tagData WHERE tagID = ?", [id]);
+      if (result.affectedRows === 0) {
+        return setResponseBadRequest("Tag not found");
+      }
       return setResponseOk("Tag removed successfully");
     } catch (err) {
-      throw new Error("Error removing tag");
+      console.error("Error removing tag:", err.message);
+      return setResponseInternalError("Error removing tag");
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
     }
   },
 
   editTag: async (id, tagName, tagAbbrevation) => {
+    const db = await pragatiDb.promise().getConnection();
     try {
-      const [result] = await pragatiDb.execute(
+      await db.query("LOCK TABLES tagData WRITE");
+      const [result] = await db.query(
         "UPDATE tagData SET tagName = ?, tagAbbrevation = ? WHERE tagID = ?",
         [tagName, tagAbbrevation, id]
       );
-      if (result.affectedRows === 0) return setResponseBadRequest("Tag not found");
+      if (result.affectedRows === 0) {
+        return setResponseBadRequest("Tag not found");
+      }
       return setResponseOk("Tag updated successfully", {
         id,
         tagName,
         tagAbbrevation,
       });
     } catch (err) {
-      throw new Error("Error editing tag");
+      console.error("Error editing tag:", err.message);
+      return setResponseInternalError("Error editing tag");
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
     }
   },
 };

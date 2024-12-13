@@ -37,7 +37,10 @@ const tagController = {
       const response = setResponseBadRequest("Tag ID is required");
       return res.status(response.responseCode).json(response.responseBody);
     }
-
+    if (isNaN(id)) {
+      const response = setResponseBadRequest("Tag ID must be a valid number");
+      return res.status(response.responseCode).json(response.responseBody);
+    }
     try {
       const response = await tagModule.removeTag(id);
       return res.status(response.responseCode).json(response.responseBody);
@@ -49,11 +52,20 @@ const tagController = {
 
   editTag: async (req, res) => {
     const { id } = req.params;
+    if (!id) {
+      const response = setResponseBadRequest("Tag ID is required");
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  
+    if (isNaN(id)) {
+      const response = setResponseBadRequest("Tag ID must be a valid number");
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  
+    // Validate the request body using validateTagData
     const validationError = validateTagData(req.body);
-    if (!id || validationError) {
-      const response = setResponseBadRequest(
-        validationError || "Tag ID is required"
-      );
+    if (validationError) {
+      const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
     }
 

@@ -1,5 +1,5 @@
 // Check if a user exists by email
-const isUserExistsByEmail = async function (email,db) {
+const isUserExistsByEmail = async function (email, db) {
   try {
     await db.query("LOCK TABLES userData READ");
     const [result] = await db.query(
@@ -17,37 +17,38 @@ const isUserExistsByEmail = async function (email,db) {
   }
 };
 
-
 /*
   Response Codes:
   responseCode = 401 -> User Not Found || Account Blocked by Admin,
   responseCode = 403 -> User not Verified,
   responseCode = 200 -> User Exists and Account is Active.
 */
-const checkValidUser = async function(userEmail, db, category, userID){
+const checkValidUser = async function (userEmail, db, category, userID) {
   const response = {
     responseCode: 200,
-    responseBody: "User Data Fetched",
-    responseData: null
+    responseBody: { MESSAGE: "User Data Fetched" },
+    responseData: null,
   };
 
   try {
     let userData = null;
-    if(category === "userEmail") userData = await isUserExistsByEmail(userEmail, db);
-    else if(category === "userID") userData = await isUserExistsByUserID(userID, db);
-    if(userData == null){
+    if (category === "userEmail")
+      userData = await isUserExistsByEmail(userEmail, db);
+    else if (category === "userID")
+      userData = await isUserExistsByUserID(userID, db);
+    if (userData == null) {
       response.responseCode = 401;
-      response.responseBody = "User Not Found";
+      response.responseBody.MESSAGE = "User Not Found";
       return response;
     }
 
-    if(userData[0].accountStatus === '0'){
+    if (userData[0].accountStatus === "0") {
       response.responseCode = 401;
-      response.responseBody = "Account Blocked by Admin !";
+      response.responseBody.MESSAGE = "Account Blocked by Admin !";
       return response;
-    } else if(userData[0].accountStatus === '1'){
+    } else if (userData[0].accountStatus === "1") {
       response.responseCode = 403;
-      response.responseBody = "Account Not Verified";
+      response.responseBody.MESSAGE = "Account Not Verified";
       return response;
     }
 
@@ -60,13 +61,12 @@ const checkValidUser = async function(userEmail, db, category, userID){
 };
 
 // Check if a user exists by userID
-const isUserExistsByUserID = async function (userID,db) {
+const isUserExistsByUserID = async function (userID, db) {
   try {
     await db.query("LOCK TABLES userData READ");
-    const [result] = await db.query(
-      "SELECT * FROM userData WHERE userID = ?",
-      [userID]
-    );
+    const [result] = await db.query("SELECT * FROM userData WHERE userID = ?", [
+      userID,
+    ]);
     await db.query("UNLOCK TABLES");
     return result.length > 0 ? result : null;
   } catch (err) {

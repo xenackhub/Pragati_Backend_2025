@@ -120,7 +120,7 @@ const validateOrganizerID = (organizerID) => {
 
 // Validate organizer name
 const validateOrganizerName = (organizerName) => {
-  return (typeof organizerName === "string");
+  return (typeof organizerName === "string") && organizerName.length > 0;
 };
 
 

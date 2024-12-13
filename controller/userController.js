@@ -1,11 +1,11 @@
-import {setResponseOk,  setResponseBadRequest, setResponseInternalError, } from "../utilities/response.js";
+import {setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
 import userModule from "../module/userModule.js";
 import { logError } from "../utilities/errorLogger.js";
 import { validateOrganizerData } from "../utilities/dataValidator.js";
 
 const userController = {
     /* 
-        Edit Organiser request body
+        Edit Organizer request body
         {
             "organizerID": "integer",
             "organizerName": "string",

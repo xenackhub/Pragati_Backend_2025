@@ -1,4 +1,4 @@
-import { validatePhoneNumber } from "./common";
+import { validatePhoneNumber } from "./common.js";
 
 // Validate organizer ID 
 const validateOrganizerID = (organizerID) => {

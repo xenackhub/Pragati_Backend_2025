@@ -2,7 +2,7 @@ import { pragatiDb } from "../db/poolConnection.js";
 import { setResponseOk, setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 
-const userModule = {
+const organizerModule = {
   editOrganizer: async (organizerID, organizerData) => {
     const { organizerName, phoneNumber } = organizerData;
     const db = await pragatiDb.promise().getConnection();
@@ -16,7 +16,7 @@ const userModule = {
       }
       return setResponseOk("Organizer updated successfully.");
     } catch (error) {
-      logError(error, "userModule:editOrganizer", "db");
+      logError(error, "organizerModule:editOrganizer", "db");
       return setResponseInternalError();
     } finally {
       await db.query("UNLOCK TABLES");
@@ -25,4 +25,4 @@ const userModule = {
   },
 };
 
-export default userModule;
+export default organizerModule;

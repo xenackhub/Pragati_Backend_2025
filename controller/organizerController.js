@@ -1,9 +1,9 @@
 import {setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
-import userModule from "../module/organizerModule.js";
+import organizerModule from "../module/organizerModule.js";
 import { logError } from "../utilities/errorLogger.js";
 import { validateOrganizerData } from "../utilities/dataValidator.js";
 
-const userController = {
+const organizerController = {
     /* 
         Edit Organizer request body
         {
@@ -23,10 +23,10 @@ const userController = {
         }
     
         try {
-            const response = await userModule.editOrganizer(organizerData.organizerID, organizerData);
+            const response = await organizerModule.editOrganizer(organizerData.organizerID, organizerData);
             return res.status(response.responseCode).json(response.responseBody);
         } catch (error) {
-            logError(error, "userController:editOrganizer", "db");
+            logError(error, "organizerController:editOrganizer", "db");
             const response = setResponseInternalError();
             return res.status(response.responseCode).json(response.responseBody);
         }
@@ -40,4 +40,4 @@ const userController = {
 };
 
 
-export default userController;
+export default organizerController;

@@ -1,7 +1,7 @@
 import {setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
 import organizerModule from "../module/organizerModule.js";
 import { logError } from "../utilities/errorLogger.js";
-import { validateOrganizerData } from "../utilities/dataValidator.js";
+import { validateOrganizerData } from "../utilities/dataValidator/organizer.js";
 
 const organizerController = {
     /* 

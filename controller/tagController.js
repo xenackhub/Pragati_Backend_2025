@@ -1,13 +1,16 @@
 import tagModule from "../module/tagModule.js";
 import { setResponseOk, setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
+import { validateTagData } from "../validators/tagValidator.js"; // Importing the tag validator
 
 const tagController = {
   addTag: async (req, res) => {
-    const { tagName, tagAbbrevation } = req.body;
-    if (!tagName || !tagAbbrevation) {
-      const response = setResponseBadRequest("Tag name and abbreviation are required");
+    const validationError = validateTagData(req.body);
+    if (validationError) {
+      const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
     }
+
+    const { tagName, tagAbbrevation } = req.body;
 
     try {
       const response = await tagModule.addTag(tagName, tagAbbrevation);
@@ -46,12 +49,15 @@ const tagController = {
 
   editTag: async (req, res) => {
     const { id } = req.params;
-    const { tagName, tagAbbrevation } = req.body;
-
-    if (!id || !tagName || !tagAbbrevation) {
-      const response = setResponseBadRequest("Tag ID, name, and abbreviation are required");
+    const validationError = validateTagData(req.body);
+    if (!id || validationError) {
+      const response = setResponseBadRequest(
+        validationError || "Tag ID is required"
+      );
       return res.status(response.responseCode).json(response.responseBody);
     }
+
+    const { tagName, tagAbbrevation } = req.body;
 
     try {
       const response = await tagModule.editTag(id, tagName, tagAbbrevation);

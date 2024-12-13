@@ -1,6 +1,6 @@
 import tagModule from "../module/tagModule.js";
 import { setResponseOk, setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
-import { validateTagData } from "../validators/tagValidator.js"; // Importing the tag validator
+import { validateTagData } from "../utilities/tagValidator.js"; // Importing the tag validator
 
 const tagController = {
   addTag: async (req, res) => {

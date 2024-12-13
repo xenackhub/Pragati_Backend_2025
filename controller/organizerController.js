@@ -1,5 +1,5 @@
 import {setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
-import userModule from "../module/userModule.js";
+import userModule from "../module/organizerModule.js";
 import { logError } from "../utilities/errorLogger.js";
 import { validateOrganizerData } from "../utilities/dataValidator.js";
 
@@ -31,15 +31,11 @@ const userController = {
             return res.status(response.responseCode).json(response.responseBody);
         }
     },
-    removeOrganiser: async (req, res) => {},
+    removeOrganizer: async (req, res) => {},
     /* 
         Comment for addOrganiser function
     */
-    addOrganiser: async (req, res) => {},
-    /* 
-        Comment for accomodationUpdate function
-    */
-    accomodationUpdate: async (req, res) => {},
+    addOrganizer: async (req, res) => {},
 
 };
 

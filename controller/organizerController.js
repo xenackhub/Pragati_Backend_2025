@@ -1,7 +1,7 @@
 import {setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
 import organizerModule from "../module/organizerModule.js";
 import { logError } from "../utilities/errorLogger.js";
-import { validateOrganizerData, validateRemoveOrganizerData } from "../utilities/dataValidator/organizer.js";
+import { validateOrganizer, validateOrganizerData, validateRemoveOrganizerData } from "../utilities/dataValidator/organizer.js";
 
 const organizerController = {
     /* 
@@ -58,9 +58,32 @@ const organizerController = {
         }
     },
     /* 
-        Comment for addOrganiser function
+        Add Organizer request body
+        {
+            "organizerName": "string",
+            "phoneNumber": "string"
+        }
     */
-    addOrganizer: async (req, res) => {},
+    addOrganizer: async (req, res) => {
+        const { organizerName, phoneNumber } = req.body;
+
+        // Validate organizer data
+        const validationError = validateOrganizer(organizerName, phoneNumber);
+        if (validationError) {
+            const response = setResponseBadRequest(validationError);
+            return res.status(response.responseCode).json(response.responseBody);
+        }
+    
+        try {
+            const response = await organizerModule.addOrganizer(organizerName, phoneNumber);
+            return res.status(response.responseCode).json(response.responseBody);
+        } catch (error) {
+            logError(error, "organizerController:editOrganizer", "db");
+            const response = setResponseInternalError();
+            return res.status(response.responseCode).json(response.responseBody);
+        }
+
+    },
 
 };
 

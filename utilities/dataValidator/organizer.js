@@ -40,4 +40,19 @@ const validateRemoveOrganizerData = (data) => {
   return null;
 };
 
-export { validateOrganizerData, validateRemoveOrganizerData };
+
+// Function to validate the incoming data for an addOrganizer
+const validateOrganizer = (organizerName, phoneNumber) => {
+  if (!organizerName || !phoneNumber) {
+    return 'Both name and phone number are required';
+  }
+
+  if(!validatePhoneNumber(phoneNumber)){
+    return "Invalid Phone Number";
+  }
+
+  return null;
+};
+
+
+export { validateOrganizerData, validateRemoveOrganizerData, validateOrganizer };

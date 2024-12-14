@@ -23,6 +23,7 @@ const organizerModule = {
       db.release();
     }
   },
+
   removeOrganizer: async (organizerID) => {
     const db = await pragatiDb.promise().getConnection();
     try {      
@@ -44,6 +45,28 @@ const organizerModule = {
       db.release();
     }
   },
+
+addOrganizer: async(organizerName, phoneNumber) => {
+  const db = await pragatiDb.promise().getConnection();
+  try {      
+    // Locking the table to prevent concurrent updates to "organizerData"  table.
+    await db.query("LOCK TABLES organizerData WRITE");
+    const query = `INSERT INTO organizerData (organizerName, phoneNumber) VALUES(?, ?);`;
+    const [result] = await db.query(query, [organizerName, phoneNumber]);
+    console.log(result);
+
+    if (result.affectedRows === 0) {
+      return setResponseBadRequest("Organizer not added.");
+    }
+    return setResponseOk("Organizer added successfully.");
+  }catch (error) {
+    logError(error, "organizerModule:addOrganizer", "db");
+    return setResponseInternalError();
+  } finally {
+    await db.query("UNLOCK TABLES");
+    db.release();
+  }
+}
 };
 
 export default organizerModule;

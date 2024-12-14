@@ -26,4 +26,18 @@ const validateOrganizerData = (data) => {
   }
 };
 
-export { validateOrganizerData };
+// Function to just check organizerID
+const validateRemoveOrganizerData = (data) => {
+  
+  if (!data) {
+      return "Organizer ID is required.";
+  }
+
+  if (typeof data !== "number" || data <= 0 || !Number.isInteger(data)) {
+      return "Invalid organizer ID or must be a positive integer.";
+  }
+
+  return null;
+};
+
+export { validateOrganizerData, validateRemoveOrganizerData };

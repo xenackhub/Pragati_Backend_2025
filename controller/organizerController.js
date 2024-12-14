@@ -1,7 +1,7 @@
 import {setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
 import organizerModule from "../module/organizerModule.js";
 import { logError } from "../utilities/errorLogger.js";
-import { validateOrganizerData } from "../utilities/dataValidator/organizer.js";
+import { validateOrganizerData, validateRemoveOrganizerData } from "../utilities/dataValidator/organizer.js";
 
 const organizerController = {
     /* 
@@ -31,7 +31,32 @@ const organizerController = {
             return res.status(response.responseCode).json(response.responseBody);
         }
     },
-    removeOrganizer: async (req, res) => {},
+    /* 
+        Remove Organizer request body
+        {
+            "organizerID": "integer"
+        }
+    */
+    removeOrganizer: async (req, res) => {
+        const {organizerID} = req.body;
+        
+    
+        // Validate organizer data
+        const validationError = validateRemoveOrganizerData(organizerID);
+        if (validationError) {
+            const response = setResponseBadRequest(validationError);
+            return res.status(response.responseCode).json(response.responseBody);
+        }
+    
+        try {
+            const response = await organizerModule.removeOrganizer(organizerID);
+            return res.status(response.responseCode).json(response.responseBody);
+        } catch (error) {
+            logError(error, "organizerController:removeOrganizer", "db");
+            const response = setResponseInternalError();
+            return res.status(response.responseCode).json(response.responseBody);
+        }
+    },
     /* 
         Comment for addOrganiser function
     */

@@ -2,6 +2,7 @@ import { Router } from "express";
 import authRouter from "./authRoute.js";
 import eventRouter from "./eventRoute.js";
 import organizerRouter from "./organizerRoute.js";
+import eventRouter from "./eventRoute.js";
 
 const router = Router();
 

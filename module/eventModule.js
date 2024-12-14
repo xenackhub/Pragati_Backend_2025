@@ -5,11 +5,9 @@ import {
 } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 import { pragatiDb } from "../db/poolConnection.js";
-import {
-  checkClubIDsExists,
-  checkOrganizerIDsExists,
-  checkTagIDsExists,
-} from "../utilities/dbUtilities.js";
+import { checkClubIDsExists } from "../utilities/dbUtilities/clubUtilities.js";
+import { checkOrganizerIDsExists } from "../utilities/dbUtilities/organizerUtilities.js";
+import { checkTagIDsExists } from "../utilities/dbUtilities/tagUtilities.js";
 
 const eventModule = {
   addEvent: async function (
@@ -33,28 +31,28 @@ const eventModule = {
     try {
       var transactionStarted = 0;
 
-       // Checking if organizer IDs are present in the database
-       const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
-       if (organizersExists !== null) {
-         await db.rollback();
-         return setResponseBadRequest(organizersExists);
-       }
- 
-       // Checking if club IDs are present in the database
-       const clubsExists = await checkClubIDsExists([clubID], db);
-       if (clubsExists !== null) {
-         console.log("Error Club not found");
-         await db.rollback();
-         return setResponseBadRequest(clubsExists);
-       }
- 
-       // Checking if tag IDs are present in the database
-       const tagExists = await checkTagIDsExists(tagIDs, db);
-       if (tagExists !== null) {
-         console.log("Error tag IDs not found");
-         await db.rollback();
-         return setResponseBadRequest(tagExists);
-       }
+      // Checking if organizer IDs are present in the database
+      const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
+      if (organizersExists !== null) {
+        await db.rollback();
+        return setResponseBadRequest(organizersExists);
+      }
+
+      // Checking if club IDs are present in the database
+      const clubsExists = await checkClubIDsExists([clubID], db);
+      if (clubsExists !== null) {
+        console.log("Error Club not found");
+        await db.rollback();
+        return setResponseBadRequest(clubsExists);
+      }
+
+      // Checking if tag IDs are present in the database
+      const tagExists = await checkTagIDsExists(tagIDs, db);
+      if (tagExists !== null) {
+        console.log("Error tag IDs not found");
+        await db.rollback();
+        return setResponseBadRequest(tagExists);
+      }
 
       await db.beginTransaction();
       // Denotes that server entered the Transaction -> Needs rollback incase of error.

@@ -1,5 +1,6 @@
 import validator from "validator";
-import { validateBasicString } from "../dataValidator.js";
+import { validateBasicString } from "./common.js";
+
 
 const validateAddEventData = (eventData) => {
   if (!validateBasicString(eventData.eventName)) {

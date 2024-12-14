@@ -28,6 +28,7 @@ const organizerModule = {
     try {      
       // Locking the table to prevent concurrent updates to "organizerData"  table.
       await db.query("LOCK TABLES organizerData WRITE");
+      // Used ON DELETE CASCADE to automatically remove linked rows in organizerEventMapping when an organizer is deleted.
       const query = `DELETE FROM organizerData WHERE organizerID = ?;`;
       const [result] = await db.query(query, [organizerID]);
       

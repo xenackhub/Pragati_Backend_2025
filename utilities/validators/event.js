@@ -15,7 +15,7 @@ const validateAddEventData = (eventData) => {
   if (
     typeof eventData.eventFee != "number" ||
     eventData.eventFee === null ||
-    eventData.eventFee <= 0
+    eventData.eventFee < 0
   ) {
     return "Invalid event fee";
   }

@@ -1,13 +1,15 @@
 import {
   setResponseOk,
   setResponseBadRequest,
-  setResponseUnauth,
   setResponseInternalError,
-  setResponseTimedOut,
 } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 import { pragatiDb } from "../db/poolConnection.js";
-import { checkClubIDsExists, checkOrganizerIDsExists, checkTagIDsExists } from "../utilities/dbUtilities.js";
+import {
+  checkClubIDsExists,
+  checkOrganizerIDsExists,
+  checkTagIDsExists,
+} from "../utilities/dbUtilities.js";
 
 const eventModule = {
   addEvent: async function (
@@ -34,6 +36,30 @@ const eventModule = {
       await db.beginTransaction();
       // Denotes that server entered the Transaction -> Needs rollback incase of error.
       transactionStarted = 1;
+
+      // Checking if organizer IDs are present in the database
+      const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
+      if (organizersExists !== null) {
+        await db.rollback();
+        return setResponseBadRequest(organizersExists);
+      }
+
+      // Checking if club IDs are present in the database
+      const clubsExists = await checkClubIDsExists([clubID], db);
+      if (clubsExists !== null) {
+        console.log("Error Club not found");
+        await db.rollback();
+        return setResponseBadRequest(clubsExists);
+      }
+
+      // Checking if tag IDs are present in the database
+      const tagExists = await checkTagIDsExists(tagIDs, db);
+      if (tagExists !== null) {
+        console.log("Error tag IDs not found");
+        await db.rollback();
+        return setResponseBadRequest(tagExists);
+      }
+
       const query = `
       INSERT INTO eventData (eventName, imageUrl, eventFee, eventDescription, eventDescSmall,
        isGroup, eventDate, maxRegistrations, isPerHeadFee, godName, minTeamSize, maxTeamSize)
@@ -55,16 +81,9 @@ const eventModule = {
       ];
       const [insertData] = await db.query(query, values);
       const eventID = insertData.insertId;
-      if(eventID==null) {
+      if (eventID == null) {
         await db.rollback();
         return setResponseInternalError("Could not add event properly");
-      }
-
-      // Checking if organizer IDs are present in the database
-      const organizersExists = await checkOrganizerIDsExists(organizerIDs, db) ;
-      if(organizersExists!==null){
-        await db.rollback();
-        return setResponseBadRequest(organizersExists);
       }
 
       // Insert into organizerEventMapping table using a single query
@@ -78,14 +97,6 @@ const eventModule = {
         [organizerValues]
       );
 
-      // Checking if tag IDs are present in the database
-      const tagExists = await checkTagIDsExists(tagIDs, db) ;
-      if(tagExists!==null){
-        console.log("Error tag IDs not found")
-        await db.rollback();
-        return setResponseBadRequest(tagExists);
-      }
-
       // Insert into tagEventMapping table using a single query
       const tagEventMapping = tagIDs.map((tagID) => [tagID, eventID]);
       await db.query(
@@ -94,28 +105,20 @@ const eventModule = {
         [tagEventMapping]
       );
 
-      // Checking if club IDs are present in the database
-      const clubsExists = await checkClubIDsExists([clubID], db);
-      if(clubsExists!==null){
-        console.log("Error Club not found")
-        await db.rollback();
-        return setResponseBadRequest(clubsExists);
-      }
-
       // Insert into clubEventMapping table
       await db.query(
         `INSERT INTO clubEventMapping (clubID, eventID) values (?,?)`,
         [clubID, eventID]
       );
-      console.log("Complete")
+      console.log("Complete");
       await db.commit();
       return setResponseOk("Event added successfully");
     } catch (err) {
-      if(transactionStarted === 1) {
+      if (transactionStarted === 1) {
         await db.rollback();
       }
-      if(err.code == "ER_DUP_ENTRY") {
-        return setResponseBadRequest("Event already found in database")
+      if (err.code == "ER_DUP_ENTRY") {
+        return setResponseBadRequest("Event already found in database");
       }
       logError(err, "eventModule:addEvent", "db");
       return setResponseInternalError();

@@ -1,4 +1,5 @@
 import validator from "validator";
+import { validatePhoneNumber } from "./common.js";
 
 // function that validates email
 const validateEmail = (email) => {
@@ -27,33 +28,12 @@ const validatePassword = (password) => {
   return false;
 };
 
-// Function that Validates OTP
+// Function that Validates OTP 
 const validateOTP = (otp) => {
-  if (
-    typeof otp === "string" &&
-    otp != null &&
-    otp.length > 0 &&
-    otp.length <= 255
-  ) {
+  if (typeof (otp) === 'string' && otp != null && otp.length > 0 && otp.length <= 255) {
     return true;
   }
   return false;
-};
-
-const validatePhoneNumber = (phoneNumber) => {
-  return (
-    typeof phoneNumber === "string" &&
-    validator.isMobilePhone(phoneNumber, "en-IN")
-  );
-};
-
-// Function to  validate standard MySQL VARCHAR(255)
-const validateBasicString = (string, len = 255) => {
-  return (
-    typeof string == "string" &&
-    string !== null &&
-    validator.isLength(string.trim(), { min: 1, max: len })
-  );
 };
 
 // Function to validate academic year
@@ -117,19 +97,12 @@ const validateSignupData = (data) => {
 
   // Validate isAmrita if provided
   if (
-    data.isAmrita === null ||
-    typeof data.isAmrita != "boolean" ||
-    (data.isAmrita !== false && data.isAmrita !== true)
+    data.isAmrita === null || typeof data.isAmrita != "boolean" ||
+    (data.isAmrita != false && data.isAmrita != true)
   ) {
     return "Invalid isAmrita Value";
   }
   return null;
 };
 
-export {
-  validateEmail,
-  validatePassword,
-  validateSignupData,
-  validateOTP,
-  validateBasicString
-};
+export { validateEmail, validatePassword, validateSignupData, validateOTP };

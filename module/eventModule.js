@@ -33,32 +33,32 @@ const eventModule = {
     try {
       var transactionStarted = 0;
 
+       // Checking if organizer IDs are present in the database
+       const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
+       if (organizersExists !== null) {
+         await db.rollback();
+         return setResponseBadRequest(organizersExists);
+       }
+ 
+       // Checking if club IDs are present in the database
+       const clubsExists = await checkClubIDsExists([clubID], db);
+       if (clubsExists !== null) {
+         console.log("Error Club not found");
+         await db.rollback();
+         return setResponseBadRequest(clubsExists);
+       }
+ 
+       // Checking if tag IDs are present in the database
+       const tagExists = await checkTagIDsExists(tagIDs, db);
+       if (tagExists !== null) {
+         console.log("Error tag IDs not found");
+         await db.rollback();
+         return setResponseBadRequest(tagExists);
+       }
+
       await db.beginTransaction();
       // Denotes that server entered the Transaction -> Needs rollback incase of error.
       transactionStarted = 1;
-
-      // Checking if organizer IDs are present in the database
-      const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
-      if (organizersExists !== null) {
-        await db.rollback();
-        return setResponseBadRequest(organizersExists);
-      }
-
-      // Checking if club IDs are present in the database
-      const clubsExists = await checkClubIDsExists([clubID], db);
-      if (clubsExists !== null) {
-        console.log("Error Club not found");
-        await db.rollback();
-        return setResponseBadRequest(clubsExists);
-      }
-
-      // Checking if tag IDs are present in the database
-      const tagExists = await checkTagIDsExists(tagIDs, db);
-      if (tagExists !== null) {
-        console.log("Error tag IDs not found");
-        await db.rollback();
-        return setResponseBadRequest(tagExists);
-      }
 
       const query = `
       INSERT INTO eventData (eventName, imageUrl, eventFee, eventDescription, eventDescSmall,

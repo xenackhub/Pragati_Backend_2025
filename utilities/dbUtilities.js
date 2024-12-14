@@ -80,10 +80,12 @@ const isUserExistsByUserID = async function (userID, db) {
 
 const checkTagIDsExists = async function (tagIDs, db) {
   try {
+    await db.query("LOCK TABLES tagData READ");
     const [result] = await db.query(
       "SELECT tagID FROM tagData WHERE tagID IN (?)",
       [tagIDs]
     );
+    await db.query("UNLOCK TABLES");
     if (result.length != tagIDs.length) {
       return "Some or all tag IDs not found in database";
     }
@@ -96,10 +98,12 @@ const checkTagIDsExists = async function (tagIDs, db) {
 
 const checkOrganizerIDsExists = async function (organizerIDs, db) {
   try {
+    await db.query("LOCK TABLES organizerData READ");
     const [result] = await db.query(
       "SELECT organizerID FROM organizerData WHERE organizerID IN (?)",
       [organizerIDs]
     );
+    await db.query("UNLOCK TABLES");
     if (result.length != organizerIDs.length) {
       return "Some or all organizer IDs not found in database";
     }
@@ -112,10 +116,12 @@ const checkOrganizerIDsExists = async function (organizerIDs, db) {
 
 const checkClubIDsExists = async function (clubIDs, db) {
   try {
+    await db.query("LOCK TABLES clubData READ");
     const [result] = await db.query(
       "SELECT clubID FROM clubData WHERE clubID IN (?)",
       [clubIDs]
     );
+    await db.query("UNLOCK TABLES");
     if (result.length != clubIDs.length) {
       return "Some or all club IDs not found in database";
     }

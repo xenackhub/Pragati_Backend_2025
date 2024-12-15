@@ -4,7 +4,6 @@ import { tokenValidator } from "../middleware/auth/tokenValidator.js";
 
 const tagRouter = Router();
 
-tagRouter.use(tokenValidator);
 
 tagRouter.post("/add",tokenValidator, tagController.addTag);
 tagRouter.get("/", tagController.getAllTags);

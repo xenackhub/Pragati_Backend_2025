@@ -1,5 +1,6 @@
 import { pragatiDb } from "../db/poolConnection.js";
 import { setResponseOk, setResponseInternalError, setResponseBadRequest } from "../utilities/response.js";
+import { logError } from "../utilities/errorLogger.js"; 
 
 const tagModule = {
   addTag: async (tagName, tagAbbrevation) => {
@@ -10,14 +11,18 @@ const tagModule = {
         "INSERT INTO tagData (tagName, tagAbbrevation) VALUES (?, ?)",
         [tagName, tagAbbrevation]
       );
-      return setResponseOk("Tag added successfully", {
-        id: result.insertId,
-        tagName,
-        tagAbbrevation,
-      });
+      if (result.affectedRows === 1) {
+        return setResponseOk("Tag added successfully", {
+          id: result.insertId,
+          tagName,
+          tagAbbrevation,
+        });
+      } else {
+        return setResponseBadRequest("Failed to add tag");
+      }
     } catch (err) {
-      console.error("Error adding tag:", err.message);
-      return setResponseInternalError("Error adding tag");
+      logError(err, "tagModule.addTag", "db");
+      return setResponseInternalError(); 
     } finally {
       await db.query("UNLOCK TABLES");
       db.release();
@@ -31,8 +36,8 @@ const tagModule = {
       const [rows] = await db.query("SELECT * FROM tagData");
       return setResponseOk("Tags fetched successfully", rows);
     } catch (err) {
-      console.error("Error fetching tags:", err.message);
-      return setResponseInternalError("Error fetching tags");
+      logError(err, "tagModule.getAllTags", "db");
+      return setResponseInternalError(); 
     } finally {
       await db.query("UNLOCK TABLES");
       db.release();
@@ -49,8 +54,8 @@ const tagModule = {
       }
       return setResponseOk("Tag removed successfully");
     } catch (err) {
-      console.error("Error removing tag:", err.message);
-      return setResponseInternalError("Error removing tag");
+      logError(err, "tagModule.removeTag", "db");
+      return setResponseInternalError(); 
     } finally {
       await db.query("UNLOCK TABLES");
       db.release();
@@ -74,8 +79,8 @@ const tagModule = {
         tagAbbrevation,
       });
     } catch (err) {
-      console.error("Error editing tag:", err.message);
-      return setResponseInternalError("Error editing tag");
+      logError(err, "tagModule.editTag", "db");
+      return setResponseInternalError(); 
     } finally {
       await db.query("UNLOCK TABLES");
       db.release();

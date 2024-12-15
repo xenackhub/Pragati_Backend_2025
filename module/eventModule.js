@@ -41,7 +41,7 @@ const eventModule = {
       // Checking if club IDs are present in the database
       const clubsExists = await checkClubIDsExists([clubID], db);
       if (clubsExists !== null) {
-        console.log("Error Club not found");
+        // console.log("Error Club not found");
         await db.rollback();
         return setResponseBadRequest(clubsExists);
       }
@@ -49,7 +49,7 @@ const eventModule = {
       // Checking if tag IDs are present in the database
       const tagExists = await checkTagIDsExists(tagIDs, db);
       if (tagExists !== null) {
-        console.log("Error tag IDs not found");
+        // console.log("Error tag IDs not found");
         await db.rollback();
         return setResponseBadRequest(tagExists);
       }
@@ -108,7 +108,7 @@ const eventModule = {
         `INSERT INTO clubEventMapping (clubID, eventID) values (?,?)`,
         [clubID, eventID]
       );
-      console.log("Complete");
+      // console.log("Complete");
       await db.commit();
       return setResponseOk("Event added successfully");
     } catch (err) {

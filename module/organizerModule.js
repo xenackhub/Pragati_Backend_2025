@@ -53,8 +53,6 @@ addOrganizer: async(organizerName, phoneNumber) => {
     await db.query("LOCK TABLES organizerData WRITE");
     const query = `INSERT INTO organizerData (organizerName, phoneNumber) VALUES(?, ?);`;
     const [result] = await db.query(query, [organizerName, phoneNumber]);
-    console.log(result);
-
     if (result.affectedRows === 0) {
       return setResponseBadRequest("Organizer not added.");
     }

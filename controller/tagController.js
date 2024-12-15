@@ -11,8 +11,15 @@ const tagController = {
     }
 
     const { tagName, tagAbbrevation } = req.body;
-
+ 
     try {
+      // Check for duplicate tagName or tagAbbrevation
+      const existingTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation);
+      if (existingTag) {
+        const response = setResponseBadRequest("Tag name or abbreviation already exists.");
+        return res.status(response.responseCode).json(response.responseBody);
+      }
+
       const response = await tagModule.addTag(tagName, tagAbbrevation);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
@@ -32,15 +39,15 @@ const tagController = {
   },
 
   removeTag: async (req, res) => {
-    const { id } = req.body; 
-    const validationError = validateTagId(id);
+    const { tagID } = req.body; 
+    const validationError = validateTagId(tagID);
     if (validationError) {
       const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
     }
 
     try {
-      const response = await tagModule.removeTag(id);
+      const response = await tagModule.removeTag(tagID);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       const response = setResponseInternalError();
@@ -49,8 +56,8 @@ const tagController = {
   },
 
   editTag: async (req, res) => {
-    const { id, tagName, tagAbbrevation } = req.body; 
-    const idValidationError = validateTagId(id);
+    const { tagID, tagName, tagAbbrevation } = req.body; 
+    const idValidationError = validateTagId(tagID);
     if (idValidationError) {
       const response = setResponseBadRequest(idValidationError);
       return res.status(response.responseCode).json(response.responseBody);
@@ -63,7 +70,14 @@ const tagController = {
     }
 
     try {
-      const response = await tagModule.editTag(id, tagName, tagAbbrevation);
+      // Check for duplicate tagName or tagAbbrevation for other tags
+      const existingTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation, tagID);
+      if (existingTag) {
+        const response = setResponseBadRequest("Tag name or abbreviation already exists.");
+        return res.status(response.responseCode).json(response.responseBody);
+      }
+  
+      const response = await tagModule.editTag(tagID, tagName, tagAbbrevation);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       const response = setResponseInternalError();

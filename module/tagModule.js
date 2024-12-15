@@ -97,6 +97,32 @@ const tagModule = {
       db.release();
     }
   },
+
+  findTagByNameOrAbbreviation: async (tagName, tagAbbrevation, excludeId = null) => {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      await db.query("LOCK TABLES tagData READ");
+  
+      let query = "SELECT * FROM tagData WHERE (tagName = ? OR tagAbbrevation = ?)";
+      const params = [tagName, tagAbbrevation];
+  
+      // If excludeId is provided, exclude that tag (useful for updates)
+      if (excludeId) {
+        query += " AND tagID != ?";
+        params.push(excludeId);
+      }
+  
+      const [rows] = await db.query(query, params);
+  
+      return rows.length > 0 ? rows[0] : null;
+    } catch (err) {
+      logError(err, "tagModule.findTagByNameOrAbbreviation", "db");
+      return setResponseInternalError(); 
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
 };
 
 export default tagModule;

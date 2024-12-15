@@ -1,3 +1,5 @@
+import { logError } from "../errorLogger.js";
+
 // Check if a user exists by email
 const isUserExistsByEmail = async function (email, db) {
   try {
@@ -9,7 +11,7 @@ const isUserExistsByEmail = async function (email, db) {
     await db.query("UNLOCK TABLES");
     return result.length > 0 ? result : null;
   } catch (err) {
-    console.error("[ERROR]: Error in isUserExistsByEmail: ", err);
+    logError(err, "isUserExistsByEmail","db");
     throw new Error("Database query failed.");
   } finally {
     await db.query("UNLOCK TABLES");
@@ -26,7 +28,7 @@ const isUserExistsByUserID = async function (userID, db) {
     await db.query("UNLOCK TABLES");
     return result.length > 0 ? result : null;
   } catch (err) {
-    console.error("[ERROR]: Error in isUserExistsByUserID: ", err);
+    logError(err, "isUserExistsByUserID","db");
     throw new Error("Database query failed.");
   } finally {
     await db.query("UNLOCK TABLES");

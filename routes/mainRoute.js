@@ -6,7 +6,7 @@ import organizerRouter from "./organizerRoute.js";
 const router = Router();
 
 router.use('/auth',authRouter);
-router.use('/tags', tagRouter); 
+router.use('/tag', tagRouter); 
 router.use('/org',organizerRouter)
 
 export default router;

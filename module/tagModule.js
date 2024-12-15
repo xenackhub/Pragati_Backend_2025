@@ -48,6 +48,11 @@ const tagModule = {
     const db = await pragatiDb.promise().getConnection();
     try {
       await db.query("LOCK TABLES tagData WRITE");
+
+       // Ensure the database schema is designed with CASCADE DELETE for foreign key relationships.
+      // This prevents integrity constraint violations if the tagID is referenced in other tables.
+      // With CASCADE DELETE, deleting a tag from this table will automatically remove dependent rows from related tables.
+
       const [result] = await db.query("DELETE FROM tagData WHERE tagID = ?", [id]);
       if (result.affectedRows === 0) {
         return setResponseBadRequest("Tag not found");
@@ -70,9 +75,15 @@ const tagModule = {
         "UPDATE tagData SET tagName = ?, tagAbbrevation = ? WHERE tagID = ?",
         [tagName, tagAbbrevation, id]
       );
-      if (result.affectedRows === 0) {
-        return setResponseBadRequest("Tag not found");
-      }
+    if (result.affectedRows === 0) {
+          if (result.matchedRows === 0) {
+            return setResponseBadRequest("Tag not found");
+          } else {
+            return setResponseBadRequest(
+              "No changes made. The provided tag name or abbreviation matches the current values."
+            );
+          }
+        }
       return setResponseOk("Tag updated successfully", {
         id,
         tagName,

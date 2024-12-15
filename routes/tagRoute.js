@@ -4,9 +4,9 @@ import { tokenValidator } from "../middleware/auth/tokenValidator.js";
 
 const tagRouter = Router();
 
-tagRouter.post("/add", tokenValidator, tagController.addTag);
+tagRouter.post("/add", tokenValidator("JWT"), tagController.addTag);
 tagRouter.get("/", tagController.getAllTags);
-tagRouter.delete("/remove", tokenValidator, tagController.removeTag); 
-tagRouter.put("/edit", tokenValidator, tagController.editTag);       
+tagRouter.delete("/remove", tokenValidator("JWT"), tagController.removeTag); 
+tagRouter.put("/edit", tokenValidator("JWT"), tagController.editTag);       
 
 export default tagRouter;

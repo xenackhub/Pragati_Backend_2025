@@ -83,6 +83,31 @@ const eventController = {
       return res.status(response.responseCode).json(response.responseBody);
     }
   },
+  getAllEvents: async (req, res) => {
+    try {
+      const response = await eventModule.getAllEvents();
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (err) {
+      logError(err, "eventController:getAllEvents", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
+  getEventDetailsByID: async (req,res) =>{
+    const {eventID} = req.params;
+    if(!Number.isInteger(eventID)){
+      const response = setResponseBadRequest("valid event ID not found");
+      return 
+    }
+    try {
+      const response = await eventModule.getEventDetailsByID(eventID);
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (err) {
+      logError(err, "eventController:getEventDetailsByID", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  }
 };
 
 export default eventController;

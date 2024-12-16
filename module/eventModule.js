@@ -2,6 +2,7 @@ import {
   setResponseOk,
   setResponseBadRequest,
   setResponseInternalError,
+  setResponseNotFound,
 } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 import { pragatiDb } from "../db/poolConnection.js";
@@ -28,9 +29,8 @@ const eventModule = {
     maxTeamSize
   ) {
     const db = await pragatiDb.promise().getConnection();
+    var transactionStarted = 0;
     try {
-      var transactionStarted = 0;
-
       // Checking if organizer IDs are present in the database
       const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
       if (organizersExists !== null) {
@@ -108,7 +108,6 @@ const eventModule = {
         `INSERT INTO clubEventMapping (clubID, eventID) values (?,?)`,
         [clubID, eventID]
       );
-      console.log("Complete");
       await db.commit();
       return setResponseOk("Event added successfully");
     } catch (err) {
@@ -119,6 +118,41 @@ const eventModule = {
         return setResponseBadRequest("Event already found in database");
       }
       logError(err, "eventModule:addEvent", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
+  getAllEvents: async function () {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      const [events] = await db.query("SELECT * FROM eventData");
+      if (events.length == 0) {
+        return setResponseNotFound("No events found!");
+      }
+      return setResponseOk("All events selected", events);
+    } catch (err) {
+      logError(err, "eventModule:getAllEvents", "db");
+      return setResponseInternalError();
+    } finally {
+      db.release();
+    }
+  },
+  getEventDetailsByID: async function (eventID) {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      await db.query("LOCK TABLES eventData READ");
+      const [event] = await db.query(
+        "SELECT * FROM eventData WHERE eventID = ?",
+        [eventID]
+      );
+      if (event.length == 0) {
+        return setResponseNotFound("No events found!");
+      }
+      return setResponseOk("Event selected", event);
+    } catch (err) {
+      logError(err, "eventModule:getEventDetailsByID", "db");
       return setResponseInternalError();
     } finally {
       await db.query("UNLOCK TABLES");

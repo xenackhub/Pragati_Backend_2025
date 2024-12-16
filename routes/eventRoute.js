@@ -3,8 +3,10 @@ import { tokenValidator } from "../middleware/auth/tokenValidator.js";
 import eventController from "../controller/eventController.js";
 
 const eventRouter = Router();
-eventRouter.use(tokenValidator);
 
-eventRouter.post("/", eventController.addEvent);
+eventRouter.post("/", tokenValidator, eventController.addEvent);
+// eventRouter.get("/club/:clubID", eventController.getEventForClub);
+eventRouter.get("/all", eventController.getAllEvents);
+eventRouter.get("/:eventID(\\d+)", eventController.getEventDetailsByID);
 
 export default eventRouter;

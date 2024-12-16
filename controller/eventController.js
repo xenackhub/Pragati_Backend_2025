@@ -1,3 +1,4 @@
+import validator from "validator"
 import eventModule from "../module/eventModule.js";
 import { validateAddEventData } from "../utilities/dataValidator/event.js";
 import { setResponseBadRequest } from "../utilities/response.js";
@@ -93,11 +94,11 @@ const eventController = {
       return res.status(response.responseCode).json(response.responseBody);
     }
   },
-  getEventDetailsByID: async (req,res) =>{
-    const {eventID} = req.params;
-    if(!Number.isInteger(eventID)){
+  getEventDetailsByID: async (req, res) => {
+    const { eventID } = req.params;
+    if (!validator.isNumeric(eventID)) {
       const response = setResponseBadRequest("valid event ID not found");
-      return 
+      return res.status(response.responseCode).json(response.responseBody);
     }
     try {
       const response = await eventModule.getEventDetailsByID(eventID);
@@ -107,7 +108,22 @@ const eventController = {
       const response = setResponseInternalError();
       return res.status(response.responseCode).json(response.responseBody);
     }
-  }
+  },
+  getEventForClub: async (req, res) => {
+    const { clubID } = req.params;
+    if (!validator.isNumeric(clubID)) {
+      const response = setResponseBadRequest("valid club ID not found");
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+    try {
+      const response = await eventModule.getEventForClub(clubID);
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (err) {
+      logError(err, "eventController:getEventForClub", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
 };
 
 export default eventController;

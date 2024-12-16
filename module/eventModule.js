@@ -159,6 +159,49 @@ const eventModule = {
       db.release();
     }
   },
+  getEventForClub: async function (clubID) {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      await db.query("LOCK TABLES eventData READ, clubEventMapping READ");
+      const [events] = await db.query(
+        `SELECT 
+            eventData.eventDate, 
+            eventData.eventDescSmall, 
+            eventData.eventDescription, 
+            eventData.eventFee, 
+            eventData.eventID, 
+            eventData.eventName, 
+            eventData.eventStatus, 
+            eventData.godName, 
+            eventData.imageUrl, 
+            eventData.isGroup, 
+            eventData.isPerHeadFee, 
+            eventData.maxRegistrations, 
+            eventData.maxTeamSize, 
+            eventData.minTeamSize, 
+            eventData.numRegistrations 
+          FROM 
+            eventData 
+          JOIN 
+            clubEventMapping 
+            ON eventData.eventID = clubEventMapping.eventID 
+          WHERE 
+            clubID = ?`,
+        [clubID]
+      );
+
+      if (events.length == 0) {
+        return setResponseNotFound("No events found for the given club!");
+      }
+      return setResponseOk("Event selected", events);
+    } catch (err) {
+      logError(err, "eventModule:getEventDetailsByID", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
 };
 
 export default eventModule;

@@ -71,19 +71,31 @@ const tagModule = {
     const db = await pragatiDb.promise().getConnection();
     try {
       await db.query("LOCK TABLES tagData WRITE");
+
+      // Check if tagId exists
+      const [existingTag] = await db.query("SELECT * FROM tagData WHERE tagID = ?", [id]);
+    
+      if (existingTag.length === 0) {
+        return setResponseBadRequest("Tag not found");
+      }
+
+      // Check if the Tag name or Abbreviation has already been used 
+      const existingDuplicateTag = await findTagByNameOrAbbreviation(tagName, tagAbbrevation, id);
+      if (existingDuplicateTag) {
+        return setResponseBadRequest("Tag name or abbreviation already exists.");
+      }
+
       const [result] = await db.query(
         "UPDATE tagData SET tagName = ?, tagAbbrevation = ? WHERE tagID = ?",
         [tagName, tagAbbrevation, id]
       );
-    if (result.affectedRows === 0) {
-          if (result.matchedRows === 0) {
-            return setResponseBadRequest("Tag not found");
-          } else {
-            return setResponseBadRequest(
-              "No changes made. The provided tag name or abbreviation matches the current values."
-            );
+      if (result.affectedRows === 0) {
+            if (result.matchedRows === 0) {
+              return setResponseBadRequest("Tag not found");
+            } else {
+              return setResponseBadRequest("No changes made. The provided tag name or abbreviation matches the current values.");
           }
-        }
+      }
       return setResponseOk("Tag updated successfully", {
         id,
         tagName,

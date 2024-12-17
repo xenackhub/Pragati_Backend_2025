@@ -8,11 +8,18 @@ const validateTagData = (data) => {
     return "Invalid or missing tagName.";
   }
 
+  if (data.tagName.length > 255) {
+    return "Tag Name cannot exceed 255 characters.";
+  }
+
   if (
-    typeof data.tagAbbrevation !== "string" ||
-    data.tagAbbrevation.trim().length === 0
+    typeof data.tagAbbrevation !== "string" || data.tagAbbrevation.trim().length === 0
   ) {
     return "Invalid or missing tagAbbrevation.";
+  }
+
+  if (data.tagAbbrevation.length > 10) {
+    return "Tag Abbrevation cannot exceed 10 characters.";
   }
 
   return null;

@@ -28,7 +28,7 @@ const tagController = {
     }
   },
 
-  getAllTags: async (req, res) => {
+  getAllTags: async (_, res) => {
     try {
       const response = await tagModule.getAllTags();
       return res.status(response.responseCode).json(response.responseBody);

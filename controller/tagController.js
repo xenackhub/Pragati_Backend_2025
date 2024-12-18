@@ -1,6 +1,6 @@
 import tagModule from "../module/tagModule.js";
 import { setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
-import { validateTagData, validateTagId } from "../utilities/tagValidator.js";
+import { validateTagData, validateTagId } from "../utilities/dataValidator/tagValidator.js";
 
 const tagController = {
   addTag: async (req, res) => {
@@ -70,12 +70,18 @@ const tagController = {
     }
 
     try {
-      // Check for duplicate tagName or tagAbbrevation for other tags
-      const existingTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation, tagID);
-      if (existingTag) {
-        const response = setResponseBadRequest("Tag name or abbreviation already exists.");
-        return res.status(response.responseCode).json(response.responseBody);
-      }
+        const existingTag = await tagModule.getTagById(tagID);
+        if (!existingTag) {
+            const response = setResponseBadRequest("Tag not found");
+            return res.status(response.responseCode).json(response.responseBody);
+        }
+
+        // Check for duplicate tagName or tagAbbrevation for other tags
+        const duplicateTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation, tagID);
+        if (duplicateTag) {
+            const response = setResponseBadRequest("Tag name or abbreviation already exists.");
+            return res.status(response.responseCode).json(response.responseBody);
+        }
   
       const response = await tagModule.editTag(tagID, tagName, tagAbbrevation);
       return res.status(response.responseCode).json(response.responseBody);

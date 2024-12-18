@@ -80,10 +80,10 @@ const tagModule = {
       }
 
       // Check if the Tag name or Abbreviation has already been used 
-      const existingDuplicateTag = await findTagByNameOrAbbreviation(tagName, tagAbbrevation, id);
-      if (existingDuplicateTag) {
-        return setResponseBadRequest("Tag name or abbreviation already exists.");
-      }
+      // const existingDuplicateTag = await findTagByNameOrAbbreviation(tagName, tagAbbrevation, id);
+      // if (existingDuplicateTag) {
+      //   return setResponseBadRequest("Tag name or abbreviation already exists.");
+      // }
 
       const [result] = await db.query(
         "UPDATE tagData SET tagName = ?, tagAbbrevation = ? WHERE tagID = ?",
@@ -135,6 +135,28 @@ const tagModule = {
       db.release();
     }
   },
+
+  getTagById: async (tagID) => {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+        await db.query("LOCK TABLES tagData READ");
+
+        const [rows] = await db.query("SELECT * FROM tagData WHERE tagID = ?", [tagID]);
+        if (rows.length > 0) {
+          return rows[0]; 
+      } else {
+          return null; 
+      }
+
+    } catch (err) {
+        logError(err, "tagModule.getTagById", "db");
+        return setResponseInternalError();
+    } finally {
+        await db.query("UNLOCK TABLES");
+        db.release();
+      }
+  },
+
 };
 
 export default tagModule;

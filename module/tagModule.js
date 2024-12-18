@@ -79,12 +79,6 @@ const tagModule = {
         return setResponseBadRequest("Tag not found");
       }
 
-      // Check if the Tag name or Abbreviation has already been used 
-      // const existingDuplicateTag = await findTagByNameOrAbbreviation(tagName, tagAbbrevation, id);
-      // if (existingDuplicateTag) {
-      //   return setResponseBadRequest("Tag name or abbreviation already exists.");
-      // }
-
       const [result] = await db.query(
         "UPDATE tagData SET tagName = ?, tagAbbrevation = ? WHERE tagID = ?",
         [tagName, tagAbbrevation, id]

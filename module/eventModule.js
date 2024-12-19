@@ -127,7 +127,60 @@ const eventModule = {
   getAllEvents: async function () {
     const db = await pragatiDb.promise().getConnection();
     try {
-      const [events] = await db.query("SELECT * FROM eventData");
+      const [events] = await db.query(`SELECT 
+    e.eventID,
+    e.eventName,
+    e.eventDate,
+    e.eventDescription,
+    e.eventFee,
+    e.imageUrl AS eventImageUrl,
+
+
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'organizerID', o.organizerID,
+            'organizerName', o.organizerName,
+            'organizerPhoneNumber', o.phoneNumber
+        )
+    ) AS organizers,
+
+
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'tagID', t.tagID,
+            'tagName', t.tagName,
+            'tagAbbrevation', t.tagAbbrevation
+        )
+    ) AS tags,
+
+
+    c.clubID,
+    c.clubName,
+    c.imageUrl AS clubImageUrl,
+    c.clubHead,
+    c.clubAbbrevation,
+    c.godName
+
+FROM 
+    eventData e
+LEFT JOIN 
+    organizerEventMapping oem ON e.eventID = oem.eventID
+LEFT JOIN 
+    organizerData o ON oem.organizerID = o.organizerID
+LEFT JOIN 
+    tagEventMapping tem ON e.eventID = tem.eventID
+LEFT JOIN 
+    tagData t ON tem.tagID = t.tagID
+LEFT JOIN 
+    clubEventMapping cem ON e.eventID = cem.eventID
+LEFT JOIN 
+    clubData c ON cem.clubID = c.clubID
+
+
+GROUP BY 
+    e.eventID, e.eventName, e.eventDate, e.eventDescription, e.eventFee, e.imageUrl,
+    c.clubID, c.clubName, c.imageUrl, c.clubHead, c.clubAbbrevation, c.godName;
+`);
       if (events.length == 0) {
         return setResponseNotFound("No events found!");
       }

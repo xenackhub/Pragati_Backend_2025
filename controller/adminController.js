@@ -1,17 +1,18 @@
-import { getAllTransactionsData } from '../module/adminModule.js';
-import { 
-  setResponseOk, 
-  setResponseInternalError 
-} from '../utilities/response.js';
+import { setResponseInternalError } from "../utilities/response.js";
+import adminModule from "../module/adminModule.js";
+import { logError } from "../utilities/errorLogger.js";
 
-export const getAllTransactions = async (req, res) => {
-  try {
-    const transactions = await getAllTransactionsData();
-    const response = setResponseOk('All transactions fetched successfully', { transactions });
-    return res.status(response.responseCode).json(response.responseBody);
-  } catch (error) {
-    console.error('Error in getAllTransactions:', error);
-    const response = setResponseInternalError();
-    return res.status(response.responseCode).json(response.responseBody);
-  }
+const adminController = {
+  getAllTransactions : async (req, res) => {
+    try {
+      const response = await adminModule.getAllTransactions();
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (error) {
+      logError(error, "adminController:getAllTransactions", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
 };
+
+export default adminController;

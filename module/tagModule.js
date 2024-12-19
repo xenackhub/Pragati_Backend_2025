@@ -7,6 +7,11 @@ const tagModule = {
     const db = await pragatiDb.promise().getConnection();
     try {
       await db.query("LOCK TABLES tagData WRITE");
+
+      const existingTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation ,null,db);
+      if (existingTag) {
+        return setResponseBadRequest("Tag name or abbreviation already exists.");
+      }
       const [result] = await db.query(
         "INSERT INTO tagData (tagName, tagAbbrevation) VALUES (?, ?)",
         [tagName, tagAbbrevation]
@@ -67,45 +72,7 @@ const tagModule = {
     }
   },
 
-  editTag: async (id, tagName, tagAbbrevation) => {
-    const db = await pragatiDb.promise().getConnection();
-    try {
-      await db.query("LOCK TABLES tagData WRITE");
-
-      // Check if tagId exists
-      const [existingTag] = await db.query("SELECT * FROM tagData WHERE tagID = ?", [id]);
-    
-      if (existingTag.length === 0) {
-        return setResponseBadRequest("Tag not found");
-      }
-
-      const [result] = await db.query(
-        "UPDATE tagData SET tagName = ?, tagAbbrevation = ? WHERE tagID = ?",
-        [tagName, tagAbbrevation, id]
-      );
-      if (result.affectedRows === 0) {
-            if (result.matchedRows === 0) {
-              return setResponseBadRequest("Tag not found");
-            } else {
-              return setResponseBadRequest("No changes made. The provided tag name or abbreviation matches the current values.");
-          }
-      }
-      return setResponseOk("Tag updated successfully", {
-        id,
-        tagName,
-        tagAbbrevation,
-      });
-    } catch (err) {
-      logError(err, "tagModule.editTag", "db");
-      return setResponseInternalError(); 
-    } finally {
-      await db.query("UNLOCK TABLES");
-      db.release();
-    }
-  },
-
-  findTagByNameOrAbbreviation: async (tagName, tagAbbrevation, excludeId = null) => {
-    const db = await pragatiDb.promise().getConnection();
+  findTagByNameOrAbbreviation: async (tagName, tagAbbrevation, excludeId = null, db) => {
     try {
       await db.query("LOCK TABLES tagData READ");
   
@@ -126,12 +93,10 @@ const tagModule = {
       return setResponseInternalError(); 
     } finally {
       await db.query("UNLOCK TABLES");
-      db.release();
     }
   },
 
-  getTagById: async (tagID) => {
-    const db = await pragatiDb.promise().getConnection();
+  getTagById: async (tagID, db) => {
     try {
         await db.query("LOCK TABLES tagData READ");
 
@@ -147,8 +112,52 @@ const tagModule = {
         return setResponseInternalError();
     } finally {
         await db.query("UNLOCK TABLES");
-        db.release();
       }
+  },
+
+  editTag: async (id, tagName, tagAbbrevation) => {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      await db.query("LOCK TABLES tagData WRITE");
+
+      const existingTag = await tagModule.getTagById(id, db);
+      if (!existingTag) {
+        return setResponseBadRequest("Tag not found");
+      }
+
+      const duplicateTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation, id, db);
+      if (duplicateTag) {
+        return setResponseBadRequest("Tag name or abbreviation already exists.");
+      }
+
+      // Perform the update
+      const [result] = await db.query(
+        "UPDATE tagData SET tagName = ?, tagAbbrevation = ? WHERE tagID = ?",
+        [tagName, tagAbbrevation, id]
+      );
+
+      if (result.affectedRows === 0) {
+        if (result.matchedRows === 0) {
+          return setResponseBadRequest("Tag not found");
+        } else {
+          return setResponseBadRequest(
+            "No changes made. The provided tag name or abbreviation matches the current values."
+          );
+        }
+      }
+
+      return setResponseOk("Tag updated successfully", {
+        id,
+        tagName,
+        tagAbbrevation,
+      });
+    } catch (err) {
+      logError(err, "tagModule.editTag", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
   },
 
 };

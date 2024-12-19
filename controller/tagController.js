@@ -12,14 +12,7 @@ const tagController = {
 
     const { tagName, tagAbbrevation } = req.body;
  
-    try {
-      // Check for duplicate tagName or tagAbbrevation
-      const existingTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation);
-      if (existingTag) {
-        const response = setResponseBadRequest("Tag name or abbreviation already exists.");
-        return res.status(response.responseCode).json(response.responseBody);
-      }
-
+    try {  
       const response = await tagModule.addTag(tagName, tagAbbrevation);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
@@ -70,19 +63,6 @@ const tagController = {
     }
 
     try {
-        const existingTag = await tagModule.getTagById(tagID);
-        if (!existingTag) {
-            const response = setResponseBadRequest("Tag not found");
-            return res.status(response.responseCode).json(response.responseBody);
-        }
-
-        // Check for duplicate tagName or tagAbbrevation for other tags
-        const duplicateTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation, tagID);
-        if (duplicateTag) {
-            const response = setResponseBadRequest("Tag name or abbreviation already exists.");
-            return res.status(response.responseCode).json(response.responseBody);
-        }
-  
       const response = await tagModule.editTag(tagID, tagName, tagAbbrevation);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {

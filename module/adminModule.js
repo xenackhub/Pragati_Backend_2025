@@ -20,6 +20,23 @@ const adminModule = {
       db.release();
     }
   },
+  getAlRoles: async () => {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      // Lock table for READ
+      await db.query("LOCK TABLES userRole READ");
+      const query = "SELECT roleID, roleName, createdAt FROM userRole";
+      const [results] = await db.query(query);
+
+      return setResponseOk("All roles fetched successfully", results);
+    } catch (error) {
+      logError(error, "adminModule:getAllRoles", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
 };
 
 export default adminModule;

@@ -1,17 +1,18 @@
 import { pragatiDb } from "../db/poolConnection.js";
 import { setResponseOk, setResponseInternalError, setResponseBadRequest } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js"; 
+import { findTagByNameOrAbbreviation, getTagById } from "../utilities/dbUtilities/tagUtilities.js";
 
 const tagModule = {
   addTag: async (tagName, tagAbbrevation) => {
     const db = await pragatiDb.promise().getConnection();
     try {
-      await db.query("LOCK TABLES tagData WRITE");
-
-      const existingTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation ,null,db);
+      const existingTag = await findTagByNameOrAbbreviation(tagName, tagAbbrevation ,null,db);
       if (existingTag) {
         return setResponseBadRequest("Tag name or abbreviation already exists.");
       }
+
+      await db.query("LOCK TABLES tagData WRITE");
       const [result] = await db.query(
         "INSERT INTO tagData (tagName, tagAbbrevation) VALUES (?, ?)",
         [tagName, tagAbbrevation]
@@ -72,63 +73,18 @@ const tagModule = {
     }
   },
 
-  findTagByNameOrAbbreviation: async (tagName, tagAbbrevation, excludeId = null, db) => {
-    try {
-      await db.query("LOCK TABLES tagData READ");
-  
-      let query = "SELECT * FROM tagData WHERE (tagName = ? OR tagAbbrevation = ?)";
-      const params = [tagName, tagAbbrevation];
-  
-      // If excludeId is provided, exclude that tag (useful for updates)
-      if (excludeId) {
-        query += " AND tagID != ?";
-        params.push(excludeId);
-      }
-  
-      const [rows] = await db.query(query, params);
-  
-      return rows.length > 0 ? rows[0] : null;
-    } catch (err) {
-      logError(err, "tagModule.findTagByNameOrAbbreviation", "db");
-      return setResponseInternalError(); 
-    } finally {
-      await db.query("UNLOCK TABLES");
-    }
-  },
-
-  getTagById: async (tagID, db) => {
-    try {
-        await db.query("LOCK TABLES tagData READ");
-
-        const [rows] = await db.query("SELECT * FROM tagData WHERE tagID = ?", [tagID]);
-        if (rows.length > 0) {
-          return rows[0]; 
-      } else {
-          return null; 
-      }
-
-    } catch (err) {
-        logError(err, "tagModule.getTagById", "db");
-        return setResponseInternalError();
-    } finally {
-        await db.query("UNLOCK TABLES");
-      }
-  },
-
   editTag: async (id, tagName, tagAbbrevation) => {
     const db = await pragatiDb.promise().getConnection();
     try {
-      await db.query("LOCK TABLES tagData WRITE");
-
-      const existingTag = await tagModule.getTagById(id, db);
+      const existingTag = await getTagById(id, db);
       if (!existingTag) {
         return setResponseBadRequest("Tag not found");
       }
-
-      const duplicateTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation, id, db);
+      const duplicateTag = await findTagByNameOrAbbreviation(tagName, tagAbbrevation, id, db);
       if (duplicateTag) {
         return setResponseBadRequest("Tag name or abbreviation already exists.");
       }
+      await db.query("LOCK TABLES tagData WRITE");
 
       // Perform the update
       const [result] = await db.query(

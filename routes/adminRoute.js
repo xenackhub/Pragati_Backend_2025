@@ -7,5 +7,6 @@ const adminRouter = Router();
 
 adminRouter.use(tokenValidator("JWT"),authorizeRoles([1]))
 adminRouter.get("/transactions", adminController.getAllTransactions);
+adminRouter.get("/roles", adminController.getAllRoles);
 
 export default adminRouter;

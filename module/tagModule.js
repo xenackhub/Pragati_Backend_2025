@@ -6,12 +6,12 @@ const tagModule = {
   addTag: async (tagName, tagAbbrevation) => {
     const db = await pragatiDb.promise().getConnection();
     try {
-      await db.query("LOCK TABLES tagData WRITE");
-
       const existingTag = await tagModule.findTagByNameOrAbbreviation(tagName, tagAbbrevation ,null,db);
       if (existingTag) {
         return setResponseBadRequest("Tag name or abbreviation already exists.");
       }
+
+      await db.query("LOCK TABLES tagData WRITE");
       const [result] = await db.query(
         "INSERT INTO tagData (tagName, tagAbbrevation) VALUES (?, ?)",
         [tagName, tagAbbrevation]

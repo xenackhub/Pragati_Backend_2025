@@ -41,18 +41,4 @@ const findTagByNameOrAbbreviation = async (tagName, tagAbbrevation, excludeId = 
   }
 };
 
-const getTagById = async (tagID, db) => {
-  try {
-    await db.query("LOCK TABLES tagData READ");
-
-    const [rows] = await db.query("SELECT * FROM tagData WHERE tagID = ?", [tagID]);
-    return rows.length > 0 ? rows[0] : null;
-  } catch (err) {
-    logError(err, "tagUtilities.getTagById", "db");
-    return null;
-  } finally {
-    await db.query("UNLOCK TABLES");
-  }
-};
-
-export { checkTagIDsExists, findTagByNameOrAbbreviation, getTagById };
+export { checkTagIDsExists, findTagByNameOrAbbreviation};

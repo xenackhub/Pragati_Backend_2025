@@ -1,7 +1,7 @@
 import { pragatiDb } from "../db/poolConnection.js";
 import { setResponseOk, setResponseInternalError, setResponseBadRequest } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js"; 
-import { findTagByNameOrAbbreviation, getTagById } from "../utilities/dbUtilities/tagUtilities.js";
+import { checkTagIDsExists , findTagByNameOrAbbreviation} from "../utilities/dbUtilities/tagUtilities.js";
 
 const tagModule = {
   addTag: async (tagName, tagAbbrevation) => {
@@ -76,8 +76,8 @@ const tagModule = {
   editTag: async (id, tagName, tagAbbrevation) => {
     const db = await pragatiDb.promise().getConnection();
     try {
-      const existingTag = await getTagById(id, db);
-      if (!existingTag) {
+      const existingTag = await checkTagIDsExists([id], db);
+      if (existingTag) {
         return setResponseBadRequest("Tag not found");
       }
       const duplicateTag = await findTagByNameOrAbbreviation(tagName, tagAbbrevation, id, db);

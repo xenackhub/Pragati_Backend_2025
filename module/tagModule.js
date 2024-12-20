@@ -76,9 +76,7 @@ const tagModule = {
   editTag: async (id, tagName, tagAbbrevation) => {
     const db = await pragatiDb.promise().getConnection();
     try {
-      await db.query("LOCK TABLES tagData WRITE");
-
-      const existingTag = await tagModule.getTagById(id, db);
+      const existingTag = await getTagById(id, db);
       if (!existingTag) {
         return setResponseBadRequest("Tag not found");
       }
@@ -87,6 +85,7 @@ const tagModule = {
         return setResponseBadRequest("Tag name or abbreviation already exists.");
       }
 
+      await db.query("LOCK TABLES tagData WRITE");
       // Perform the update
       const [result] = await db.query(
         "UPDATE tagData SET tagName = ?, tagAbbrevation = ? WHERE tagID = ?",

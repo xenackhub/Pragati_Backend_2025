@@ -13,6 +13,16 @@ const adminController = {
       return res.status(response.responseCode).json(response.responseBody);
     }
   },
+  getAllRoles: async (req, res) => {
+    try {
+      const response = await adminModule.getAllRoles();
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (error) {
+      logError(error, "adminController:getAllRoles", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
 };
 
 export default adminController;

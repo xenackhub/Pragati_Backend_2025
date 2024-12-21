@@ -20,7 +20,7 @@ const adminModule = {
       db.release();
     }
   },
-  getAlRoles: async () => {
+  getAllRoles: async () => {
     const db = await pragatiDb.promise().getConnection();
     try {
       // Lock table for READ

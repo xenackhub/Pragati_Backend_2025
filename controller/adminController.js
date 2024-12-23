@@ -23,6 +23,16 @@ const adminController = {
       return res.status(response.responseCode).json(response.responseBody);
     }
   },
+  getEventWiseAmountGenerated: async (req, res) => {
+    try {
+      const response = await adminModule.getEventWiseAmountGenerated();
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (error) {
+      logError(error, "adminController:getEventWiseAmountGenerated", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
 };
 
 export default adminController;

@@ -75,10 +75,16 @@ LEFT JOIN
   }
   Object.entries(data).map((condition) => {
     if (firstCondition === true) {
-      query += ` WHERE ${condition[0][0]}.${condition[0]} = ${condition[1]}`;
+      if (condition[0] == "eventIDs") {
+        query += ` WHERE e.eventID IN (${condition[1]})`;
+      } else
+        query += ` WHERE ${condition[0][0]}.${condition[0]} = ${condition[1]}`;
       firstCondition = false;
     } else {
-      query += ` AND ${condition[0][0]}.${condition[0]} = ${condition[1]}`;
+      if (condition[0] == "eventIDs") {
+        query += ` WHERE e.eventID IN ${condition[1]}`;
+      } else
+        query += ` AND ${condition[0][0]}.${condition[0]} = ${condition[1]}`;
     }
   });
   return query + groupByPart;

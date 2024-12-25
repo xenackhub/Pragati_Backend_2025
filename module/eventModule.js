@@ -164,7 +164,7 @@ const eventModule = {
         clubData AS c READ`
       );
       let query = getEventQueryFormatter({ eventID: eventID });
-      console.log(query)
+      console.log(query);
       const [event] = await db.query(query);
       if (event.length == 0) {
         return setResponseNotFound("No events found!");
@@ -215,8 +215,26 @@ const eventModule = {
         tagEventMapping AS tem READ, 
         tagData AS t READ, 
         clubEventMapping AS cem READ,  
-        clubData AS c READ`
+        clubData AS c READ,
+        registrationData READ`
       );
+      const [eventIDs] = await db.query(
+        "SELECT eventID FROM registrationData WHERE userID = ?",
+        [userID]
+      );
+      console.log(eventIDs);
+      if (eventIDs.length == 0) {
+        return setResponseNotFound("No registered events found for user.");
+      }
+      const eventIDsNew = eventIDs.map(
+        (eventIDObject) => eventIDObject.eventID
+      );
+      const query = getEventQueryFormatter({ eventIDs: eventIDsNew });
+      const [events] = await db.query(query);
+      if (events.length == 0) {
+        return setResponseNotFound("No registered events found for user.");
+      }
+      return setResponseOk("Registered events fetched", events);
     } catch (err) {
       logError(err, "eventModule:getEventsRegisteredByUser", "db");
       return setResponseInternalError();

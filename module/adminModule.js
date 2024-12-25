@@ -80,6 +80,11 @@ const adminModule = {
         "UPDATE userData SET accountStatus = ? WHERE userID = ?",
         [accountStatus, studentID]
       );
+      if (result.affectedRows !== 1) {
+        return setResponseBadRequest(
+          "Unable to change the status of the user. The user may not exist or the status is unchanged."
+        );
+      }
       return setResponseOk("User account status updated successfully.", {
         studentID,
         accountStatus,

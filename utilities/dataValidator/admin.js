@@ -3,19 +3,33 @@ const validateEditUserStatusData = ( studentID, accountStatus) => {
         return "studentID or accountStatus body is missing.";
     }
 
-  // 1. Check userID
-    if (studentID === null) {
-        return "User ID is required.";
-    }
     if (isNaN(studentID)) {
         return "User ID must be a valid number.";
     }
 
-  // 2. Check accountStatus
+  // Check accountStatus
     if (!["0", "1", "2"].includes(accountStatus)) {
         return "Invalid accountStatus. Must be '0', '1', or '2'.";
     }
 
   return null; // No errors
 };
-export{validateEditUserStatusData};
+
+const validateEditUserRoleData = (studentID, studentRoleID) => {
+  if (!studentID || !studentRoleID) {
+    return "studentID or studentRoleID body is missing..";
+  }
+  if (isNaN(studentID)) {
+    return "User ID must be a valid number.";
+  }
+  if (isNaN(studentRoleID)) {
+    return "Role ID must be a valid number.";
+  }
+  if (![1, 2].includes(Number(studentRoleID))) {
+    return "Invalid roleID. Must be 1 or 2.";
+  }
+
+  return null; // No errors
+};
+
+export{validateEditUserStatusData, validateEditUserRoleData};

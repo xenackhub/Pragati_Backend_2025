@@ -1,6 +1,7 @@
 import { transactionsDb, pragatiDb } from '../db/poolConnection.js';
-import { setResponseOk, setResponseInternalError } from "../utilities/response.js";
+import { setResponseOk, setResponseInternalError, setResponseBadRequest } from "../utilities/response.js";
 import { logError } from '../utilities/errorLogger.js';
+import { checkUserIDsExists } from "../utilities/dbUtilities/adminUtilities.js";
 
 const adminModule = {
   getAllTransactions: async () => {
@@ -65,7 +66,37 @@ const adminModule = {
       db.release();
     }
   },
+  editUserAccountStatus: async (studentID, accountStatus) => {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      // 1) Check if the user exists
+      const userCheck = await checkUserIDsExists([studentID], db);
+      if (userCheck) {
+        return setResponseBadRequest(userCheck); 
+      }
+      await db.query("LOCK TABLES userData WRITE");
 
+      const [result] = await db.query(
+        "UPDATE userData SET accountStatus = ? WHERE userID = ?",
+        [accountStatus, studentID]
+      );
+      if (result.affectedRows !== 1) {
+        return setResponseBadRequest(
+          "Unable to change the status of the user. The user may not exist or the status is unchanged."
+        );
+      }
+      return setResponseOk("User account status updated successfully.", {
+        studentID,
+        accountStatus,
+      });
+    } catch (err) {
+      logError(err, "userModule.editUserAccountStatus", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
 };
 
 export default adminModule;

@@ -9,4 +9,5 @@ adminRouter.use(tokenValidator("JWT"),authorizeRoles([1]))
 adminRouter.get("/transactions", adminController.getAllTransactions);
 adminRouter.get("/roles", adminController.getAllRoles);
 adminRouter.get("/amountGenerated", adminController.getEventWiseAmountGenerated);
+adminRouter.put("/changeUserStatus", adminController.changeStatusOfUser);
 export default adminRouter;

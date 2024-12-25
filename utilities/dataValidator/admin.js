@@ -1,5 +1,5 @@
 const validateEditUserStatusData = ( studentID, accountStatus) => {
-    if ( !studentID && !accountStatus) {
+    if ( !studentID || !accountStatus) {
         return "studentID or accountStatus body is missing.";
     }
 

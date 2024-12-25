@@ -9,6 +9,7 @@ import { pragatiDb } from "../db/poolConnection.js";
 import { checkClubIDsExists } from "../utilities/dbUtilities/clubUtilities.js";
 import { checkOrganizerIDsExists } from "../utilities/dbUtilities/organizerUtilities.js";
 import { checkTagIDsExists } from "../utilities/dbUtilities/tagUtilities.js";
+import { getEventQueryFormatter } from "../utilities/dbUtilities/eventUtilities.js";
 
 const eventModule = {
   addEvent: async function (
@@ -127,60 +128,17 @@ const eventModule = {
   getAllEvents: async function () {
     const db = await pragatiDb.promise().getConnection();
     try {
-      const [events] = await db.query(`SELECT 
-    e.eventID,
-    e.eventName,
-    e.eventDate,
-    e.eventDescription,
-    e.eventFee,
-    e.imageUrl AS eventImageUrl,
-
-
-    JSON_ARRAYAGG(
-        JSON_OBJECT(
-            'organizerID', o.organizerID,
-            'organizerName', o.organizerName,
-            'organizerPhoneNumber', o.phoneNumber
-        )
-    ) AS organizers,
-
-
-    JSON_ARRAYAGG(
-        JSON_OBJECT(
-            'tagID', t.tagID,
-            'tagName', t.tagName,
-            'tagAbbrevation', t.tagAbbrevation
-        )
-    ) AS tags,
-
-
-    c.clubID,
-    c.clubName,
-    c.imageUrl AS clubImageUrl,
-    c.clubHead,
-    c.clubAbbrevation,
-    c.godName
-
-FROM 
-    eventData e
-LEFT JOIN 
-    organizerEventMapping oem ON e.eventID = oem.eventID
-LEFT JOIN 
-    organizerData o ON oem.organizerID = o.organizerID
-LEFT JOIN 
-    tagEventMapping tem ON e.eventID = tem.eventID
-LEFT JOIN 
-    tagData t ON tem.tagID = t.tagID
-LEFT JOIN 
-    clubEventMapping cem ON e.eventID = cem.eventID
-LEFT JOIN 
-    clubData c ON cem.clubID = c.clubID
-
-
-GROUP BY 
-    e.eventID, e.eventName, e.eventDate, e.eventDescription, e.eventFee, e.imageUrl,
-    c.clubID, c.clubName, c.imageUrl, c.clubHead, c.clubAbbrevation, c.godName;
-`);
+      await db.query(
+        `LOCK TABLES eventData AS e READ, 
+        organizerEventMapping AS oem READ, 
+        organizerData AS o READ, 
+        tagEventMapping AS tem READ, 
+        tagData AS t READ, 
+        clubEventMapping AS cem READ,  
+        clubData AS c READ`
+      );
+      const query = getEventQueryFormatter();
+      const [events] = await db.query(query);
       if (events.length == 0) {
         return setResponseNotFound("No events found!");
       }
@@ -189,17 +147,25 @@ GROUP BY
       logError(err, "eventModule:getAllEvents", "db");
       return setResponseInternalError();
     } finally {
+      await db.query("UNLOCK TABLES");
       db.release();
     }
   },
   getEventDetailsByID: async function (eventID) {
     const db = await pragatiDb.promise().getConnection();
     try {
-      await db.query("LOCK TABLES eventData READ");
-      const [event] = await db.query(
-        "SELECT * FROM eventData WHERE eventID = ?",
-        [eventID]
+      await db.query(
+        `LOCK TABLES eventData AS e READ, 
+        organizerEventMapping AS oem READ, 
+        organizerData AS o READ, 
+        tagEventMapping AS tem READ, 
+        tagData AS t READ, 
+        clubEventMapping AS cem READ,  
+        clubData AS c READ`
       );
+      let query = getEventQueryFormatter({ eventID: eventID });
+      console.log(query)
+      const [event] = await db.query(query);
       if (event.length == 0) {
         return setResponseNotFound("No events found!");
       }
@@ -215,33 +181,17 @@ GROUP BY
   getEventForClub: async function (clubID) {
     const db = await pragatiDb.promise().getConnection();
     try {
-      await db.query("LOCK TABLES eventData READ, clubEventMapping READ");
-      const [events] = await db.query(
-        `SELECT 
-            eventData.eventDate, 
-            eventData.eventDescSmall, 
-            eventData.eventDescription, 
-            eventData.eventFee, 
-            eventData.eventID, 
-            eventData.eventName, 
-            eventData.eventStatus, 
-            eventData.godName, 
-            eventData.imageUrl, 
-            eventData.isGroup, 
-            eventData.isPerHeadFee, 
-            eventData.maxRegistrations, 
-            eventData.maxTeamSize, 
-            eventData.minTeamSize, 
-            eventData.numRegistrations 
-          FROM 
-            eventData 
-          JOIN 
-            clubEventMapping 
-            ON eventData.eventID = clubEventMapping.eventID 
-          WHERE 
-            clubID = ?`,
-        [clubID]
+      await db.query(
+        `LOCK TABLES eventData AS e READ, 
+        organizerEventMapping AS oem READ, 
+        organizerData AS o READ, 
+        tagEventMapping AS tem READ, 
+        tagData AS t READ, 
+        clubEventMapping AS cem READ,  
+        clubData AS c READ`
       );
+      const query = getEventQueryFormatter({ clubID: clubID });
+      const [events] = await db.query(query);
 
       if (events.length == 0) {
         return setResponseNotFound("No events found for the given club!");
@@ -249,6 +199,26 @@ GROUP BY
       return setResponseOk("Event selected", events);
     } catch (err) {
       logError(err, "eventModule:getEventDetailsByID", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
+  getEventsRegisteredByUser: async function (userID) {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      await db.query(
+        `LOCK TABLES eventData AS e READ, 
+        organizerEventMapping AS oem READ, 
+        organizerData AS o READ, 
+        tagEventMapping AS tem READ, 
+        tagData AS t READ, 
+        clubEventMapping AS cem READ,  
+        clubData AS c READ`
+      );
+    } catch (err) {
+      logError(err, "eventModule:getEventsRegisteredByUser", "db");
       return setResponseInternalError();
     } finally {
       await db.query("UNLOCK TABLES");

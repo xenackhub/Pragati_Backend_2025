@@ -8,6 +8,7 @@ eventRouter.post("/", tokenValidator("JWT"), eventController.addEvent);
 eventRouter.get("/all", eventController.getAllEvents);
 eventRouter.get("/:eventID(\\d+)", eventController.getEventDetailsByID);
 eventRouter.get("/club/:clubID(\\d+)", eventController.getEventForClub);
+eventRouter.get("/user/:userID(\\d+)", eventController.getEventsRegisteredByUser);
 
 
 export default eventRouter;

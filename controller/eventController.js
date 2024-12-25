@@ -1,4 +1,4 @@
-import validator from "validator"
+import validator from "validator";
 import eventModule from "../module/eventModule.js";
 import { validateAddEventData } from "../utilities/dataValidator/event.js";
 import { setResponseBadRequest } from "../utilities/response.js";
@@ -120,6 +120,22 @@ const eventController = {
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "eventController:getEventForClub", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
+  getEventsRegisteredByUser: async (req, res) => {
+    const {userID} = req.params;
+    // typeof userID is string, therefore can be checked using validator.
+    if(!validator.isNumeric(userID)) {
+      const response = setResponseBadRequest("valid user ID not found");
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+    try {
+      const response = await eventModule.getEventsRegisteredByUser(userID);
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (err) {
+      logError(err, "eventController:getEventsRegisteredByUser", "db");
       const response = setResponseInternalError();
       return res.status(response.responseCode).json(response.responseBody);
     }

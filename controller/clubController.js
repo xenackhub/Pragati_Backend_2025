@@ -27,7 +27,7 @@ addClub: async (req, res) => {
     } = req.body;
   
     // Validate input data
-    const validationError = validateClubData({
+    const validationError = validateClubData(req.body);
       clubName,
       imageUrl,
       clubHead,

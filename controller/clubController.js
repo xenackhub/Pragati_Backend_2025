@@ -28,30 +28,12 @@ addClub: async (req, res) => {
   
     // Validate input data
     const validationError = validateClubData(req.body);
-      clubName,
-      imageUrl,
-      clubHead,
-      clubAbbrevation,
-      godName,
-    });
     if (validationError) {
       const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
     }
   
     try {
-      // Check for duplicate club name or abbreviation
-      const duplicateCheck = await clubModule.checkDuplicateClub({
-        clubName,
-        clubAbbrevation,
-      });
-      if (duplicateCheck) {
-        const response = setResponseBadRequest(
-          "A club with the same name or abbreviation already exists."
-        );
-        return res.status(response.responseCode).json(response.responseBody);
-      }
-  
       // Add the club
       const response = await clubModule.addClub({
         clubName,
@@ -80,13 +62,7 @@ addClub: async (req, res) => {
     } = req.body;
   
     // Validate input data
-    const validationError = validateClubData({
-      clubName,
-      imageUrl,
-      clubHead,
-      clubAbbrevation,
-      godName,
-    });
+    const validationError = validateClubData(req.body);
     if (validationError) {
       const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
@@ -100,19 +76,6 @@ addClub: async (req, res) => {
     }
   
     try {
-      // Check for duplicate club name or abbreviation
-      const duplicateCheck = await clubModule.checkDuplicateClub({
-        clubName,
-        clubAbbrevation,
-        excludeClubID: clubID, // Exclude the current club ID
-      });
-      if (duplicateCheck) {
-        const response = setResponseBadRequest(
-          "A club with the same name or abbreviation already exists."
-        );
-        return res.status(response.responseCode).json(response.responseBody);
-      }
-  
       // Edit the club
       const response = await clubModule.editClub({
         clubID,

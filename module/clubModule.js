@@ -1,5 +1,9 @@
 import { pragatiDb } from "../db/poolConnection.js";
-import { setResponseOk, setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
+import {
+  setResponseOk,
+  setResponseBadRequest,
+  setResponseInternalError,
+} from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 
 const clubModule = {
@@ -8,12 +12,12 @@ const clubModule = {
     const db = await pragatiDb.promise().getConnection();
     try {
       // Use READ lock to ensure data consistency during reading
-      await db.query("LOCK TABLES clubdata READ");
+      await db.query("LOCK TABLES clubData READ");
 
-      const query = "SELECT * FROM clubdata";
+      const query = "SELECT * FROM clubData";
       const [result] = await db.query(query);
 
-      return setResponseOk(result);
+      return setResponseOk("Club data fetched successfully", result);
     } catch (error) {
       logError(error, "clubModule:getAllClubs", "db");
       return setResponseInternalError();
@@ -24,11 +28,15 @@ const clubModule = {
   },
 
   // Check if a duplicate club exists
-  checkDuplicateClub: async ({ clubName, clubAbbrevation, excludeClubID = null }) => {
+  checkDuplicateClub: async ({
+    clubName,
+    clubAbbrevation,
+    excludeClubID = null,
+  }) => {
     const db = await pragatiDb.promise().getConnection();
     try {
       let query = `
-        SELECT * FROM clubdata
+        SELECT * FROM clubData
         WHERE (clubName = ? OR clubAbbrevation = ?)
       `;
       const params = [clubName, clubAbbrevation];
@@ -54,7 +62,7 @@ const clubModule = {
     const db = await pragatiDb.promise().getConnection();
     try {
       // Use WRITE lock to prevent other processes from modifying the table
-      await db.query("LOCK TABLES clubdata WRITE");
+      await db.query("LOCK TABLES clubData WRITE");
 
       // Check if a duplicate club exists
       const duplicateExists = await clubModule.checkDuplicateClub({
@@ -62,11 +70,13 @@ const clubModule = {
         clubAbbrevation: clubData.clubAbbrevation,
       });
       if (duplicateExists) {
-        return setResponseBadRequest("A club with the same name or abbreviation already exists.");
+        return setResponseBadRequest(
+          "A club with the same name or abbreviation already exists."
+        );
       }
 
       const query = `
-        INSERT INTO clubdata (clubName, imageUrl, clubHead, clubAbbrevation, godName)
+        INSERT INTO clubData (clubName, imageUrl, clubHead, clubAbbrevation, godName)
         VALUES (?, ?, ?, ?, ?)
       `;
       const values = [
@@ -80,13 +90,12 @@ const clubModule = {
 
       // Check if insertion was successful
       if (result.affectedRows === 0) {
-        return setResponseInternalError("Could not insert club into the database.");
+        return setResponseInternalError(
+          "Could not insert club into the database."
+        );
       }
 
-      return setResponseOk({
-        message: "Club added successfully",
-        clubID: result.insertId,
-      });
+      return setResponseOk("Club added successfully", result.insertId);
     } catch (error) {
       logError(error, "clubModule:addClub", "db");
       return setResponseInternalError();
@@ -101,7 +110,7 @@ const clubModule = {
     const db = await pragatiDb.promise().getConnection();
     try {
       // Use WRITE lock to prevent other processes from modifying the table
-      await db.query("LOCK TABLES clubdata WRITE");
+      await db.query("LOCK TABLES clubData WRITE");
 
       // Check if a duplicate club exists
       const duplicateExists = await clubModule.checkDuplicateClub({
@@ -110,11 +119,13 @@ const clubModule = {
         excludeClubID: clubData.clubID,
       });
       if (duplicateExists) {
-        return setResponseBadRequest("A club with the same name or abbreviation already exists.");
+        return setResponseBadRequest(
+          "A club with the same name or abbreviation already exists."
+        );
       }
 
       const query = `
-        UPDATE clubdata 
+        UPDATE clubData 
         SET clubName = ?, imageUrl = ?, clubHead = ?, clubAbbrevation = ?, godName = ?
         WHERE clubID = ?
       `;
@@ -146,9 +157,9 @@ const clubModule = {
     const db = await pragatiDb.promise().getConnection();
     try {
       // Use WRITE lock to prevent other processes from modifying the table
-      await db.query("LOCK TABLES clubdata WRITE");
+      await db.query("LOCK TABLES clubData WRITE");
 
-      const query = "DELETE FROM clubdata WHERE clubID = ?";
+      const query = "DELETE FROM clubData WHERE clubID = ?";
       const [result] = await db.query(query, [clubID]);
 
       if (result.affectedRows === 0) {

@@ -42,7 +42,7 @@ const checkRoleNameAlreadyExists = async (roleName, db) => {
         // If there is at least one row, that means roleID already exists
         return existing.length > 0;
     } catch (err) {
-        logError(err, "checkRoleIDAlreadyExists", "db");
+        logError(err, "checkRoleNameAlreadyExists", "db");
         return null; // indicates an internal error
     }
     };

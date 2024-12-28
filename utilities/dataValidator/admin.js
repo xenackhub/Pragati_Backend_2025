@@ -45,9 +45,6 @@ export const validateNewUserRoleData = (roleID, roleName) => {
   if (!validateBasicString(roleName, 50)) {
     return "roleName must be a valid string.";
   }
-  if (roleName.length > 50) {
-    return "roleName cannot exceed 50 characters.";
-  }
 
   return null; // No errors
 };

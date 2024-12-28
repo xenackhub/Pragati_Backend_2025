@@ -75,16 +75,16 @@ const adminController = {
     }
   },
   changeUserRole: async (req, res) => {
-    const { studentID, roleID } = req.body;
+    const { studentID, userRoleID } = req.body; // userRoleID is used because middleware sets roleID by default
     /* 
         Edit userRole request body
         {
             "studentID": "integer"
-            "roleID": "integer"
+            "userRoleID": "integer"
         }
     */
     // 1) Validate input
-    const validationError = validateEditUserRoleData(studentID, roleID);
+    const validationError = validateEditUserRoleData(studentID, userRoleID);
     if (validationError != null) {
       const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
@@ -92,7 +92,7 @@ const adminController = {
 
     try {
       // 2) Call the module
-      const response = await adminModule.updateUserRole(studentID, roleID);
+      const response = await adminModule.updateUserRole(studentID, userRoleID);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "adminController.updateUserRole", "db");
@@ -104,13 +104,13 @@ const adminController = {
     /* 
           Add userRole request body
         {
-            "roleID": "integer"
+            "userRoleID": "integer"
             "roleName": "string"
         }
     */
     // Validate the request body
-    const { roleID, roleName } = req.body;
-    const validationError = validateNewUserRoleData(roleID, roleName);
+    const { userRoleID, roleName } = req.body;  // userRoleID is used because middleware sets roleID by default
+    const validationError = validateNewUserRoleData(userRoleID, roleName);
     if (validationError) {
       const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
@@ -119,7 +119,7 @@ const adminController = {
     //
     try {
       // Call the module
-      const response = await adminModule.addNewUserRole(roleID, roleName);
+      const response = await adminModule.addNewUserRole(userRoleID, roleName);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (error) {
       logError(error, "adminController.addNewUserRole", "db");

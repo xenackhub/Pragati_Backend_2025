@@ -1,18 +1,18 @@
+import { validateBasicString } from "./common.js";
 
+const validateEditUserStatusData = (studentID, accountStatus) => {
+  if (!studentID || !accountStatus) {
+    return "studentID or accountStatus body is missing.";
+  }
 
-const validateEditUserStatusData = ( studentID, accountStatus) => {
-    if ( !studentID || !accountStatus) {
-        return "studentID or accountStatus body is missing.";
-    }
-
-    if (isNaN(studentID)) {
-        return "User ID must be a valid number.";
-    }
+  if (isNaN(studentID)) {
+    return "User ID must be a valid number.";
+  }
 
   // Check accountStatus
-    if (!["0", "1", "2"].includes(accountStatus)) {
-        return "Invalid accountStatus. Must be '0', '1', or '2'.";
-    }
+  if (!["0", "1", "2"].includes(accountStatus)) {
+    return "Invalid accountStatus. Must be '0', '1', or '2'.";
+  }
 
   return null; // No errors
 };
@@ -34,15 +34,15 @@ const validateEditUserRoleData = (studentID, roleID) => {
   return null; // No errors
 };
 
-export const validateNewUserRoleData = (roleID , roleName) => {
+export const validateNewUserRoleData = (roleID, roleName) => {
   if (!roleID || !roleName) {
     return "roleID or roleName body is missing";
   }
-  if (isNaN(roleID )) {
+  if (isNaN(roleID)) {
     return "roleID must be a valid number.";
   }
   // Validate roleName
-  if ( typeof roleName !== "string") {
+  if (!validateBasicString(roleName, 50)) {
     return "roleName must be a valid string.";
   }
   if (roleName.length > 50) {
@@ -52,5 +52,4 @@ export const validateNewUserRoleData = (roleID , roleName) => {
   return null; // No errors
 };
 
-
-export{validateEditUserStatusData, validateEditUserRoleData};
+export { validateEditUserStatusData, validateEditUserRoleData };

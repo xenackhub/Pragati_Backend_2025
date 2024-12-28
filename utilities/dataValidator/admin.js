@@ -1,3 +1,5 @@
+
+
 const validateEditUserStatusData = ( studentID, accountStatus) => {
     if ( !studentID || !accountStatus) {
         return "studentID or accountStatus body is missing.";
@@ -17,7 +19,7 @@ const validateEditUserStatusData = ( studentID, accountStatus) => {
 
 const validateEditUserRoleData = (studentID, studentRoleID) => {
   if (!studentID || !studentRoleID) {
-    return "studentID or studentRoleID body is missing..";
+    return "studentID or studentRoleID body is missing.";
   }
   if (isNaN(studentID)) {
     return "User ID must be a valid number.";
@@ -31,5 +33,24 @@ const validateEditUserRoleData = (studentID, studentRoleID) => {
 
   return null; // No errors
 };
+
+export const validateNewUserRoleData = (studentRoleID , roleName) => {
+  if (!studentRoleID || !roleName) {
+    return "studentRoleID or roleName body is missing";
+  }
+  if (isNaN(studentRoleID )) {
+    return "roleID must be a valid number.";
+  }
+  // Validate roleName
+  if ( typeof roleName !== "string") {
+    return "roleName must be a valid string.";
+  }
+  if (roleName.length > 50) {
+    return "roleName cannot exceed 50 characters.";
+  }
+
+  return null; // No errors
+};
+
 
 export{validateEditUserStatusData, validateEditUserRoleData};

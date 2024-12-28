@@ -5,6 +5,7 @@ import {
   setResponseInternalError,
 } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
+import { checkDuplicateClub } from "../utilities/dbUtilities/clubUtilities.js";
 
 const clubModule = {
   // Fetch all clubs
@@ -27,36 +28,6 @@ const clubModule = {
     }
   },
 
-  // Check if a duplicate club exists
-  checkDuplicateClub: async ({
-    clubName,
-    clubAbbrevation,
-    excludeClubID = null,
-  }) => {
-    const db = await pragatiDb.promise().getConnection();
-    try {
-      let query = `
-        SELECT * FROM clubData
-        WHERE (clubName = ? OR clubAbbrevation = ?)
-      `;
-      const params = [clubName, clubAbbrevation];
-
-      // Exclude the current club ID for edit operations
-      if (excludeClubID) {
-        query += " AND clubID != ?";
-        params.push(excludeClubID);
-      }
-
-      const [result] = await db.query(query, params);
-      return result.length > 0; // Return true if duplicate exists
-    } catch (error) {
-      logError(error, "clubModule:checkDuplicateClub", "db");
-      throw error;
-    } finally {
-      db.release();
-    }
-  },
-
   // Add a club
   addClub: async (clubData) => {
     const db = await pragatiDb.promise().getConnection();
@@ -65,9 +36,10 @@ const clubModule = {
       await db.query("LOCK TABLES clubData WRITE");
 
       // Check if a duplicate club exists
-      const duplicateExists = await clubModule.checkDuplicateClub({
+      const duplicateExists = await checkDuplicateClub({
         clubName: clubData.clubName,
         clubAbbrevation: clubData.clubAbbrevation,
+        db
       });
       if (duplicateExists) {
         return setResponseBadRequest(
@@ -113,9 +85,10 @@ const clubModule = {
       await db.query("LOCK TABLES clubData WRITE");
 
       // Check if a duplicate club exists
-      const duplicateExists = await clubModule.checkDuplicateClub({
+      const duplicateExists = await checkDuplicateClub({
         clubName: clubData.clubName,
         clubAbbrevation: clubData.clubAbbrevation,
+        db,
         excludeClubID: clubData.clubID,
       });
       if (duplicateExists) {

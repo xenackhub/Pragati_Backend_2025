@@ -1,7 +1,7 @@
 import { transactionsDb, pragatiDb } from '../db/poolConnection.js';
 import { setResponseOk, setResponseInternalError, setResponseBadRequest } from "../utilities/response.js";
 import { logError } from '../utilities/errorLogger.js';
-import { checkUserIDsExists  } from "../utilities/dbUtilities/adminUtilities.js";
+import { checkUserIDsExists, checkRoleIDAlreadyExists, checkRoleNameAlreadyExists } from "../utilities/dbUtilities/adminUtilities.js";
 
 const adminModule = {
   getAllTransactions: async () => {
@@ -122,6 +122,38 @@ const adminModule = {
       return setResponseOk("User role updated successfully.", { studentID, studentRoleID});
     } catch (err) {
       logError(err, "adminModule.updateUserRole", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
+  addNewUserRole: async (roleID, roleName) => {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      // Check if the roleID already exists in userRole
+      const doesRoleIDExist = await checkRoleIDAlreadyExists(roleID, db);
+      if (doesRoleIDExist) {
+        return setResponseBadRequest("A role with this roleID already exists.");
+      }
+      const doesRoleNameExist = await checkRoleNameAlreadyExists(roleName, db);
+
+      if (doesRoleNameExist) {
+        return setResponseBadRequest("A role with this roleName already exists.");
+      }
+
+      await db.query("LOCK TABLES userRole WRITE");
+
+      // Insert the new role
+      const insertQuery = `INSERT INTO userRole (roleID, roleName) VALUES (?, ?)`;
+      const [result] = await db.query(insertQuery, [roleID, roleName]);
+
+      if (result.affectedRows === 0) {
+        return setResponseBadRequest("Failed to add new user role.");
+      }
+      return setResponseOk("New user role added successfully.", {roleID,roleName,});
+    } catch (err) {
+      logError(err, "adminModule.addNewUserRole", "db");
       return setResponseInternalError();
     } finally {
       await db.query("UNLOCK TABLES");

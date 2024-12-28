@@ -32,8 +32,6 @@ const clubModule = {
   addClub: async (clubData) => {
     const db = await pragatiDb.promise().getConnection();
     try {
-      // Use WRITE lock to prevent other processes from modifying the table
-      await db.query("LOCK TABLES clubData WRITE");
 
       // Check if a duplicate club exists
       const duplicateExists = await checkDuplicateClub({
@@ -46,6 +44,9 @@ const clubModule = {
           "A club with the same name or abbreviation already exists."
         );
       }
+
+      // Use WRITE lock to prevent other processes from modifying the table
+      await db.query("LOCK TABLES clubData WRITE");
 
       const query = `
         INSERT INTO clubData (clubName, imageUrl, clubHead, clubAbbrevation, godName)
@@ -81,8 +82,6 @@ const clubModule = {
   editClub: async (clubData) => {
     const db = await pragatiDb.promise().getConnection();
     try {
-      // Use WRITE lock to prevent other processes from modifying the table
-      await db.query("LOCK TABLES clubData WRITE");
 
       // Check if a duplicate club exists
       const duplicateExists = await checkDuplicateClub({
@@ -96,6 +95,9 @@ const clubModule = {
           "A club with the same name or abbreviation already exists."
         );
       }
+
+      // Use WRITE lock to prevent other processes from modifying the table
+      await db.query("LOCK TABLES clubData WRITE");
 
       const query = `
         UPDATE clubData 

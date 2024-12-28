@@ -26,6 +26,7 @@ const checkDuplicateClub =  async function ({
   excludeClubID = null,
 }) {
   try {
+    await db.query("LOCK TABLES clubData READ");
     let query = `
       SELECT * FROM clubData
       WHERE (clubName = ? OR clubAbbrevation = ?)
@@ -44,6 +45,7 @@ const checkDuplicateClub =  async function ({
     logError(error, "clubModule:checkDuplicateClub", "db");
     throw error;
   } finally {
+    db.query("UNLOCK TABLES");
     db.release();
   }
 }

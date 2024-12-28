@@ -1,7 +1,7 @@
 import { transactionsDb, pragatiDb } from '../db/poolConnection.js';
 import { setResponseOk, setResponseInternalError, setResponseBadRequest } from "../utilities/response.js";
 import { logError } from '../utilities/errorLogger.js';
-import { checkUserIDsExists } from "../utilities/dbUtilities/adminUtilities.js";
+import { checkUserIDsExists  } from "../utilities/dbUtilities/adminUtilities.js";
 
 const adminModule = {
   getAllTransactions: async () => {
@@ -91,6 +91,37 @@ const adminModule = {
       });
     } catch (err) {
       logError(err, "userModule.editUserAccountStatus", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
+  updateUserRole: async (studentID, studentRoleID) => {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      // Check if userID exists
+      const userCheck = await checkUserIDsExists(studentID, db);
+      if (userCheck) {
+        return setResponseBadRequest(userCheck);
+      }
+      // Lock userData for WRITE
+      await db.query("LOCK TABLES userData WRITE");
+
+      // Update
+      const [result] = await db.query(
+        "UPDATE userData SET roleID = ? WHERE userID = ?",
+        [studentRoleID, studentID]
+      );
+      if (result.affectedRows !== 1) {
+        return setResponseBadRequest(
+          "Unable to change the role of the user. The user may not exist or the role is unchanged."
+        );
+      }
+
+      return setResponseOk("User role updated successfully.", { studentID, studentRoleID});
+    } catch (err) {
+      logError(err, "adminModule.updateUserRole", "db");
       return setResponseInternalError();
     } finally {
       await db.query("UNLOCK TABLES");

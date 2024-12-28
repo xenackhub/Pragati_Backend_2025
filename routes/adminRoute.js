@@ -10,4 +10,6 @@ adminRouter.get("/transactions", adminController.getAllTransactions);
 adminRouter.get("/roles", adminController.getAllRoles);
 adminRouter.get("/amountGenerated", adminController.getEventWiseAmountGenerated);
 adminRouter.put("/changeUserStatus", adminController.changeStatusOfUser);
+adminRouter.put("/changeUserRole", adminController.changeUserRole);
+
 export default adminRouter;

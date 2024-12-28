@@ -19,4 +19,33 @@ try {
 }
 };
 
-export {checkUserIDsExists};
+const checkRoleIDAlreadyExists = async (roleID, db) => {
+try {
+    await db.query("LOCK TABLES userRole READ");
+    const [existing] = await db.query("SELECT roleID FROM userRole WHERE roleID = ?", [roleID]);
+    await db.query("UNLOCK TABLES");
+
+    // If there is at least one row, that means roleID already exists
+    return existing.length > 0;
+} catch (err) {
+    logError(err, "checkRoleIDAlreadyExists", "db");
+    return null; // indicates an internal error
+}
+};
+
+const checkRoleNameAlreadyExists = async (roleName, db) => {
+    try {
+        await db.query("LOCK TABLES userRole READ");
+        const [existing] = await db.query("SELECT roleName FROM userRole WHERE roleName = ?", [roleName]);
+        await db.query("UNLOCK TABLES");
+    
+        // If there is at least one row, that means roleID already exists
+        return existing.length > 0;
+    } catch (err) {
+        logError(err, "checkRoleNameAlreadyExists", "db");
+        return null; // indicates an internal error
+    }
+    };
+    
+
+export {checkUserIDsExists,checkRoleIDAlreadyExists,checkRoleNameAlreadyExists};

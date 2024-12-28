@@ -11,5 +11,6 @@ adminRouter.get("/roles", adminController.getAllRoles);
 adminRouter.get("/amountGenerated", adminController.getEventWiseAmountGenerated);
 adminRouter.put("/changeUserStatus", adminController.changeStatusOfUser);
 adminRouter.put("/changeUserRole", adminController.changeUserRole);
+adminRouter.post("/addUserRole",adminController.addNewUserRole);
 
 export default adminRouter;

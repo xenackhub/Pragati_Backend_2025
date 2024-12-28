@@ -1,12 +1,17 @@
-import { setResponseInternalError, setResponseBadRequest} from "../utilities/response.js";
+import {
+  setResponseInternalError,
+  setResponseBadRequest,
+} from "../utilities/response.js";
 import adminModule from "../module/adminModule.js";
 import { logError } from "../utilities/errorLogger.js";
-import { validateEditUserStatusData,  validateEditUserRoleData,  validateNewUserRoleData}  from "../utilities/dataValidator/admin.js";
+import {
+  validateEditUserStatusData,
+  validateEditUserRoleData,
+  validateNewUserRoleData,
+} from "../utilities/dataValidator/admin.js";
 
 const adminController = {
-
-  getAllTransactions : async (req, res) => {
-  
+  getAllTransactions: async (req, res) => {
     try {
       const response = await adminModule.getAllTransactions();
       return res.status(response.responseCode).json(response.responseBody);
@@ -39,7 +44,7 @@ const adminController = {
     }
   },
   changeStatusOfUser: async (req, res) => {
-        /* 
+    /* 
         Edit accountStatus request body
         {
             "studentID": "integer"
@@ -48,14 +53,20 @@ const adminController = {
     */
     const { studentID, accountStatus } = req.body;
     // Ensure userID is a number, and accountStatus is one of '0', '1', or '2'
-    const validationError = validateEditUserStatusData( studentID, accountStatus);
-    if (validationError !=null) {
+    const validationError = validateEditUserStatusData(
+      studentID,
+      accountStatus
+    );
+    if (validationError != null) {
       const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
     }
 
     try {
-      const response = await adminModule. editUserAccountStatus(studentID, accountStatus);
+      const response = await adminModule.editUserAccountStatus(
+        studentID,
+        accountStatus
+      );
       return res.status(response.responseCode).json(response.responseBody);
     } catch (error) {
       logError(error, "adminController:changeStatusOfUser", "db");
@@ -64,24 +75,24 @@ const adminController = {
     }
   },
   changeUserRole: async (req, res) => {
-    const {studentID, studentRoleID } = req.body;
+    const { studentID, roleID } = req.body;
     /* 
         Edit userRole request body
         {
             "studentID": "integer"
-            "studentRoleID": "integer"
+            "roleID": "integer"
         }
     */
     // 1) Validate input
-    const validationError = validateEditUserRoleData(studentID, studentRoleID);
-    if (validationError !=null) {
+    const validationError = validateEditUserRoleData(studentID, roleID);
+    if (validationError != null) {
       const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
     }
 
     try {
       // 2) Call the module
-      const response = await adminModule.updateUserRole(studentID,studentRoleID);
+      const response = await adminModule.updateUserRole(studentID, roleID);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "adminController.updateUserRole", "db");
@@ -93,13 +104,13 @@ const adminController = {
     /* 
           Add userRole request body
         {
-            "studentRoleID": "integer"
+            "roleID": "integer"
             "roleName": "string"
         }
     */
-    // 1) Validate the request body
-    const {studentRoleID , roleName} = req.body;
-    const validationError = validateNewUserRoleData(studentRoleID , roleName);
+    // Validate the request body
+    const { roleID, roleName } = req.body;
+    const validationError = validateNewUserRoleData(roleID, roleName);
     if (validationError) {
       const response = setResponseBadRequest(validationError);
       return res.status(response.responseCode).json(response.responseBody);
@@ -107,8 +118,8 @@ const adminController = {
 
     //
     try {
-      // 2) Call the module
-      const response = await adminModule.addNewUserRole(studentRoleID , roleName);
+      // Call the module
+      const response = await adminModule.addNewUserRole(roleID, roleName);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (error) {
       logError(error, "adminController.addNewUserRole", "db");

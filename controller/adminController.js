@@ -1,7 +1,7 @@
 import { setResponseInternalError, setResponseBadRequest} from "../utilities/response.js";
 import adminModule from "../module/adminModule.js";
 import { logError } from "../utilities/errorLogger.js";
-import { validateEditUserStatusData,  validateEditUserRoleData} from "../utilities/dataValidator/admin.js";
+import { validateEditUserStatusData,  validateEditUserRoleData,  validateNewUserRoleData}  from "../utilities/dataValidator/admin.js";
 
 const adminController = {
 
@@ -66,7 +66,7 @@ const adminController = {
   changeUserRole: async (req, res) => {
     const {studentID, studentRoleID } = req.body;
     /* 
-        Edit accountStatus request body
+        Edit userRole request body
         {
             "studentID": "integer"
             "studentRoleID": "integer"
@@ -85,6 +85,33 @@ const adminController = {
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "adminController.updateUserRole", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
+  addNewUserRole: async (req, res) => {
+    /* 
+          Add userRole request body
+        {
+            "studentRoleID": "integer"
+            "roleName": "string"
+        }
+    */
+    // 1) Validate the request body
+    const {studentRoleID , roleName} = req.body;
+    const validationError = validateNewUserRoleData(studentRoleID , roleName);
+    if (validationError) {
+      const response = setResponseBadRequest(validationError);
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+
+    //
+    try {
+      // 2) Call the module
+      const response = await adminModule.addNewUserRole(studentRoleID , roleName);
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (error) {
+      logError(error, "adminController.addNewUserRole", "db");
       const response = setResponseInternalError();
       return res.status(response.responseCode).json(response.responseBody);
     }

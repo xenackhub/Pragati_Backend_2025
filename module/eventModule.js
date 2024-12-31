@@ -243,6 +243,27 @@ const eventModule = {
       db.release();
     }
   },
+  deleteEvent: async function (eventID) {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      await db.query("LOCK TABLES eventData WRITE");
+      // TODO: Should we remove all the entries in mapping tables or cascade will take care ?
+      const [deleted] = await db.query(
+        "DELETE  FROM eventData WHERE eventID = ?",
+        [eventID]
+      );
+      if (deleted.affectedRows == 0) {
+        return setResponseBadRequest("Event ID not found in database!");
+      }
+      return setResponseOk("Event deleted successfully :)");
+    } catch (err) {
+      logError(err, "eventModule:deleteEvent", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
 };
 
 export default eventModule;

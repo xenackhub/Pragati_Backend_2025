@@ -259,6 +259,20 @@ const eventModule = {
     const db = await pragatiDb.promise().getConnection();
     var transactionStarted = 0;
     try {
+      // Checking if new maxRegistrations is >= numRegistrations
+      await db.query("LOCK TABLES eventData READ");
+      const [rows] = await db.query(
+        `SELECT numRegistrations FROM eventData WHERE eventID = ?`,
+        [eventID]
+      );
+      if (rows.length === 0) {
+        return setResponseBadRequest("Event not found");
+      }
+      const numRegistrations = rows[0].numRegistrations;
+      if (maxRegistrations < numRegistrations) {
+        return setResponseBadRequest("Maximum registrations must be greater than or equal to registered students!")
+      }
+
       // Checking if organizer IDs are present in the database
       const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
       if (organizersExists !== null) {
@@ -298,6 +312,10 @@ const eventModule = {
       godName = ?, 
       minTeamSize = ?, 
       maxTeamSize = ?
+      eventStatus = CASE 
+        WHEN maxRegistrations = numRegistrations THEN 2 
+        ELSE 1 
+      END
       WHERE eventID = ?
     `;
       const values = [

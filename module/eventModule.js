@@ -35,7 +35,6 @@ const eventModule = {
       // Checking if organizer IDs are present in the database
       const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
       if (organizersExists !== null) {
-        await db.rollback();
         return setResponseBadRequest(organizersExists);
       }
 
@@ -43,7 +42,6 @@ const eventModule = {
       const clubsExists = await checkClubIDsExists([clubID], db);
       if (clubsExists !== null) {
         // console.log("Error Club not found");
-        await db.rollback();
         return setResponseBadRequest(clubsExists);
       }
 
@@ -51,7 +49,6 @@ const eventModule = {
       const tagExists = await checkTagIDsExists(tagIDs, db);
       if (tagExists !== null) {
         // console.log("Error tag IDs not found");
-        await db.rollback();
         return setResponseBadRequest(tagExists);
       }
 
@@ -78,7 +75,7 @@ const eventModule = {
         minTeamSize,
         maxTeamSize,
       ];
-      const [insertData] = await db.query(query, values);
+      const [insertData] = await db.query(query, values); // explicit lock and unlock is not necessary in transactions
       const eventID = insertData.insertId;
       if (eventID == null) {
         await db.rollback();
@@ -164,7 +161,6 @@ const eventModule = {
         clubData AS c READ`
       );
       let query = getEventQueryFormatter({ eventID: eventID });
-      console.log(query);
       const [event] = await db.query(query);
       if (event.length == 0) {
         return setResponseNotFound("No events found!");
@@ -222,7 +218,6 @@ const eventModule = {
         "SELECT eventID FROM registrationData WHERE userID = ?",
         [userID]
       );
-      console.log(eventIDs);
       if (eventIDs.length == 0) {
         return setResponseNotFound("No registered events found for user.");
       }
@@ -237,6 +232,134 @@ const eventModule = {
       return setResponseOk("Registered events fetched", events);
     } catch (err) {
       logError(err, "eventModule:getEventsRegisteredByUser", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
+  editEvent: async function (
+    eventID,
+    eventName,
+    imageUrl,
+    eventFee,
+    eventDescription,
+    eventDescSmall,
+    isGroup,
+    eventDate,
+    maxRegistrations,
+    isPerHeadFee,
+    godName,
+    organizerIDs,
+    tagIDs,
+    clubID,
+    minTeamSize,
+    maxTeamSize
+  ) {
+    const db = await pragatiDb.promise().getConnection();
+    var transactionStarted = 0;
+    try {
+      // Checking if organizer IDs are present in the database
+      const organizersExists = await checkOrganizerIDsExists(organizerIDs, db);
+      if (organizersExists !== null) {
+        return setResponseBadRequest(organizersExists);
+      }
+
+      // Checking if club IDs are present in the database
+      const clubsExists = await checkClubIDsExists([clubID], db);
+      if (clubsExists !== null) {
+        // console.log("Error Club not found");
+        return setResponseBadRequest(clubsExists);
+      }
+
+      // Checking if tag IDs are present in the database
+      const tagExists = await checkTagIDsExists(tagIDs, db);
+      if (tagExists !== null) {
+        // console.log("Error tag IDs not found");
+        return setResponseBadRequest(tagExists);
+      }
+
+      await db.beginTransaction();
+      // Denotes that server entered the Transaction -> Needs rollback incase of error.
+      transactionStarted = 1;
+      // Update the event data
+      const query = `
+      UPDATE eventData
+      SET 
+      eventName = ?, 
+      imageUrl = ?, 
+      eventFee = ?, 
+      eventDescription = ?, 
+      eventDescSmall = ?, 
+      isGroup = ?, 
+      eventDate = ?, 
+      maxRegistrations = ?, 
+      isPerHeadFee = ?, 
+      godName = ?, 
+      minTeamSize = ?, 
+      maxTeamSize = ?
+      WHERE eventID = ?
+    `;
+      const values = [
+        eventName,
+        imageUrl,
+        eventFee,
+        eventDescription,
+        eventDescSmall,
+        isGroup,
+        eventDate,
+        maxRegistrations,
+        isPerHeadFee,
+        godName,
+        minTeamSize,
+        maxTeamSize,
+        eventID,
+      ];
+      const [updateResult] = await db.query(query, values); // explicit lock and unlock is not necessary in transactions
+
+      if (updateResult.affectedRows === 0) {
+        await db.rollback();
+        return setResponseBadRequest("Event not found or update failed");
+      }
+
+      // Clear existing mappings
+      await db.query(`DELETE FROM organizerEventMapping WHERE eventID = ?`, [
+        eventID,
+      ]);
+      await db.query(`DELETE FROM tagEventMapping WHERE eventID = ?`, [
+        eventID,
+      ]);
+      await db.query(`DELETE FROM clubEventMapping WHERE eventID = ?`, [
+        eventID,
+      ]);
+
+      // Re-inserting updated mappings
+      const organizerValues = organizerIDs.map((organizerID) => [
+        organizerID,
+        eventID,
+      ]);
+      await db.query(
+        `INSERT INTO organizerEventMapping (organizerID, eventID) VALUES ?`,
+        [organizerValues]
+      );
+
+      const tagEventMapping = tagIDs.map((tagID) => [tagID, eventID]);
+      await db.query(`INSERT INTO tagEventMapping (tagID, eventID) VALUES ?`, [
+        tagEventMapping,
+      ]);
+
+      await db.query(
+        `INSERT INTO clubEventMapping (clubID, eventID) VALUES (?, ?)`,
+        [clubID, eventID]
+      );
+
+      await db.commit();
+      return setResponseOk("Event updated successfully");
+    } catch (err) {
+      if (transactionStarted === 1) {
+        await db.rollback();
+      }
+      logError(err, "eventModule:editEvent", "db");
       return setResponseInternalError();
     } finally {
       await db.query("UNLOCK TABLES");

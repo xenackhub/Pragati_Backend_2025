@@ -366,6 +366,29 @@ const eventModule = {
       db.release();
     }
   },
+  toggleStatus: async function (eventID) {
+    const db = await pragatiDb.promise().getConnection();
+    try {
+      await db.query("LOCK TABLES eventData WRITE");
+      const query = `UPDATE eventData
+      SET eventStatus = CASE
+          WHEN eventStatus = 1 THEN 0
+          WHEN eventStatus = 0 THEN 1
+          ELSE eventStatus
+      END
+      WHERE eventID = ?;`;
+      const [updated] = await db.query(query, [eventID]);
+      if (updated.affectedRows == 0)
+        return setResponseBadRequest("Event not found!!");
+      return setResponseOk("Event status updated successfully!");
+    } catch (err) {
+      logError(err, "eventModule:toggleStatus", "db");
+      return setResponseInternalError();
+    } finally {
+      await db.query("UNLOCK TABLES");
+      db.release();
+    }
+  },
 };
 
 export default eventModule;

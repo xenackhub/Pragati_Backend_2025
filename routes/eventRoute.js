@@ -11,6 +11,7 @@ eventRouter.get("/:eventID(\\d+)", eventController.getEventDetailsByID);
 eventRouter.get("/club/:clubID(\\d+)", eventController.getEventForClub);
 eventRouter.get("/user/:userID(\\d+)", eventController.getEventsRegisteredByUser);
 
-eventRouter.put("/", tokenValidator("JWT"),authorizeRoles([1]), eventController.editEvent);
+eventRouter.put("/", tokenValidator("JWT"), authorizeRoles([1]), eventController.editEvent);
+eventRouter.put("/toggleStatus", tokenValidator("JWT"), authorizeRoles([1]), eventController.toggleStatus);
 
 export default eventRouter;

@@ -231,6 +231,28 @@ const eventController = {
       return res.status(response.responseCode).json(response.responseBody);
     }
   },
+  toggleStatus: async (req, res) => {
+    const { eventID } = req.body;
+    // validating eventID
+    if (
+      !eventID ||
+      eventID == null ||
+      !validator.isNumeric(eventID.toString())
+    ) {
+      const response = setResponseBadRequest(
+        "eventID should be a valid number"
+      );
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+    try {
+      const response = await eventModule.toggleStatus(eventID);
+      return res.status(response.responseCode).json(response.responseBody);
+    } catch (err) {
+      logError(err, "eventController:toggleStatus", "db");
+      const response = setResponseInternalError();
+      return res.status(response.responseCode).json(response.responseBody);
+    }
+  },
 };
 
 export default eventController;

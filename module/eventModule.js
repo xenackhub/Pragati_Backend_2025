@@ -125,7 +125,7 @@ const eventModule = {
       db.release();
     }
   },
-  getAllEvents: async function () {
+  getAllEvents: async function (isLogged, userID) {
     const db = await pragatiDb.promise().getConnection();
     try {
       await db.query(
@@ -135,9 +135,11 @@ const eventModule = {
         tagEventMapping AS tem READ, 
         tagData AS t READ, 
         clubEventMapping AS cem READ,  
-        clubData AS c READ`
+        clubData AS c READ,
+        registrationData AS rg READ`
       );
-      const query = getEventQueryFormatter();
+      const query = getEventQueryFormatter(isLogged, userID);
+      console.log(query)
       const [events] = await db.query(query);
       if (events.length == 0) {
         return setResponseNotFound("No events found!");

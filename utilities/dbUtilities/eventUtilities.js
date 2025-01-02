@@ -10,7 +10,7 @@ NOTE: the key should match the column to search in database.
 // IMPORTANT: This function embeds the query with variable values too. So it will not be necessary to do,
 //            db.query(thisQuery, [someValue,...]); The array is not necessary
 
-const getEventQueryFormatter = function (data = {}) {
+const getEventQueryFormatter = function (isLogged = 0, userID = -1, data = {}) {
   // variable to avoid adding AND keyword in query for the first contition
   let firstCondition = true;
   let query = `SELECT
@@ -58,14 +58,22 @@ const getEventQueryFormatter = function (data = {}) {
     c.imageUrl AS clubImageUrl,
     c.clubHead,
     c.clubAbbrevation,
-    c.godName
-
-FROM
-    eventData e
-LEFT JOIN
-    clubEventMapping cem ON e.eventID = cem.eventID
-LEFT JOIN
-    clubData c ON cem.clubID = c.clubID
+    c.godName,
+    CASE 
+      WHEN ${isLogged} = 1 AND 
+      rg.userID = ${userID} AND 
+      rg.registrationStatus = '2'
+      THEN '1' 
+      ELSE '0'
+    END AS isRegistered
+    FROM
+      eventData e
+    LEFT JOIN
+      clubEventMapping cem ON e.eventID = cem.eventID
+    LEFT JOIN
+      clubData c ON cem.clubID = c.clubID
+    LEFT JOIN 
+      registrationData rg ON rg.eventID = e.eventID
 `;
   const groupByPart = ` GROUP BY
     e.eventID, e.eventName, e.eventDate, e.eventDescription, e.eventFee, e.imageUrl,

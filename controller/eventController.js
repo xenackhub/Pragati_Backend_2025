@@ -85,8 +85,12 @@ const eventController = {
     }
   },
   getAllEvents: async (req, res) => {
+    let userID = -1;
+    if(req.body.userID) {
+      userID = req.body.userID;
+    }
     try {
-      const response = await eventModule.getAllEvents();
+      const response = await eventModule.getAllEvents(req.body.isLogged, userID);
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "eventController:getAllEvents", "db");

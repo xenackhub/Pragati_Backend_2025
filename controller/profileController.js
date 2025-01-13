@@ -1,32 +1,29 @@
-import {setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
+import { setResponseBadRequest, setResponseInternalError } from "../utilities/response.js";
 import profileModule from "../module/profileModule.js";
 import { logError } from "../utilities/errorLogger.js";
-import {validateUserID,validateProfileData} from "../utilities/dataValidator/profile.js";
+import { validateUserID, validateProfileData } from "../utilities/dataValidator/profile.js";
 
 const profileController = {
-    /* get user profile
-    @param {Object} req
-    */
-   getUserProfile:async (req, res) => {
+    getUserProfile: async (req, res) => {
         const userID = parseInt(req.params.userID);
 
-        //validate user data
+        // Validate user data.
         const validationError = validateUserID(userID);
         if (validationError) {
             const response = setResponseBadRequest(validationError);
             return res.status(response.responseCode).json(response.responseBody);
         }
-        try{
 
+        try {
             const response = await profileModule.getUserProfile(userID);
             return res.status(response.responseCode).json(response.responseBody);
-        }catch(err){
-            logError(err, "profileController:getUserProfile","db");
+        } catch (err) {
+            logError(err, "profileController:getUserProfile", "db");
             const response = setResponseInternalError();
             return res.status(response.responseCode).json(response.responseBody);
         }
-    } ,
-   
+    },
+
     /*editprofile
     {
         userID,
@@ -48,28 +45,28 @@ const profileController = {
         updatedAt
     }
     */
-    editProfile:async (req, res) => {
+    editProfile: async (req, res) => {
         const userID = parseInt(req.body.userID);
         const userData = req.body;
         //validate user data
         const validationErrorID = validateUserID(userID);
-        const validationErrordata=validateProfileData(userData);
-        if (validationErrorID||validationErrordata){
-            const response = setResponseBadRequest(validationErrorID||validationErrordata);
+        const validationErrordata = validateProfileData(userData);
+        if (validationErrorID || validationErrordata) {
+            const response = setResponseBadRequest(validationErrorID || validationErrordata);
             return res.status(response.responseCode).json(response.responseBody);
         }
 
-        
-        try{
+
+        try {
             delete userData.userID;
             const response = await profileModule.editProfile(userID, userData);
             return res.status(response.responseCode).json(response.responseBody);
-        }catch(err){
-            logError(err, "profileController:editProfile","db");
+        } catch (err) {
+            logError(err, "profileController:editProfile", "db");
             const response = setResponseInternalError();
             return res.status(response.responseCode).json(response.responseBody);
         }
-    } 
+    }
 };
 
 export default profileController;

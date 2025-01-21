@@ -7,6 +7,21 @@ import express, { json } from "express";
 import cors from "cors";
 import helmet from "helmet";
 
+// Importing swagger UI for API documentation and setting things up
+import { serve, setup } from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Pragati 2025 API Documentation",
+      version: "1.0.0",
+      description: "Comprehensive API docs of Pragati 2025",
+    },
+  },
+  apis: ["./routes/*.js"], // Path to your API docs or comments in route files
+};
+
 // Multi-Processing.
 import cluster from "cluster";
 
@@ -17,7 +32,7 @@ import { existsSync } from "fs";
 import { generateKey } from "./utilities/RSA/generateKey.js";
 
 // Imports for database initialization
-import initDatabase from "./db/schema/initDatabase.js"
+import initDatabase from "./db/schema/initDatabase.js";
 
 // import function to create log directories.
 import { initLog } from "./utilities/logInit.js";
@@ -31,19 +46,22 @@ app.use(helmet());
 app.use(json());
 
 // test endpoint for checking the availability of server
-app.get('/api/test',(req, res)=>{
-  return res.status(200).json({MESSAGE:"Server is running ◪_◪"})
-})
+app.get("/api/test", (req, res) => {
+  return res.status(200).json({ MESSAGE: "Server is running ◪_◪" });
+});
 
 // using routes extending the '/api' path
-app.use('/api',router);
+app.use("/api", router);
+
+// endpoint for accessing API docs
+app.use("/docs", serve, setup(swaggerJSDoc(swaggerOptions)));
 
 if (cluster.isPrimary) {
   console.info(`[LOG]: Parent ${process.pid} is Running.`);
 
   // Validate the environment variables.
-  if(!validateEnv()){
-    console.error("[ERROR]: env varaiables validator failed!!")
+  if (!validateEnv()) {
+    console.error("[ERROR]: env varaiables validator failed!!");
     process.exit(1);
   }
 
@@ -60,7 +78,10 @@ if (cluster.isPrimary) {
     process.exit(1);
   }
 
-  if (!existsSync("./middleware/encryptionKeys/privateKey.pem") || !existsSync("./middleware/encryptionKeys/publicKey.pem")) {
+  if (
+    !existsSync("./middleware/encryptionKeys/privateKey.pem") ||
+    !existsSync("./middleware/encryptionKeys/publicKey.pem")
+  ) {
     await generateKey();
   }
 
@@ -71,11 +92,14 @@ if (cluster.isPrimary) {
   }
 
   // If a worker dies, fork a new one.
-  cluster.on('exit', (worker, code, signal) => {
-    console.info('Worker with PID: %d Died (%s). Restarting...', worker.process.pid, signal || code);
+  cluster.on("exit", (worker, code, signal) => {
+    console.info(
+      "Worker with PID: %d Died (%s). Restarting...",
+      worker.process.pid,
+      signal || code
+    );
     cluster.fork();
   });
-
 } else {
   app.listen(appConfig.PORT, (err) => {
     if (err) {

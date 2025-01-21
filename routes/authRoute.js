@@ -5,6 +5,30 @@ import authorizeRoles from "../middleware/auth/authRoleValidator.js";
 
 const authRouter = Router();
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login with user credentials
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userEmail:
+ *                 type: string
+ *               userPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Invalid credentials
+ */
 authRouter.post("/login", authController.login);
 authRouter.post("/forgotPassword", authController.forgotPassword);
 

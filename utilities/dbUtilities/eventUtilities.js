@@ -10,7 +10,11 @@ NOTE: the key should match the column to search in database.
 // IMPORTANT: This function embeds the query with variable values too. So it will not be necessary to do,
 //            db.query(thisQuery, [someValue,...]); The array is not necessary
 
-const getEventQueryFormatter = function (isLogged = 0, userID = -1, data = {}) {
+const getEventQueryFormatter = function (
+  isLoggedIn = 0,
+  userID = -1,
+  data = {}
+) {
   // variable to avoid adding AND keyword in query for the first contition
   let firstCondition = true;
   let query = `SELECT
@@ -60,7 +64,7 @@ const getEventQueryFormatter = function (isLogged = 0, userID = -1, data = {}) {
     c.clubAbbrevation,
     c.godName,
     CASE 
-      WHEN ${isLogged} = 1 AND 
+      WHEN ${isLoggedIn} = 1 AND 
       rg.userID = ${userID} AND 
       rg.registrationStatus = '2'
       THEN '1' 

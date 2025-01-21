@@ -16,4 +16,9 @@ const validateBasicString = (string, len = 255) => {
   );
 };
 
-export { validatePhoneNumber, validateBasicString };
+// Id will be passed as a string when passed via query params
+const isValidID = (ID) => {
+  return Number.isInteger(parseInt(ID)) && ID > 0;
+};
+
+export { validatePhoneNumber, validateBasicString, isValidID };

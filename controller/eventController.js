@@ -4,6 +4,7 @@ import { validateAddEventData } from "../utilities/dataValidator/event.js";
 import { setResponseBadRequest } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
 import { setResponseInternalError } from "../utilities/response.js";
+import { isValidID } from "../utilities/dataValidator/common.js";
 
 const eventController = {
   /*
@@ -85,12 +86,11 @@ const eventController = {
     }
   },
   getAllEvents: async (req, res) => {
-    let userID = -1;
-    if(req.body.userID) {
-      userID = req.body.userID;
-    }
     try {
-      const response = await eventModule.getAllEvents(req.body.isLogged, userID);
+      const response = await eventModule.getAllEvents(
+        req.body.isLoggedIn,
+        req.body.userID
+      );
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "eventController:getAllEvents", "db");
@@ -100,12 +100,16 @@ const eventController = {
   },
   getEventDetailsByID: async (req, res) => {
     const { eventID } = req.params;
-    if (!validator.isNumeric(eventID)) {
+    if (!isValidID(eventID)) {
       const response = setResponseBadRequest("valid event ID not found");
       return res.status(response.responseCode).json(response.responseBody);
     }
     try {
-      const response = await eventModule.getEventDetailsByID(eventID);
+      const response = await eventModule.getEventDetailsByID(
+        eventID,
+        req.body.isLoggedIn,
+        req.body.userID
+      );
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "eventController:getEventDetailsByID", "db");
@@ -115,12 +119,16 @@ const eventController = {
   },
   getEventForClub: async (req, res) => {
     const { clubID } = req.params;
-    if (!validator.isNumeric(clubID)) {
+    if (!isValidID(clubID)) {
       const response = setResponseBadRequest("valid club ID not found");
       return res.status(response.responseCode).json(response.responseBody);
     }
     try {
-      const response = await eventModule.getEventForClub(clubID);
+      const response = await eventModule.getEventForClub(
+        clubID,
+        req.body.isLoggedIn,
+        req.body.userID
+      );
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "eventController:getEventForClub", "db");
@@ -129,14 +137,18 @@ const eventController = {
     }
   },
   getEventsRegisteredByUser: async (req, res) => {
-    const {userID} = req.params;
-    // typeof userID is string, therefore can be checked using validator.
-    if(!validator.isNumeric(userID)) {
+    const { id } = req.params;
+    // typeof id should be string(usually query params are strings).
+    if (!isValidID(id)) {
       const response = setResponseBadRequest("valid user ID not found");
       return res.status(response.responseCode).json(response.responseBody);
     }
     try {
-      const response = await eventModule.getEventsRegisteredByUser(userID);
+      const response = await eventModule.getEventsRegisteredByUser(
+        id,
+        req.body.isLoggedIn,
+        req.body.userID
+      );
       return res.status(response.responseCode).json(response.responseBody);
     } catch (err) {
       logError(err, "eventController:getEventsRegisteredByUser", "db");

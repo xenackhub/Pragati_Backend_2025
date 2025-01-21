@@ -6,7 +6,7 @@ export default function (req, res, next) {
   const tokenHeader = req.headers.authorization;
   const webToken = tokenHeader && tokenHeader.split(" ")[1];
   if (tokenHeader == null || webToken == null) {
-    req.body.isLogged = 0;
+    req.body.isLoggedIn = 0;
     next();
     return;
   }
@@ -19,16 +19,17 @@ export default function (req, res, next) {
       algorithms: ["RS256"],
     });
     if (payloadData["SECRET_TOKEN"] == appConfig.tokenSecretKey) {
-      req.body.isLogged = 1;
+      req.body.isLoggedIn = 1;
       req.body.userEmail = payloadData["userEmail"];
       req.body.userID = payloadData["userID"];
     } else {
-      req.body.isLogged = 0;
+      req.body.isLoggedIn = 0;
+      req.body.userID = -1; // it is set as -1 here to avoid unecessary validations in modules or controllers
     }
     next();
     return;
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(401).send({ MESSAGE: "Unauthorized Access" });
   }
 }

@@ -65,7 +65,7 @@ const getEventQueryFormatter = function (
     c.godName,
     CASE 
       WHEN ${isLoggedIn} = 1 AND 
-      rg.userID = ${userID} AND 
+      g.userID = ${userID} AND 
       rg.registrationStatus = '2'
       THEN '1' 
       ELSE '0'
@@ -78,7 +78,8 @@ const getEventQueryFormatter = function (
       clubData c ON cem.clubID = c.clubID
     LEFT JOIN 
       registrationData rg ON rg.eventID = e.eventID
-`;
+    LEFT JOIN 
+      groupDetail g ON g.registrationID = rg.registrationID`;
   const groupByPart = ` GROUP BY
     e.eventID, e.eventName, e.eventDate, e.eventDescription, e.eventFee, e.imageUrl,
     c.clubID, c.clubName, c.imageUrl, c.clubHead, c.clubAbbrevation, c.godName`;

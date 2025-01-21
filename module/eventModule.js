@@ -136,7 +136,8 @@ const eventModule = {
         tagData AS t READ, 
         clubEventMapping AS cem READ,  
         clubData AS c READ,
-        registrationData AS rg READ`
+        registrationData AS rg READ,
+        groupDetail AS g READ`
       );
       const query = getEventQueryFormatter(isLoggedIn, userID);
       // console.log(query);
@@ -164,7 +165,8 @@ const eventModule = {
         tagData AS t READ, 
         clubEventMapping AS cem READ,  
         clubData AS c READ,
-        registrationData AS rg READ`
+        registrationData AS rg READ,
+        groupDetail AS g READ`
       );
       let query = getEventQueryFormatter(isLoggedIn, userID, { eventID: eventID });
       // console.log(query);
@@ -192,7 +194,8 @@ const eventModule = {
         tagData AS t READ, 
         clubEventMapping AS cem READ,  
         clubData AS c READ,
-        registrationData AS rg READ`
+        registrationData AS rg READ,
+        groupDetail AS g READ`
       );
       const query = getEventQueryFormatter(isLoggedIn, userID,{ clubID: clubID });
       const [events] = await db.query(query);
@@ -221,10 +224,11 @@ const eventModule = {
         clubEventMapping AS cem READ,  
         clubData AS c READ,
         registrationData AS rg READ,
-        registrationData READ`
+        registrationData READ,
+        groupDetail AS g READ`
       );
       const [eventIDs] = await db.query(
-        "SELECT eventID FROM registrationData WHERE userID = ?",
+        "SELECT rg.eventID FROM registrationData rg JOIN groupDetail g ON rg.registrationID = g.registrationID WHERE g.userID = ?",
         [id]
       );
       // console.log(eventIDs);

@@ -18,4 +18,33 @@ const checkOrganizerIDsExists = async function (organizerIDs, db) {
     }
 };
 
-export { checkOrganizerIDsExists };
+const findOrganizerByNameOrPhone = async (
+    organizerName,
+    phoneNumber,
+    excludeId = null,
+    db,
+) => {
+    try {
+        let query =
+            "SELECT * FROM organizerData WHERE (organizerName = ? OR phoneNumber = ?)";
+        const params = [organizerName, phoneNumber];
+
+        // If excludeId is provided, add it to the query
+        if (excludeId) {
+            query += " AND organizerID != ?";
+            params.push(excludeId);
+        }
+
+        await db.query("LOCK TABLES organizerData READ");
+        const [rows] = await db.query(query, params);
+
+        return rows.length > 0 ? rows[0] : null;
+    } catch (err) {
+        logError(err, "organizerUtilities.findOrganizerByNameOrPhone", "db");
+        return null;
+    } finally {
+        await db.query("UNLOCK TABLES");
+    }
+};
+
+export { checkOrganizerIDsExists, findOrganizerByNameOrPhone };

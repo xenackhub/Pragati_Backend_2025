@@ -79,5 +79,3 @@ MAILER_PASS=<MAILER_PASSWORD>
     ```bash
     npm start
     ```
-
----

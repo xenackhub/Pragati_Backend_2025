@@ -70,15 +70,14 @@ MAILER_PASS=<MAILER_PASSWORD>
 
 - **For development** (with live reload):
 
-  ```bash
-  npm run dev
-  ```
+    ```bash
+    npm run dev
+    ```
 
 - **For development** (without live reload):
 
-  ```bash
-  npm start
-  ```
+    ```bash
+    npm start
+    ```
 
 ---
-

@@ -7,9 +7,20 @@ const eventRouter = Router();
 
 eventRouter.post("/", tokenValidator("JWT"), eventController.addEvent);
 eventRouter.get("/all", loginSetter, eventController.getAllEvents);
-eventRouter.get("/:eventID(\\d+)", loginSetter, eventController.getEventDetailsByID);
-eventRouter.get("/club/:clubID(\\d+)", loginSetter, eventController.getEventForClub);
-eventRouter.get("/user/:id(\\d+)", loginSetter, eventController.getEventsRegisteredByUser);
-
+eventRouter.get(
+    "/:eventID(\\d+)",
+    loginSetter,
+    eventController.getEventDetailsByID,
+);
+eventRouter.get(
+    "/club/:clubID(\\d+)",
+    loginSetter,
+    eventController.getEventForClub,
+);
+eventRouter.get(
+    "/user/:id(\\d+)",
+    loginSetter,
+    eventController.getEventsRegisteredByUser,
+);
 
 export default eventRouter;

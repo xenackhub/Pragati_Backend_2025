@@ -271,11 +271,8 @@ const eventController = {
   },
   toggleStatus: async (req, res) => {
     const { eventID } = req.body;
-    // validating eventID
     if (
-      !eventID ||
-      eventID == null ||
-      !validator.isNumeric(eventID.toString())
+      !isValidID(eventID.toString())
     ) {
       const response = setResponseBadRequest(
         "eventID should be a valid number"

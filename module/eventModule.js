@@ -340,7 +340,7 @@ const eventModule = {
         isPerHeadFee = ?, 
         godName = ?, 
         minTeamSize = ?, 
-        maxTeamSize = ?
+        maxTeamSize = ?,
         eventStatus = CASE 
           WHEN maxRegistrations = numRegistrations THEN 2 
           ELSE 1 

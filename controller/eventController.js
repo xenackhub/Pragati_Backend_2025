@@ -221,18 +221,13 @@ const eventController = {
       tagIDs,
       clubID,
     } = req.body;
-    // validating eventID
-    if (
-      !eventID ||
-      eventID == null ||
-      !validator.isNumeric(eventID.toString())
-    ) {
+    if (!isValidID(eventID.toString())) {
       const response = setResponseBadRequest(
         "eventID should be a valid number"
       );
       return res.status(response.responseCode).json(response.responseBody);
     }
-    //validating the req.body
+
     const errors = validateAddEventData(req.body);
     if (errors != null) {
       const response = setResponseBadRequest(errors);
@@ -248,7 +243,7 @@ const eventController = {
       minTeamSize = req.body.minTeamSize || 1;
     }
     try {
-      // not passing sending req.body.userID as it will be checked during login itself
+      // not passing sending req.body.userID as it will be checked during login itself (Updated: Ehh?)
       const response = await eventModule.editEvent(
         eventID,
         eventName,

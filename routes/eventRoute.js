@@ -6,7 +6,12 @@ import authorizeRoles from "../middleware/auth/authRoleValidator.js";
 
 const eventRouter = Router();
 
-eventRouter.post("/", tokenValidator("JWT"), authorizeRoles([1]), eventController.addEvent);
+eventRouter.post(
+    "/",
+    tokenValidator("JWT"),
+    authorizeRoles([1]),
+    eventController.addEvent,
+);
 eventRouter.get("/all", loginSetter, eventController.getAllEvents);
 eventRouter.get(
     "/:eventID(\\d+)",
@@ -23,7 +28,17 @@ eventRouter.get(
     loginSetter,
     eventController.getEventsRegisteredByUser,
 );
-eventRouter.put("/", tokenValidator("JWT"), authorizeRoles([1]), eventController.editEvent);
-eventRouter.put("/toggleStatus", tokenValidator("JWT"), authorizeRoles([1]), eventController.toggleStatus);
+eventRouter.put(
+    "/",
+    tokenValidator("JWT"),
+    authorizeRoles([1]),
+    eventController.editEvent,
+);
+eventRouter.put(
+    "/toggleStatus",
+    tokenValidator("JWT"),
+    authorizeRoles([1]),
+    eventController.toggleStatus,
+);
 
 export default eventRouter;

@@ -73,7 +73,6 @@ eventRouter.post(
     eventController.addEvent,
 );
 
-
 /**
  * @swagger
  * /api/event/all:
@@ -90,7 +89,6 @@ eventRouter.post(
  *         description: A problem from our side :(
  */
 eventRouter.get("/all", loginSetter, eventController.getAllEvents);
-
 
 /**
  * @swagger
@@ -124,7 +122,6 @@ eventRouter.get(
     eventController.getEventDetailsByID,
 );
 
-
 /**
  * @swagger
  * /api/event/club/{clubID}:
@@ -157,7 +154,6 @@ eventRouter.get(
     eventController.getEventForClub,
 );
 
-
 /**
  * @swagger
  * /api/event/user/{id}:
@@ -189,7 +185,6 @@ eventRouter.get(
     loginSetter,
     eventController.getEventsRegisteredByUser,
 );
-
 
 /**
  * @swagger
@@ -278,7 +273,6 @@ eventRouter.put(
     authorizeRoles([1]),
     eventController.editEvent,
 );
-
 
 /**
  * @swagger

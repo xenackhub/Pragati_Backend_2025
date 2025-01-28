@@ -7,6 +7,21 @@ import express, { json } from "express";
 import cors from "cors";
 import helmet from "helmet";
 
+// Importing swagger UI for API documentation and setting things up
+import { serve, setup } from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Pragati 2025 API Documentation",
+            version: "1.0.0",
+            description: "Comprehensive API docs of Pragati 2025",
+        },
+    },
+    apis: ["./routes/*.js"], // Path to your API docs or comments in route files
+};
+
 // Multi-Processing.
 import cluster from "cluster";
 
@@ -37,6 +52,9 @@ app.get("/api/test", (req, res) => {
 
 // using routes extending the '/api' path
 app.use("/api", router);
+
+// endpoint for accessing API docs
+app.use("/docs", serve, setup(swaggerJSDoc(swaggerOptions)));
 
 if (cluster.isPrimary) {
     console.info(`[LOG]: Parent ${process.pid} is Running.`);

@@ -347,7 +347,7 @@ const eventModule = {
         minTeamSize = ?, 
         maxTeamSize = ?,
         eventStatus = CASE 
-          WHEN maxRegistrations = numRegistrations THEN 2 
+          WHEN maxRegistrations <= numRegistrations THEN 2 
           ELSE 1 
         END
         WHERE eventID = ?

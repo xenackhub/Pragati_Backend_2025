@@ -24,7 +24,7 @@ const authController = {
         "userEmail": "string",
         "userPassword": "string"
     }
-  */
+    */
     login: async (req, res) => {
         const { userEmail, userPassword } = req.body;
         if (!validateEmail(userEmail)) {

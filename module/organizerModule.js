@@ -114,6 +114,22 @@ const organizerModule = {
             db.release();
         }
     },
+
+    allOrganizers: async () => {
+        const db = await pragatiDb.promise().getConnection();
+        try {
+            await db.query("LOCK TABLES organizerData READ");
+            const query = `SELECT * FROM organizerData;`;
+            const [result] = await db.query(query);
+            return setResponseOk(result);
+        } catch (error) {
+            logError(error, "organizerModule:allOrganizers", "db");
+            return setResponseInternalError();
+        } finally {
+            await db.query("UNLOCK TABLES");
+            db.release();
+        }
+    },
 };
 
 export default organizerModule;

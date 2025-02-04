@@ -113,6 +113,21 @@ const organizerController = {
                 .json(response.responseBody);
         }
     },
+
+    allOrganizers: async (_, res) => {
+        try {
+            const response = await organizerModule.allOrganizers();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        } catch (error) {
+            logError(error, "organizerController:allOrganizers", "db");
+            const response = setResponseInternalError();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
 };
 
 export default organizerController;

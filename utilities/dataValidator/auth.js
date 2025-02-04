@@ -19,7 +19,7 @@ const validatePassword = (password) => {
     if (
         typeof password === "string" &&
         password != null &&
-        password.length > 8 &&
+        password.length >= 8 &&
         password.length <= 255 &&
         !validator.contains(password, "-" || "'")
     ) {

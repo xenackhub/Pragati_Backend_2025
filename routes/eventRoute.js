@@ -11,6 +11,7 @@ const eventRouter = Router();
  * /api/event:
  *   post:
  *     summary: Add new event via this route.
+ *     description: Requires admin privileges to delete an event.
  *     tags:
  *       - Events
  *     security:
@@ -191,6 +192,7 @@ eventRouter.get(
  * /api/event/:
  *   put:
  *     summary: Edit details of an existing event.
+ *     description: Requires admin privileges to delete an event.
  *     tags:
  *       - Events
  *     security:
@@ -279,6 +281,7 @@ eventRouter.put(
  * /api/event/toggleStatus:
  *   put:
  *     summary: Toggle the status of a specific event (Open/Close [0/1]).
+ *     description: Requires admin privileges to delete an event.
  *     tags:
  *       - Events
  *     security:
@@ -310,7 +313,41 @@ eventRouter.put(
     eventController.toggleStatus,
 );
 
-
-eventRouter.delete("/", tokenValidator("JWT"), authorizeRoles([1]), eventController.deleteEvent);
+/**
+ * @swagger
+ * /api/event/:
+ *   delete:
+ *     summary: Delete an event.
+ *     description: Requires admin privileges to delete an event.
+ *     tags:
+ *       - Events
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               eventID:
+ *                 type: string
+ *                 description: ID of the event to be deleted
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully.
+ *       400:
+ *         description: Invalid event ID.
+ *       403:
+ *         description: Unauthorized. Admin access required.
+ *       500:
+ *         description: Internal server error.
+ */
+eventRouter.delete(
+    "/",
+    tokenValidator("JWT"),
+    authorizeRoles([1]),
+    eventController.deleteEvent,
+);
 
 export default eventRouter;

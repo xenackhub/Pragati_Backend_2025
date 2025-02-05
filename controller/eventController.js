@@ -300,27 +300,33 @@ const eventController = {
                 .json(response.responseBody);
         }
     },
-  /*
+    /*
   Request Header: Bearer Token
     {
       "eventID": "number", => as string
     }
   */
-  deleteEvent: async (req, res)=>{
-    const {eventID} = req.body;
-    if(!validator.isNumeric(eventID)) {
-      const response = setResponseBadRequest("valid event ID not found");
-      return res.status(response.responseCode).json(response.responseBody);
-    }
-    try{
-      const response = await eventModule.deleteEvent(eventID);
-      return res.status(response.responseCode).json(response.responseBody);
-    } catch (err) {
-      logError(err, "eventController:deleteEvent", "db");
-      const response = setResponseInternalError();
-      return res.status(response.responseCode).json(response.responseBody);
-    }
-  }
+    deleteEvent: async (req, res) => {
+        const { eventID } = req.body;
+        if (!isValidID(eventID)) {
+            const response = setResponseBadRequest("valid event ID not found");
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+        try {
+            const response = await eventModule.deleteEvent(eventID);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        } catch (err) {
+            logError(err, "eventController:deleteEvent", "db");
+            const response = setResponseInternalError();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
 };
 
 export default eventController;

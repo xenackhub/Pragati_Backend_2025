@@ -121,7 +121,7 @@ const organizerModule = {
             await db.query("LOCK TABLES organizerData READ");
             const query = `SELECT * FROM organizerData;`;
             const [result] = await db.query(query);
-            return setResponseOk(result);
+            return setResponseOk("Organizer data fetched successfully", result);
         } catch (error) {
             logError(error, "organizerModule:allOrganizers", "db");
             return setResponseInternalError();

@@ -23,6 +23,7 @@ const getEventQueryFormatter = function (
     e.eventDate,
     e.eventDescription,
     e.venue,
+    e.time,
     e.eventFee,
     e.isGroup,
     e.maxTeamSize,
@@ -80,9 +81,11 @@ const getEventQueryFormatter = function (
       registrationData rg ON rg.eventID = e.eventID
     LEFT JOIN 
       groupDetail g ON g.registrationID = rg.registrationID`;
+
     const groupByPart = ` GROUP BY
     e.eventID, e.eventName, e.eventDate, e.eventDescription, e.eventFee, e.imageUrl,
     c.clubID, c.clubName, c.imageUrl, c.clubHead, c.clubAbbrevation, c.godName`;
+    
     if (data == {}) {
         return query + groupByPart;
     }

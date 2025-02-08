@@ -33,6 +33,8 @@ const eventRouter = Router();
  *                 type: string
  *               venue:
  *                 type: string
+ *               time:
+ *                 type: string
  *               isGroup:
  *                 type: boolean
  *               maxTeamSize:
@@ -221,7 +223,10 @@ eventRouter.get(
  *                 description: Full description of the event
  *               venue:
  *                 type: string
- *                 description: Short description of the event
+ *                 description: Venue of the event
+ *               time:
+ *                 type: string
+ *                 description: Time of event/time of event rounds
  *               isGroup:
  *                 type: boolean
  *                 description: Indicates if the event is group-based

@@ -24,6 +24,9 @@ const validateAddEventData = (eventData) => {
     if (!validateBasicString(eventData.venue, 1000)) {
         return "Invalid venue format for event";
     }
+    if (!validateBasicString(eventData.time, 5000)) {
+        return "Invalid time of event (should be sent as string)";
+    }
     if (
         eventData.isGroup === null ||
         typeof eventData.isGroup != "boolean" ||

@@ -45,6 +45,18 @@ const authModule = {
             return setResponseOk("Login successful", {
                 roleID: userData[0].roleID,
                 TOKEN: token,
+                USER: {
+                    userEmail: userData[0].userEmail,
+                    userName: userData[0].userName,
+                    rollNumber: userData[0].rollNumber,
+                    phoneNumber: userData[0].phoneNumber,
+                    collegeName: userData[0].collegeName,
+                    collegeCity: userData[0].collegeCity,
+                    userDepartment: userData[0].userDepartment,
+                    academicYear: userData[0].academicYear,
+                    degree: userData[0].degree,
+                    isAmrita: userData[0].isAmrita,
+                },
             });
         } catch (err) {
             console.log("[ERROR]: Error in Login Module: ", err);

@@ -21,8 +21,8 @@ const validateAddEventData = (eventData) => {
     if (!validateBasicString(eventData.eventDescription, 5000)) {
         return "Invalid description of event";
     }
-    if (!validateBasicString(eventData.eventDescSmall, 1000)) {
-        return "Invalid short description of event";
+    if (!validateBasicString(eventData.venue, 1000)) {
+        return "Invalid venue format for event";
     }
     if (
         eventData.isGroup === null ||

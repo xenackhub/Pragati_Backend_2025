@@ -17,7 +17,7 @@ const eventModule = {
         imageUrl,
         eventFee,
         eventDescription,
-        eventDescSmall,
+        venue,
         isGroup,
         eventDate,
         maxRegistrations,
@@ -63,7 +63,7 @@ const eventModule = {
             transactionStarted = 1;
 
             const query = `
-      INSERT INTO eventData (eventName, imageUrl, eventFee, eventDescription, eventDescSmall,
+      INSERT INTO eventData (eventName, imageUrl, eventFee, eventDescription, venue,
        isGroup, eventDate, maxRegistrations, isPerHeadFee, godName, minTeamSize, maxTeamSize)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
       `;
@@ -72,7 +72,7 @@ const eventModule = {
                 imageUrl,
                 eventFee,
                 eventDescription,
-                eventDescSmall,
+                venue,
                 isGroup,
                 eventDate,
                 maxRegistrations,
@@ -273,7 +273,7 @@ const eventModule = {
         imageUrl,
         eventFee,
         eventDescription,
-        eventDescSmall,
+        venue,
         isGroup,
         eventDate,
         maxRegistrations,
@@ -338,7 +338,7 @@ const eventModule = {
         imageUrl = ?, 
         eventFee = ?, 
         eventDescription = ?, 
-        eventDescSmall = ?, 
+        venue = ?, 
         isGroup = ?, 
         eventDate = ?, 
         maxRegistrations = ?, 
@@ -357,7 +357,7 @@ const eventModule = {
                 imageUrl,
                 eventFee,
                 eventDescription,
-                eventDescSmall,
+                venue,
                 isGroup,
                 eventDate,
                 maxRegistrations,

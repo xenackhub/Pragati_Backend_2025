@@ -22,7 +22,7 @@ const getEventQueryFormatter = function (
     e.eventName,
     e.eventDate,
     e.eventDescription,
-    e.eventDescSmall,
+    e.venue,
     e.eventFee,
     e.isGroup,
     e.maxTeamSize,

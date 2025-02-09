@@ -230,10 +230,10 @@ CREATE TABLE IF NOT EXISTS `clubEventMapping` (
 
 CREATE TABLE IF NOT EXISTS `notification` (
   `notificationID` INT AUTO_INCREMENT PRIMARY KEY,
-  `title` VARCHAR(1000) UNIQUE NOT NULL,
-  `description` VARCHAR(5000) NOT NULL,
-  `author` VARCHAR(1000) NOT NULL,  -- can be ASB, Pragati team, Clubs etc..
-  `venue` VARCHAR(1000) NOT NULL,
+  `title` VARCHAR(500) UNIQUE NOT NULL,
+  `description` VARCHAR(2000) NOT NULL,
+  `author` VARCHAR(255) NOT NULL,  -- can be ASB, Pragati team, Clubs etc..
+  `venue` VARCHAR(500) NOT NULL,
   `startDate` DATE NOT NULL,
   `endDate` DATE NOT NULL,
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,

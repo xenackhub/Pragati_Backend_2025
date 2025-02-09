@@ -74,7 +74,7 @@ const eventModule = {
                 eventFee,
                 eventDescription,
                 venue,
-                time, 
+                time,
                 isGroup,
                 eventDate,
                 maxRegistrations,

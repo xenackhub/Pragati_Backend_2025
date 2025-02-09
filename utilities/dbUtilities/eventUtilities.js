@@ -152,7 +152,6 @@ const getEventQueryFormatter = function (
                 query += ` AND ${condition[0][0]}.${condition[0]} = ${condition[1]}`;
         }
     });
-    console.log(query);
     return query;
 };
 

@@ -39,6 +39,7 @@ DROP TABLE IF EXISTS `eventData`;
 DROP TABLE IF EXISTS `organizerData`;
 DROP TABLE IF EXISTS `tagData`;
 DROP TABLE IF EXISTS `clubData`;
+DROP TABLE IF EXISTS `notification`;
 
 -- table for user role ---------------------------------------------------------------------------
 
@@ -224,3 +225,17 @@ CREATE TABLE IF NOT EXISTS `clubEventMapping` (
   CONSTRAINT FOREIGN KEY (`clubID`) REFERENCES `clubData` (`clubID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- table for handling notifications
+
+CREATE TABLE IF NOT EXISTS `notification` (
+  `notificationID` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` VARCHAR(1000) UNIQUE NOT NULL,
+  `description` VARCHAR(5000) NOT NULL,
+  `author` VARCHAR(1000) NOT NULL,  -- can be ASB, Pragati team, Clubs etc..
+  `venue` VARCHAR(1000) NOT NULL,
+  `startDate` DATE NOT NULL,
+  `endDate` DATE NOT NULL,
+  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

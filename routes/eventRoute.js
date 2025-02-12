@@ -31,7 +31,9 @@ const eventRouter = Router();
  *                 type: number
  *               eventDescription:
  *                 type: string
- *               eventDescSmall:
+ *               venue:
+ *                 type: string
+ *               time:
  *                 type: string
  *               isGroup:
  *                 type: boolean
@@ -219,9 +221,12 @@ eventRouter.get(
  *               eventDescription:
  *                 type: string
  *                 description: Full description of the event
- *               eventDescSmall:
+ *               venue:
  *                 type: string
- *                 description: Short description of the event
+ *                 description: Venue of the event
+ *               time:
+ *                 type: string
+ *                 description: Time of event/time of event rounds
  *               isGroup:
  *                 type: boolean
  *                 description: Indicates if the event is group-based

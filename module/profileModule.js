@@ -91,7 +91,6 @@ const profileModule = {
             if (!userExists) {
                 return setResponseBadRequest("User not found");
             }
-            console.log(phoneNumber, phoneNumber.length);
 
             await db.query("LOCK TABLES userData WRITE");
             const query = `

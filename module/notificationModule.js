@@ -1,5 +1,11 @@
 import { pragatiDb } from "../db/poolConnection.js";
-import { setResponseNotFound, setResponseOk } from "../utilities/response.js";
+import {
+    setResponseNotFound,
+    setResponseOk,
+    setResponseInternalError,
+    setResponseBadRequest,
+} from "../utilities/response.js";
+import { logError } from "../utilities/errorLogger.js";
 
 const notificationModule = {
     getAllNotifications: async function () {
@@ -52,6 +58,52 @@ const notificationModule = {
             return setResponseOk("Notification event added successfully!");
         } catch (err) {
             logError(err, "notificationModule:addNotification", "db");
+            return setResponseInternalError();
+        } finally {
+            await db.query("UNLOCK TABLES");
+            db.release();
+        }
+    },
+    updateNotification: async function (
+        notificationID,
+        title,
+        description,
+        author,
+        venue,
+        startDate,
+        endDate,
+    ) {
+        const db = await pragatiDb.promise().getConnection();
+        try {
+            await db.query(`LOCK TABLES notification WRITE`);
+            const [updateResult] = await db.query(
+                `UPDATE notification SET
+              title = ?,
+              description = ?,
+              author = ?,
+              venue = ?,
+              startDate = ?,
+              endDate = ? 
+              WHERE notificationID = ?`,
+                [
+                    title,
+                    description,
+                    author,
+                    venue,
+                    startDate,
+                    endDate,
+                    notificationID,
+                ],
+            );
+            if (updateResult.affectedRows === 0) {
+                await db.rollback();
+                return setResponseBadRequest(
+                    "Notification not found or update failed",
+                );
+            }
+            return setResponseOk("Notification updated successfully!");
+        } catch (err) {
+            logError(err, "notificationModule:updateNotification", "db");
             return setResponseInternalError();
         } finally {
             await db.query("UNLOCK TABLES");

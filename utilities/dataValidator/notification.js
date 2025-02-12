@@ -1,5 +1,5 @@
 import validator from "validator";
-import { validateBasicString } from "./common.js";
+import { isValidID, validateBasicString } from "./common.js";
 
 const validateAddNotificationData = (data) => {
     if (!validateBasicString(data.title, 500)) {
@@ -23,4 +23,15 @@ const validateAddNotificationData = (data) => {
     return null;
 };
 
-export { validateAddNotificationData };
+const validateUpdateNotificationData = (data) => {
+  if(!isValidID(data.notificationID)){
+    return "Invalid notification ID";
+  }
+  const errors = validateAddNotificationData(data);
+  if(errors != null) {
+    return errors;
+  }
+  return null
+}
+
+export { validateAddNotificationData, validateUpdateNotificationData };

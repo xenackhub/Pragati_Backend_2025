@@ -5,6 +5,7 @@ import tagRouter from "./tagRoute.js";
 import organizerRouter from "./organizerRoute.js";
 import adminRouter from "./adminRoute.js";
 import clubRouter from "./clubRoute.js";
+import registrationRouter from "./registrationRoute.js";
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use("/admin", adminRouter);
 router.use("/auth", authRouter);
 router.use("/tag", tagRouter);
 router.use("/club", clubRouter);
+router.use("/registration", registrationRouter);
 
 export default router;

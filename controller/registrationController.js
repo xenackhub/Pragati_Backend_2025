@@ -13,6 +13,7 @@ const registrationController = {
       Request Header: Bearer OTP Token
       Add Registration Request Body
       {
+          "userID": String [Mandatory],
           "eventID": "integer" [Mandatory],
           "totalMembers": "integer" [Mandatory],
           "teamName": "string" [Mandatory],

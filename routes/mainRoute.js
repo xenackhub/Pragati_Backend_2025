@@ -6,6 +6,7 @@ import organizerRouter from "./organizerRoute.js";
 import adminRouter from "./adminRoute.js";
 import clubRouter from "./clubRoute.js";
 import notificationRouter from "./notificationRoute.js";
+import registrationRouter from "./registrationRoute.js";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use("/auth", authRouter);
 router.use("/tag", tagRouter);
 router.use("/club", clubRouter);
 router.use("/notification", notificationRouter);
+router.use("/registration", registrationRouter);
 
 export default router;

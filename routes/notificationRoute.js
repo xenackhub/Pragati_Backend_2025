@@ -71,7 +71,6 @@ notificationRouter.post(
     notificationController.addNotification,
 );
 
-
 /**
  * @swagger
  * /api/notification/:
@@ -118,10 +117,10 @@ notificationRouter.post(
  *         description: A problem from our side :(
  */
 notificationRouter.put(
-  "/",
-  tokenValidator("JWT"),
-  authorizeRoles([1]),
-  notificationController.updateNotification,
+    "/",
+    tokenValidator("JWT"),
+    authorizeRoles([1]),
+    notificationController.updateNotification,
 );
 
 export default notificationRouter;

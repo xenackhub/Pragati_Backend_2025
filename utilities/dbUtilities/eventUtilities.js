@@ -88,6 +88,11 @@ const getEventQueryFormatter = function (
     e.maxRegistrations,
     e.isPerHeadFee,
     e.imageUrl AS eventImageUrl,
+    e.firstPrice,
+    e.secondPrice,
+    e.thirdPrice,
+    e.fourthPrice,
+    e.fifthPrice,
     (
         SELECT JSON_ARRAYAGG(
             JSON_OBJECT(

@@ -24,14 +24,14 @@ const validateAddNotificationData = (data) => {
 };
 
 const validateUpdateNotificationData = (data) => {
-  if(!isValidID(data.notificationID)){
-    return "Invalid notification ID";
-  }
-  const errors = validateAddNotificationData(data);
-  if(errors != null) {
-    return errors;
-  }
-  return null
-}
+    if (!isValidID(data.notificationID)) {
+        return "Invalid notification ID";
+    }
+    const errors = validateAddNotificationData(data);
+    if (errors != null) {
+        return errors;
+    }
+    return null;
+};
 
 export { validateAddNotificationData, validateUpdateNotificationData };

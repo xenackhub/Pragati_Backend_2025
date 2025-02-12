@@ -47,6 +47,16 @@ const eventRouter = Router();
  *                 type: number
  *               isPerHeadFee:
  *                 type: boolean
+ *               firstPrice:
+ *                 type: string
+ *               secondPrice:
+ *                 type: string
+ *               thirdPrice:
+ *                 type: string
+ *               fourthPrice:
+ *                 type: string
+ *               fifthPrice:
+ *                 type: string
  *               godName:
  *                 type: string
  *               organizerIDs:
@@ -246,6 +256,21 @@ eventRouter.get(
  *               isPerHeadFee:
  *                 type: boolean
  *                 description: Indicates if the fee is per participant
+ *               firstPrice:
+ *                 type: string
+ *                 descriptiong: First Price for the event
+ *               secondPrice:
+ *                 type: string
+ *                 descriptiong: Second Price for the event
+ *               thirdPrice:
+ *                 type: string
+ *                 descriptiong: Third Price for the event
+ *               fourthPrice:
+ *                 type: string
+ *                 descriptiong: Fourth Price for the event
+ *               fifthPrice:
+ *                 type: string
+ *                 descriptiong: Fifth Price for the event
  *               godName:
  *                 type: string
  *                 description: Name of the god associated with the event

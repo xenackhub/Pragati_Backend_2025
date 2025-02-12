@@ -116,8 +116,8 @@ CREATE TABLE IF NOT EXISTS `eventData` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `eventData` 
-(`eventName`, `imageUrl`, `eventFee`, `eventDescription`, `isGroup`, `maxTeamSize`, `minTeamSize`, `eventDate`, `eventStatus`, `maxRegistrations`, `isPerHeadFee`, `godName`) 
-VALUES ("sampleEvent", "URL", 1000, "This is a Sample Event", FALSE, 4, 1, '1', '1', 10, TRUE, "Zeus");
+(`eventName`, `imageUrl`, `eventFee`, `eventDescription`, `venue`, `time`, `isGroup`, `maxTeamSize`, `minTeamSize`, `eventDate`, `eventStatus`, `maxRegistrations`, `isPerHeadFee`, `godName`) 
+VALUES ("sampleEvent", "URL", 1000, "This is a Sample Event", "AB3 - C203", "10:00 AM", FALSE, 4, 1, '1', '1', 10, TRUE, "Zeus");
 
 -- table for registration details ------------------------------------------------------------------
 

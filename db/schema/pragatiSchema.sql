@@ -115,6 +115,9 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `eventData` 
+(`eventName`, `imageUrl`, `eventFee`, `eventDescription`, `isGroup`, `maxTeamSize`, `minTeamSize`, `eventDate`, `eventStatus`, `maxRegistrations`, `isPerHeadFee`, `godName`) 
+VALUES ("sampleEvent", "URL", 1000, "This is a Sample Event", FALSE, 4, 1, '1', '1', 10, TRUE, "Zeus");
 
 -- table for registration details ------------------------------------------------------------------
 
@@ -148,11 +151,13 @@ CREATE TABLE IF NOT EXISTS `registrationData` (
 CREATE TABLE IF NOT EXISTS `groupDetail` (
   `registrationID` INT NOT NULL,
   `userID` INT NOT NULL,
+  `eventID` INT NOT NULL,
   `roleDescription` VARCHAR(255) DEFAULT NULL,
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (`registrationID`, `userID`),
   CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE CASCADE,
+  CONSTRAINT FOREIGN KEY (`eventID`) REFERENCES `eventData` (`eventID`),
   CONSTRAINT FOREIGN KEY (`registrationID`) REFERENCES `registrationData` (`registrationID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

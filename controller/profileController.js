@@ -34,14 +34,14 @@ const profileController = {
     /*
     Request Header: Bearer Token
     {
-      "userID": "number",
+      "userID": "string",
       "userName": "string",
       "rollNumber": "string",
       "phoneNumber": "string",
       "collegeName": "string",
       "collegeCity": "string",
       "userDepartment": "string",
-      "academicYear": "string",
+      "academicYear": "number",
       "degree": "string",
       "needAccommodationDay1": "boolean",
       "needAccommodationDay2": "boolean",
@@ -50,23 +50,46 @@ const profileController = {
     }
     */
     editProfile: async (req, res) => {
-        const userID = parseInt(req.body.userID);
-        const userData = req.body;
-        //validate user data
-        const validationErrorID = validateUserID(userID);
-        const validationErrordata = validateProfileData(userData);
-        if (validationErrorID || validationErrordata) {
-            const response = setResponseBadRequest(
-                validationErrorID || validationErrordata,
-            );
+        const {
+            userID,
+            userName,
+            rollNumber,
+            phoneNumber,
+            collegeName,
+            collegeCity,
+            userDepartment,
+            academicYear,
+            degree,
+            needAccommodationDay1,
+            needAccommodationDay2,
+            needAccommodationDay3,
+            isAmrita,
+        } = req.body;
+
+        const validationErrordata = validateProfileData(req.body);
+        if (validationErrordata != null) {
+            const response = setResponseBadRequest(validationErrordata);
             return res
                 .status(response.responseCode)
                 .json(response.responseBody);
         }
 
         try {
-            delete userData.userID;
-            const response = await profileModule.editProfile(userID, userData);
+            const response = await profileModule.editProfile(
+                userID,
+                userName,
+                rollNumber,
+                phoneNumber,
+                collegeName,
+                collegeCity,
+                userDepartment,
+                academicYear,
+                degree,
+                needAccommodationDay1,
+                needAccommodationDay2,
+                needAccommodationDay3,
+                isAmrita,
+            );
             return res
                 .status(response.responseCode)
                 .json(response.responseBody);

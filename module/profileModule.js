@@ -70,18 +70,61 @@ const profileModule = {
         }
     },
 
-    editProfile: async (userID, userData) => {
+    editProfile: async (
+        userID,
+        userName,
+        rollNumber,
+        phoneNumber,
+        collegeName,
+        collegeCity,
+        userDepartment,
+        academicYear,
+        degree,
+        needAccommodationDay1,
+        needAccommodationDay2,
+        needAccommodationDay3,
+        isAmrita,
+    ) => {
         const db = await pragatiDb.promise().getConnection();
         try {
             const userExists = await isUserExistsByUserID(userID, db);
             if (!userExists) {
                 return setResponseBadRequest("User not found");
             }
+            console.log(phoneNumber, phoneNumber.length);
 
             await db.query("LOCK TABLES userData WRITE");
-            const query = `UPDATE userData SET ? WHERE userID = ?;`;
+            const query = `
+            UPDATE userData SET 
+            userName = ?,
+            rollNumber = ?,
+            phoneNumber = ?,
+            collegeName = ?,
+            collegeCity = ?,
+            userDepartment = ?,
+            academicYear = ?,
+            degree = ?,
+            needAccommodationDay1 = ?,
+            needAccommodationDay2 = ?,
+            needAccommodationDay3 = ?,
+            isAmrita = ?
+            WHERE userID = ?;`;
 
-            const [result] = await db.query(query, [userData, userID]);
+            const [result] = await db.query(query, [
+                userName,
+                rollNumber,
+                phoneNumber,
+                collegeName,
+                collegeCity,
+                userDepartment,
+                academicYear,
+                degree,
+                needAccommodationDay1,
+                needAccommodationDay2,
+                needAccommodationDay3,
+                isAmrita,
+                userID
+            ]);
             if (result.affectedRows === 0) {
                 return setResponseBadRequest(
                     "User not found or no changes made",

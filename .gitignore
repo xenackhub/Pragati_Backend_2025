@@ -4,4 +4,5 @@ node_modules
 package-lock.json
 /middleware/encryptionKeys/privateKey.pem
 /middleware/encryptionKeys/publicKey.pem
-*.log
+logs
+.DS_Store

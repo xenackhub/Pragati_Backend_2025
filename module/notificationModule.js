@@ -110,6 +110,28 @@ const notificationModule = {
             db.release();
         }
     },
+    deleteNotification: async function (notificationID) {
+        const db = await pragatiDb.promise().getConnection();
+        try {
+            await db.query("LOCK TABLES notification WRITE");
+            const [deleted] = await db.query(
+                "DELETE  FROM notification WHERE notificationID = ?",
+                [notificationID],
+            );
+            if (deleted.affectedRows == 0) {
+                return setResponseBadRequest(
+                    "Notification event ID not found in database!",
+                );
+            }
+            return setResponseOk("Deleted successfully :)");
+        } catch (err) {
+            logError(err, "notificationModule:deleteNotification", "db");
+            return setResponseInternalError();
+        } finally {
+            await db.query("UNLOCK TABLES");
+            db.release();
+        }
+    },
 };
 
 export default notificationModule;

@@ -8,6 +8,7 @@ import {
     setResponseInternalError,
 } from "../utilities/response.js";
 import { logError } from "../utilities/errorLogger.js";
+import { isValidID } from "../utilities/dataValidator/common.js";
 
 const notificationController = {
     getAllNotifications: async (req, res) => {
@@ -86,6 +87,30 @@ const notificationController = {
                 .json(response.responseBody);
         } catch (err) {
             logError(err, "notificationController:updateNotification", "db");
+            const response = setResponseInternalError();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
+    deleteNotification: async (req, res) => {
+        const { notificationID } = req.body;
+        if (!isValidID(notificationID)) {
+            const response = setResponseBadRequest(
+                "valid notification ID not found",
+            );
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+        try {
+            const response =
+                await notificationModule.deleteNotification(notificationID);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        } catch (err) {
+            logError(err, "notificationController:deleteNotification", "db");
             const response = setResponseInternalError();
             return res
                 .status(response.responseCode)

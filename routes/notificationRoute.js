@@ -123,4 +123,41 @@ notificationRouter.put(
     notificationController.updateNotification,
 );
 
+/**
+ * @swagger
+ * /api/notification/:
+ *   delete:
+ *     summary: Delete a notification.
+ *     description: Requires admin privileges to delete.
+ *     tags:
+ *       - Notifications
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               notificationID:
+ *                 type: string
+ *                 description: ID of the event to be deleted
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully.
+ *       400:
+ *         description: Invalid event ID.
+ *       403:
+ *         description: Unauthorized. Admin access required.
+ *       500:
+ *         description: Internal server error.
+ */
+notificationRouter.delete(
+    "/",
+    tokenValidator("JWT"),
+    authorizeRoles([1]),
+    notificationController.deleteNotification,
+);
+
 export default notificationRouter;

@@ -47,5 +47,23 @@ export const appConfig = {
         },
         name: "Pragati 2025",
     },
-    // TODO: Should List the Config Needed for PayU.
+    payU_test: {
+        key: process.env.PAYU_TEST_KEY,
+        salt: process.env.PAYU_TEST_SALT,
+        verifyURL: "https://test.payu.in/merchant/postservice?form=2",
+    },
+    payU_prod: {
+        key: process.env.PAYU_PROD_KEY,
+        salt: process.env.PAYU_PROD_SALT,
+        verifyURL: "https://info.payu.in/merchant/postservice?form=2",
+    },
 };
+
+const payUMode =
+    process.env.isProduction === "1"
+        ? appConfig.payU_prod
+        : appConfig.payU_test;
+
+appConfig.payUKey = payUMode.key;
+appConfig.payUSalt = payUMode.salt;
+appConfig.payUVerifyURL = payUMode.verifyURL;

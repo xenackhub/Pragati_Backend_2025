@@ -179,6 +179,10 @@ const authModule = {
                 return setResponseBadRequest(response.responseBody);
             }
 
+            if(response.responseCode === 200){
+                return setResponseBadRequest("User Account Already Verified !");
+            }
+
             /*
       Started a transaction to ensure atomical writes to otpTable and userData Table.
       If any one of the write resulted in error, DB will be rolled back to the start of transaction
@@ -376,6 +380,48 @@ const authModule = {
 
             console.log("[ERROR]: Error in Reset Password Module", error);
             logError(err, "authModule:Reset Password", "db");
+            return setResponseInternalError();
+        } finally {
+            await db.query("UNLOCK TABLES");
+            db.release();
+        }
+    },
+    reVerifyUser: async function (userEmail) {
+        const db = await pragatiDb.promise().getConnection();
+        try {
+            const userData = await isUserExistsByEmail(userEmail, db);
+            if (userData == null) {
+                return setResponseBadRequest(
+                    "User email not found in database!",
+                );
+            }
+            const OTP = generateOTP();
+            const otpToken = createToken(
+                {
+                    userID: userData[0].userID,
+                },
+                "OTP",
+            );
+            const otpHashed = crypto
+                .createHash("sha256")
+                .update(OTP)
+                .digest("hex");
+            await sendRegistrationOTP(userData[0].userName, OTP, userEmail);
+
+            await db.query("LOCK TABLES otpTable WRITE;");
+            await db.query(
+                `INSERT INTO otpTable (userID, otp, expiryTime) 
+                VALUES (?, ?, CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)`,
+                [userData[0].userID, otpHashed],
+            );
+
+            // Commit Transaction and return response.
+            await db.commit();
+            return setResponseOk("New verification mail sent successfully!", {
+                TOKEN: otpToken,
+            });
+        } catch (err) {
+            logError(err, "authModule:reVerifyUser", "db");
             return setResponseInternalError();
         } finally {
             await db.query("UNLOCK TABLES");

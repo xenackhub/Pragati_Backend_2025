@@ -227,6 +227,27 @@ const authController = {
                 .json(response.responseBody);
         }
     },
+    reVerifyUser: async (req, res) => {
+        const { userEmail } = req.body;
+        if (!validateEmail(userEmail)) {
+            const response = setResponseBadRequest("Invalid email format");
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+        try {
+            const response = await authModule.reVerifyUser(userEmail);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        } catch (error) {
+            logError(error, "authController:reVerifyUser", "db");
+            const response = setResponseInternalError();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
 };
 
 export default authController;

@@ -21,14 +21,14 @@ export const verifyTransaction = async function (txnID, pragatiDb, transactionsD
         await transactionDB.query("LOCK TABLES transactionData READ");
 
         const [transactionData] = await transactionDB.query(
-            "SELECT * FROM transactionData WHERE txnID = ? AND transactionStatus = '0'",
+            "SELECT * FROM transactionData WHERE txnID = ?",
             [txnID]
         );
 
         await transactionDB.query("UNLOCK TABLES");
 
         if(transactionData.length === 0){
-            return setResponseBadRequest("Transaction already Verified or No Transaction Exists for the given Transaction ID !");
+            return setResponseBadRequest("No Transaction Exists for the given Transaction ID !");
         }
 
         const hash = generateVerifyHash({ command: "verify_payment", var1: txnID});

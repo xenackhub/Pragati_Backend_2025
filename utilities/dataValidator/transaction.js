@@ -20,7 +20,7 @@ const validateTransactionID = async (txnID, db) => {
     }
 
     const [eventData] = await db.query(
-        "SELECT * FROM eventDaa WHERE eventID = ?",
+        "SELECT * FROM eventData WHERE eventID = ?",
         [eventID]
     );
 

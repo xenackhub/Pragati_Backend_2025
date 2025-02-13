@@ -4,6 +4,7 @@ import { tokenValidator } from "../middleware/auth/tokenValidator.js";
 
 const transactionRouter = Router();
 
+// TODO: Test this route in production.
 transactionRouter.post("/verify", 
     tokenValidator("JWT"), 
     transactionController.verifyTransactionController);

@@ -179,7 +179,7 @@ const authModule = {
                 return setResponseBadRequest(response.responseBody);
             }
 
-            if(response.responseCode === 200){
+            if (response.responseCode === 200) {
                 return setResponseBadRequest("User Account Already Verified !");
             }
 
@@ -389,6 +389,7 @@ const authModule = {
     reVerifyUser: async function (userEmail) {
         const db = await pragatiDb.promise().getConnection();
         try {
+            var transactionStarted = 0;
             const userData = await isUserExistsByEmail(userEmail, db);
             if (userData == null) {
                 return setResponseBadRequest(
@@ -408,7 +409,15 @@ const authModule = {
                 .digest("hex");
             await sendRegistrationOTP(userData[0].userName, OTP, userEmail);
 
+            await db.beginTransaction();
             await db.query("LOCK TABLES otpTable WRITE;");
+
+            transactionStarted = 1;
+
+            // Delete old OTP value for the user from otpTable.
+            await db.query("DELETE FROM otpTable WHERE userID = ?", [
+                userData[0].userID,
+            ]);
             await db.query(
                 `INSERT INTO otpTable (userID, otp, expiryTime) 
                 VALUES (?, ?, CURRENT_TIMESTAMP + INTERVAL 5 MINUTE)`,
@@ -421,6 +430,9 @@ const authModule = {
                 TOKEN: otpToken,
             });
         } catch (err) {
+            if (transactionStarted === 1) {
+                await db.rollback();
+            }
             logError(err, "authModule:reVerifyUser", "db");
             return setResponseInternalError();
         } finally {

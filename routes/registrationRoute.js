@@ -10,4 +10,10 @@ registrationRouter.post(
     registrationController.addRegistration,
 );
 
+registrationRouter.put(
+    "/event/edit",
+    tokenValidator("JWT"),
+    registrationController.editRegistration,
+);
+
 export default registrationRouter;

@@ -7,6 +7,7 @@ import {
 
 import { validateEventRegistration } from "../utilities/dataValidator/registration.js";
 import registrationModule from "../module/registrationModule.js";
+import { editRegistrationModule } from "../module/editRegistrationModule.js";
 
 const registrationController = {
     /*
@@ -56,6 +57,39 @@ const registrationController = {
         } catch (error) {
             console.log(
                 "[ERROR]: Error in Add Registration Controller: ",
+                error,
+            );
+            const response = setResponseInternalError();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
+
+    editRegistration: async (req, res) => {
+        const { userID, eventID, teamName } = req.body;
+
+        // Hardcoded totalMembers to be 5 to reuse the validateEventRegistration vaidator.
+        if (!validateEventRegistration(userID, eventID, 5, teamName)) {
+            const response = setResponseBadRequest("Invalid Team Name !");
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+
+        try {
+            const editRegistrationResponse =
+                await editRegistrationModule.editRegistration(
+                    userID,
+                    eventID,
+                    teamName,
+                );
+            return res
+                .status(editRegistrationResponse.responseCode)
+                .json(editRegistrationResponse.responseBody);
+        } catch (error) {
+            console.log(
+                "[ERROR]: Error in Edit Registration Controller: ",
                 error,
             );
             const response = setResponseInternalError();

@@ -120,6 +120,9 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `eventData` (`eventName`, `imageUrl`, `eventFee`, `eventDescription`, `venue`, `time`, `isGroup`, `maxTeamSize`, `minTeamSize`, `eventDate`, `eventStatus`, `numRegistrations`, `maxRegistrations`, `isPerHeadFee`, `godName`, `createdAt`, `updatedAt`) VALUES 
+('Hackathon', 'https://example.com/hackathon.jpg', 500, 'Coding event with 24-hour hack challenge', 'Main Auditorium', '10:00 AM - 10:00 PM', TRUE, 4, 2, '1', '1', 0, 100, TRUE, 'Athena', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Tech Quiz', 'https://example.com/quiz.jpg', 200, 'Technology-based quiz competition', 'Room A101', '2:00 PM - 4:00 PM', FALSE, 1, 1, '2', '1', 0, 50, FALSE, 'Hermes', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- table for registration details ------------------------------------------------------------------
 
@@ -147,20 +150,28 @@ CREATE TABLE IF NOT EXISTS `registrationData` (
 -- 6 -> EVENT WAS CANCELLED, refund done.
 -- 7 -> EVENT WAS CANCELLED, refund also rejected.
 
+INSERT INTO `registrationData` (`eventID`, `txnID`, `amountPaid`, `totalMembers`, `teamName`, `userID`, `registrationStatus`, `createdAt`, `updatedAt`) VALUES 
+(1, 'TXN001', 500, 2, 'Code Masters', 2, '2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'TXN002', 200, 1, NULL, 3, '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
 
 -- table for group information ----------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `groupDetail` (
   `registrationID` INT NOT NULL,
   `userID` INT NOT NULL,
+  `eventID` INT NOT NULL,
   `roleDescription` VARCHAR(255) DEFAULT NULL,
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (`registrationID`, `userID`),
   CONSTRAINT FOREIGN KEY (`userID`) REFERENCES `userData` (`userID`) ON DELETE CASCADE,
+  CONSTRAINT FOREIGN KEY (`eventID`) REFERENCES `eventData` (`eventID`),
   CONSTRAINT FOREIGN KEY (`registrationID`) REFERENCES `registrationData` (`registrationID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `groupDetail` (`registrationID`, `userID`, `eventID`, `roleDescription`, `createdAt`, `updatedAt`) VALUES 
+(1, 2, 1, 'Team Leader', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- table for event organizer details  -------------------------------------------------------------------
 
@@ -172,6 +183,9 @@ CREATE TABLE IF NOT EXISTS `organizerData` (
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `organizerData` (`organizerName`, `phoneNumber`, `createdAt`, `updatedAt`) VALUES 
+('Saran', '9876543210', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Naganathan', '8765432109', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- table for mapping many-to-many relation between eventData and organizerData --------------------------
 
@@ -183,6 +197,9 @@ CREATE TABLE IF NOT EXISTS `organizerEventMapping` (
   CONSTRAINT FOREIGN KEY (`organizerID`) REFERENCES `organizerData` (`organizerID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `organizerEventMapping` (`organizerID`, `eventID`) VALUES 
+(1, 1), 
+(2, 2);
 
 -- table for tag data -------------------------------------------------------------------------------------
 
@@ -194,6 +211,9 @@ CREATE TABLE IF NOT EXISTS `tagData` (
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `tagData` (`tagName`, `tagAbbrevation`, `createdAt`, `updatedAt`) VALUES 
+('Artificial Intelligence', 'AI', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Computer Science and Engineering', 'CSE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- table for mapping many-to-many relation between tagData and eventData --------------------------------
 
@@ -205,6 +225,9 @@ CREATE TABLE IF NOT EXISTS `tagEventMapping` (
   CONSTRAINT FOREIGN KEY (`tagID`) REFERENCES `tagData` (`tagID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `tagEventMapping` (`tagID`, `eventID`) VALUES 
+(1, 1),
+(2, 2);
 
 -- table for club data ------------------------------------------------------------------------------------
 
@@ -219,6 +242,9 @@ CREATE TABLE IF NOT EXISTS `clubData` (
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `clubData` (`clubName`, `imageUrl`, `clubHead`, `clubAbbrevation`, `godName`, `createdAt`, `updatedAt`) VALUES 
+('Tech Club', 'https://example.com/techclub.jpg', 'Naganathan', 'TC', 'Zeus', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Coding Club', 'https://example.com/codingclub.jpg', 'Thanush', 'CC', 'Apollo', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- table for mapping many-to-many relation between clubData and eventData ---------------------------------
 
@@ -230,6 +256,9 @@ CREATE TABLE IF NOT EXISTS `clubEventMapping` (
   CONSTRAINT FOREIGN KEY (`clubID`) REFERENCES `clubData` (`clubID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `clubEventMapping` (`clubID`, `eventID`) VALUES 
+(1, 1),
+(2, 2);
 
 -- table for handling notifications
 
@@ -244,3 +273,7 @@ CREATE TABLE IF NOT EXISTS `notification` (
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `notification` (`title`, `description`, `author`, `venue`, `startDate`, `endDate`, `createdAt`, `updatedAt`) VALUES 
+('Hackathon Announcement', 'Join the 24-hour coding hackathon and win prizes!', 'Pragati Team', 'Main Auditorium', '2025-03-01', '2025-03-02', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Tech Quiz Registration', 'Register now for the upcoming Tech Quiz!', 'Tech Club', 'Room A101', '2025-03-05', '2025-03-05', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

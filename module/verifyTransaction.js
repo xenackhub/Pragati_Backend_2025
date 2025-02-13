@@ -32,7 +32,7 @@ export const verifyTransaction = async function (txnID, pragatiDb, transactionsD
         }
 
         if(transactionData[0].transactionStatus !== '1') {
-            return setResponseBadRequest("Transaction verification has already been attempted.", transactionData[0].transactionStatus);
+            return setResponseOk("Transaction Verification Done.", transactionData[0].transactionStatus);
         }
 
         const hash = generateVerifyHash({ command: "verify_payment", var1: txnID});
@@ -74,7 +74,7 @@ export const verifyTransaction = async function (txnID, pragatiDb, transactionsD
             );
             
             const [releaseSeats] = await db.query(
-                "SELECT registrationID, eventID, totalMembers FROM registrationData WHERE txnID = ? GROUP BY eventID",
+                "SELECT registrationID, eventID, totalMembers FROM registrationData WHERE txnID = ?",
                 [txnID]
             );
 

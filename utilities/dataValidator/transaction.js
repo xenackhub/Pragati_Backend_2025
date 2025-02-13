@@ -1,4 +1,4 @@
-import { checkValidUser } from "../dbUtilities/userUtilities";
+import { checkValidUser } from "../dbUtilities/userUtilities.js";
 
 const validateTransactionID = async (txnID, db) => {
     if(!txnID){

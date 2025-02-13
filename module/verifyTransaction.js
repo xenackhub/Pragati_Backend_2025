@@ -31,6 +31,10 @@ export const verifyTransaction = async function (txnID, pragatiDb, transactionsD
             return setResponseBadRequest("No Transaction Exists for the given Transaction ID !");
         }
 
+        if(transactionData[0].transactionStatus !== '1') {
+            return setResponseBadRequest("Transaction verification has already been attempted.", transactionData[0].transactionStatus);
+        }
+
         const hash = generateVerifyHash({ command: "verify_payment", var1: txnID});
 
         const response = await fetch(payUVerifyURL, {

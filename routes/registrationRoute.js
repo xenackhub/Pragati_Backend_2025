@@ -9,6 +9,7 @@ registrationRouter.post(
     tokenValidator("JWT"),
     registrationController.addRegistration,
 );
+
 registrationRouter.put(
     "/event/edit",
     tokenValidator("JWT"),

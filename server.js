@@ -54,7 +54,7 @@ app.get("/api/test", (req, res) => {
 app.use("/api", router);
 
 // endpoint for accessing API docs
-app.use("/docs", serve, setup(swaggerJSDoc(swaggerOptions)));
+app.use("/api/docs", serve, setup(swaggerJSDoc(swaggerOptions)));
 
 if (cluster.isPrimary) {
     console.info(`[LOG]: Parent ${process.pid} is Running.`);

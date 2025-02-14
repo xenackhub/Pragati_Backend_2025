@@ -122,7 +122,7 @@ const profileModule = {
                 needAccommodationDay2,
                 needAccommodationDay3,
                 isAmrita,
-                userID
+                userID,
             ]);
             if (result.affectedRows === 0) {
                 return setResponseBadRequest(

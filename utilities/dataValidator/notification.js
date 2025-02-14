@@ -14,20 +14,24 @@ const validateAddNotificationData = (data) => {
     if (!validateBasicString(data.venue, 500)) {
         return "Invalid venue";
     }
-    
+
     if (!data.startDate) return "Invalid start date.";
 
     let date = new Date(data.startDate);
-    const startDateValidity = !isNaN(date.getTime()) && data.startDate === date.toISOString().split("T")[0];
+    const startDateValidity =
+        !isNaN(date.getTime()) &&
+        data.startDate === date.toISOString().split("T")[0];
 
-    if(!startDateValidity) return "Invalid Start Date";
+    if (!startDateValidity) return "Invalid Start Date";
 
     if (!data.endDate) return "Invalid End date.";
 
     date = new Date(data.endDate);
-    const endDateValidity = !isNaN(date.getTime()) && data.endDate === date.toISOString().split("T")[0];
+    const endDateValidity =
+        !isNaN(date.getTime()) &&
+        data.endDate === date.toISOString().split("T")[0];
 
-    if(!endDateValidity) return "Invalid End Date";
+    if (!endDateValidity) return "Invalid End Date";
     return null;
 };
 

@@ -22,7 +22,7 @@ const notificationModule = {
               startDate,
               endDate FROM notification`);
             if (noties.length == 0) {
-                return setResponseNotFound("No notifications found");
+                return setResponseOk("No notifications found", []);
             }
             return setResponseOk("All notifications selected", noties);
         } catch (err) {

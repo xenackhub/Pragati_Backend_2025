@@ -160,7 +160,7 @@ const eventModule = {
             // console.log(query);
             const [events] = await db.query(query);
             if (events.length == 0) {
-                return setResponseNotFound("No events found!");
+                return setResponseOk("No events found!", []);
             }
             return setResponseOk("All events selected", events);
         } catch (err) {

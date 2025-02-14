@@ -19,21 +19,37 @@ const massMailerController = {
 
         if (!announcement) {
             const response = setResponseBadRequest("Invalid Announcement !");
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
-        
-        if(!validateMassMails(ccEmails)) {
-            const response = setResponseBadRequest("Invalid CC Email Address !");
-            return res.status(response.responseCode).json(response.responseBody);
+
+        if (!validateMassMails(ccEmails)) {
+            const response = setResponseBadRequest(
+                "Invalid CC Email Address !",
+            );
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
 
         try {
-            const response = await massMailerModule.allParticipantsMailer(ccEmails, announcement);
-            return res.status(response.responseCode).json(response.responseBody);
+            const response = await massMailerModule.allParticipantsMailer(
+                ccEmails,
+                announcement,
+            );
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         } catch (err) {
-            console.log("[ERROR]: Error in All Participant Mailer Controller: ", err);
+            console.log(
+                "[ERROR]: Error in All Participant Mailer Controller: ",
+                err,
+            );
             const response = setResponseInternalError();
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
     },
 
@@ -51,21 +67,38 @@ const massMailerController = {
 
         if (!announcement) {
             const response = setResponseBadRequest("Invalid Announcement !");
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
 
         if (!validateMassMails(ccEmails)) {
-            const response = setResponseBadRequest("Invalid CC Email Address !");
-            return res.status(response.responseCode).json(response.responseBody);
+            const response = setResponseBadRequest(
+                "Invalid CC Email Address !",
+            );
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
 
         try {
-            const response = await massMailerModule.eventParticipantsMailer(eventID, ccEmails, announcement);
-            return res.status(response.responseCode).json(response.responseBody);
+            const response = await massMailerModule.eventParticipantsMailer(
+                eventID,
+                ccEmails,
+                announcement,
+            );
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         } catch (err) {
-            console.log("[ERROR]: Error in Event Participants Mailer Controller: ", err);
+            console.log(
+                "[ERROR]: Error in Event Participants Mailer Controller: ",
+                err,
+            );
             const response = setResponseInternalError();
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
     },
 
@@ -83,28 +116,49 @@ const massMailerController = {
 
         if (!announcement) {
             const response = setResponseBadRequest("Invalid Announcement !");
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
 
         if (!validateMassMails(userEmails)) {
-            const response = setResponseBadRequest("Invalid User Email Address !");
-            return res.status(response.responseCode).json(response.responseBody);
+            const response = setResponseBadRequest(
+                "Invalid User Email Address !",
+            );
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
 
         if (!validateMassMails(ccEmails)) {
-            const response = setResponseBadRequest("Invalid CC Email Address !");
-            return res.status(response.responseCode).json(response.responseBody);
+            const response = setResponseBadRequest(
+                "Invalid CC Email Address !",
+            );
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
 
         try {
-            const response = await massMailerModule.selectedParticipantsMailer(userEmails, ccEmails, announcement);
-            return res.status(response.responseCode).json(response.responseBody);
+            const response = await massMailerModule.selectedParticipantsMailer(
+                userEmails,
+                ccEmails,
+                announcement,
+            );
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         } catch (err) {
-            console.log("[ERROR]: Error in Selected Participants Mailer Controller: ", err);
+            console.log(
+                "[ERROR]: Error in Selected Participants Mailer Controller: ",
+                err,
+            );
             const response = setResponseInternalError();
-            return res.status(response.responseCode).json(response.responseBody);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
         }
-    }
-}
+    },
+};
 
 export default massMailerController;

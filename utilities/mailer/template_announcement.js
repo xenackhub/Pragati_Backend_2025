@@ -57,6 +57,6 @@ const TEMPLATE_ANNOUNCEMENT = (announcement) => {
         </div>
     </body>
     </html>`;
-}
+};
 
 export default TEMPLATE_ANNOUNCEMENT;

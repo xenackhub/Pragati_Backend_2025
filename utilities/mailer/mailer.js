@@ -10,7 +10,9 @@ import TEMPLATE_FORGOT_PASSWORD_OTP from "./template_forgot_password_otp.js";
 import TEMPLATE_EVENT_REGISTRATION_OTP from "./template_event_registration_complete.js";
 
 const mailTransporter = nodemailer.createTransport(appConfig.mailer.obj);
-const massMailerTransporter = nodemailer.createTransport(appConfig.massMailer.obj);
+const massMailerTransporter = nodemailer.createTransport(
+    appConfig.massMailer.obj,
+);
 
 // Standard Class defined to avoid Redundancy in Mail Option Initialization.
 class mailOptions {
@@ -66,10 +68,7 @@ export const sendRegistrationOTP = async (userName, OTP, userEmail) => {
         mailSubject,
         TEMPLATE_OTP(OTP, userName),
     );
-    await sendMail(
-        registrationMailOption,
-        "Account Registration OTP"
-    );
+    await sendMail(registrationMailOption, "Account Registration OTP");
 };
 
 export const sendForgotPasswordOtp = async (userName, OTP, userEmail) => {
@@ -100,23 +99,20 @@ export const sendEventRegistrationCompleteOtp = async (
             totalMembers,
         ),
     );
-    await sendMail(
-        eventRegistrationMailOption,
-        "Event Registration OTP",
-    );
+    await sendMail(eventRegistrationMailOption, "Event Registration OTP");
 };
 
 export const sendAnnouncementMail = async (
     userEmails,
     ccEmails,
-    announcement
+    announcement,
 ) => {
     const mailSubject = "Pragati 2025 - Announcement";
     const announcementMailOption = new massMailerOptions(
         userEmails,
         ccEmails,
         mailSubject,
-        TEMPLATE_ANNOUNCEMENT(announcement)
+        TEMPLATE_ANNOUNCEMENT(announcement),
     );
     await sendBulkMail(announcementMailOption, "Announcement Mail");
 };
@@ -125,14 +121,14 @@ export const sendEventMail = async (
     userEmails,
     ccEmails,
     eventName,
-    announcement
+    announcement,
 ) => {
     const mailSubject = "Pragati 2025 - " + eventName + " Event Announcement";
     const eventAnnouncementMailOption = new massMailerOptions(
         userEmails,
         ccEmails,
         mailSubject,
-        TEMPLATE_EVENT_ANNOUNCEMENT(eventName, announcement)
+        TEMPLATE_EVENT_ANNOUNCEMENT(eventName, announcement),
     );
     await sendBulkMail(eventAnnouncementMailOption, "Event Announcement Mail");
-}
+};

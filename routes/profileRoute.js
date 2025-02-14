@@ -33,8 +33,11 @@ const profileRouter = Router();
  *       500:
  *         description: Internal server error.
  */
-profileRouter.get("/:userID(\\d+)", tokenValidator("JWT"), profileController.getUserProfile);
-
+profileRouter.get(
+    "/:userID(\\d+)",
+    tokenValidator("JWT"),
+    profileController.getUserProfile,
+);
 
 /**
  * @swagger
@@ -104,6 +107,10 @@ profileRouter.get("/:userID(\\d+)", tokenValidator("JWT"), profileController.get
  *       500:
  *         description: Internal server error.
  */
-profileRouter.put("/edit", tokenValidator("JWT"), profileController.editProfile);
+profileRouter.put(
+    "/edit",
+    tokenValidator("JWT"),
+    profileController.editProfile,
+);
 
 export default profileRouter;

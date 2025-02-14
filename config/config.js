@@ -47,7 +47,7 @@ export const appConfig = {
         },
         name: "Pragati 2025",
     },
-    massMailer : {
+    massMailer: {
         obj: {
             service: process.env.MAILER_SERVICE,
             host: process.env.MAILER_HOST,

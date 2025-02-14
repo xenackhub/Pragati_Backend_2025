@@ -52,6 +52,6 @@ const TEMPLATE_EVENT_ANNOUNCEMENT = (eventName, announcement) => {
     </body>
     </html>
     `;
-}
+};
 
 export default TEMPLATE_EVENT_ANNOUNCEMENT;

@@ -1,4 +1,4 @@
-import { validateEmail } from "./auth.js"
+import { validateEmail } from "./auth.js";
 
 export const validateMassMails = (emailIDs) => {
     for (const email of emailIDs) {
@@ -7,4 +7,4 @@ export const validateMassMails = (emailIDs) => {
         }
     }
     return true;
-}
+};

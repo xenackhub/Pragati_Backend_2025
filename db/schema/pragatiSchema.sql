@@ -275,5 +275,5 @@ CREATE TABLE IF NOT EXISTS `notification` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `notification` (`title`, `description`, `author`, `venue`, `startDate`, `endDate`, `createdAt`, `updatedAt`) VALUES 
-('Hackathon Announcement', 'Join the 24-hour coding hackathon and win prizes!', 'Pragati Team', 'Main Auditorium', '2025-03-01', '2025-03-02', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Tech Quiz Registration', 'Register now for the upcoming Tech Quiz!', 'Tech Club', 'Room A101', '2025-03-05', '2025-03-05', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('Curtain Raiser', 'Curtain Raiser along with the amazing Flashmob by our talented dancers.', 'Pragati Team', 'ASB Block', '2025-01-04', '2025-01-04', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Food Fest', 'Experience the magic of our Food Fest through the eyes of our guests.', 'Pragati Team', 'AB3 Car Parking', '2025-01-05', '2025-01-08', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

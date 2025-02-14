@@ -46,4 +46,6 @@ authRouter.post(
     authController.verifyUser,
 );
 
+authRouter.post("/reVerifyUser", authController.reVerifyUser);
+
 export default authRouter;

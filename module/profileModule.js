@@ -69,12 +69,14 @@ const profileModule = {
                 "SELECT * FROM transactionData WHERE userID = ?",
                 [userID],
             );
-
+            await db.query("LOCK TABLES eventData READ");
             userTransactions.forEach(async (transaction) => {
-                await db.query("LOCK TABLES eventData READ");
-                const [eventData] = await db.query("SELECT eventName FROM eventData");
+                const [eventData] = await db.query(
+                    "SELECT eventName FROM eventData WHERE eventID = ?",
+                    [transaction.eventID],
+                );
                 transaction.eventName = eventData[0].eventName;
-            })
+            });
             result[0].transactions = userTransactions;
             return setResponseOk("Records fetched successfully", result[0]);
         } catch (error) {

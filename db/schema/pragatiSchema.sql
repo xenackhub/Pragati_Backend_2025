@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `eventDescription` VARCHAR(5000) NOT NULL,
   `venue` VARCHAR(1000),
   `time` VARCHAR(5000),
+  `rules` TEXT,
   `isGroup` BOOL DEFAULT FALSE,
   `maxTeamSize` INT DEFAULT 1 NOT NULL,
   `minTeamSize` INT DEFAULT 1 NOT NULL,

@@ -27,6 +27,11 @@ const validateAddEventData = (eventData) => {
     if (!validateBasicString(eventData.time, 5000)) {
         return "Invalid time of event (should be sent as string)";
     }
+    if (typeof eventData.rules != "string") {
+        if (eventData.rules != null) {
+            return "Invalid rules for event (should be string)";
+        }
+    }
     if (!validateBasicString(eventData.firstPrice, 255)) {
         if (eventData.firstPrice != null) {
             return "Invalid first price entry for event (should be sent as string)";

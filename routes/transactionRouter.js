@@ -11,8 +11,6 @@ const transactionRouter = Router();
  *     description: Validates a transaction against PayU and updates its status accordingly.
  *     tags:
  *       - Transactions
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `eventData` (
   `eventDate` CHAR(1) NOT NULL CHECK(`eventDate` IN ('1','2','3')),  -- the day of the events, so that the original date can be changed
   `eventStatus` CHAR(1) DEFAULT '1' CHECK(`eventStatus` IN ('0','1','2')), -- Blocked, Open, Full
   `numRegistrations` INT DEFAULT 0,
-  `maxRegistrations` INT NOT NULL,
+  `maxRegistrations` INT NOT NULL DEFAULT 0,
   `isPerHeadFee` BOOL DEFAULT FALSE,
   `firstPrice` VARCHAR(255) DEFAULT NULL,
   `secondPrice` VARCHAR(255) DEFAULT NULL,

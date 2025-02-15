@@ -18,7 +18,7 @@ const profileModule = {
             }
 
             await db.query(
-                "LOCK TABLES userData READ, registrationData READ, groupDetail READ",
+                "LOCK TABLES userData READ, registrationData READ, groupDetail READ, eventData READ",
             );
             const query = `
             SELECT 
@@ -40,6 +40,7 @@ const profileModule = {
                     JSON_OBJECT(
                         'registrationID', registrationData.registrationID,
                         'eventID', groupDetail.eventID,
+                        'eventName', eventData.eventName,
                         'txnID', registrationData.txnID,
                         'amountPaid', registrationData.amountPaid,
                         'totalMembers', registrationData.totalMembers,
@@ -50,7 +51,8 @@ const profileModule = {
                 )
                 FROM registrationData
                 JOIN groupDetail ON groupDetail.registrationID = registrationData.registrationID
-                WHERE groupDetail.userID = userData.userID AND registrationData.registrationStatus = '2'
+                JOIN eventData ON eventData.eventID = registrationData.eventID
+                WHERE groupDetail.userID = userData.userID
                 ) AS registrations
             FROM 
                 userData 
@@ -68,6 +70,13 @@ const profileModule = {
                 [userID],
             );
 
+            console.log(userTransactions[0]);
+            userTransactions.forEach(async (transaction) => {
+                await db.query("LOCK TABLES eventData READ");
+                const [eventData] = await db.query("SELECT eventName FROM eventData");
+                console.log(eventData[0].eventName);
+                transaction.eventName = eventData[0].eventName;
+            })
             result[0].transactions = userTransactions;
             return setResponseOk("Records fetched successfully", result[0]);
         } catch (error) {

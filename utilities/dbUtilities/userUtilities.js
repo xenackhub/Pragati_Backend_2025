@@ -23,6 +23,7 @@ const checkValidUser = async function (userEmail, db, category, userID) {
             userData = await isUserExistsByEmail(userEmail, db);
         else if (category === "userID")
             userData = await isUserExistsByUserID(userID, db);
+
         if (userData == null) {
             response.responseCode = 401;
             response.responseBody.MESSAGE = "User Not Found";

@@ -9,7 +9,7 @@ import { isValidID } from "../utilities/dataValidator/common.js";
 
 const profileController = {
     getUserProfile: async (req, res) => {
-        const userID = req.params.userID;
+        const { userID } = req.body;
         if (!isValidID(userID)) {
             const response = setResponseBadRequest("Invalid user ID sent!");
             return res

@@ -1,4 +1,4 @@
-import { pragatiDb } from "../db/poolConnection.js";
+import { pragatiDb, transactionsDb } from "../db/poolConnection.js";
 import {
     setResponseOk,
     setResponseBadRequest,
@@ -10,6 +10,7 @@ import { isUserExistsByUserID } from "../utilities/dbUtilities/common.js";
 const profileModule = {
     getUserProfile: async (userID) => {
         const db = await pragatiDb.promise().getConnection();
+        const transactionDB = await transactionsDb.promise().getConnection();
         try {
             const userExists = await isUserExistsByUserID(userID, db);
             if (!userExists || userExists == null) {
@@ -60,7 +61,16 @@ const profileModule = {
             if (result.length === 0) {
                 return setResponseBadRequest("User not found");
             }
-            return setResponseOk("Records fetched successfully", result);
+
+            await transactionDB.query("LOCK TABLES transactionData READ");
+            const [userTransactions] = await transactionDB.query(
+                "SELECT * FROM transactionData WHERE userID = ?",
+                [userID]
+            );
+
+            result[0].transactions = userTransactions;
+            return setResponseOk("Records fetched successfully", result[0]);
+            
         } catch (error) {
             logError(error, "profileModule:getUserProfile", "db");
             return setResponseInternalError();

@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `userData` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 insert into `userData` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '2', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '8838517013', 1, 'CB.EN.U4CSE22447', 'CSE', 'thanuskumaara@gmail.com', 1, 'Thanus', 'c608f93243eefce1290a691f87aa2138af23c5b188b202f7f8afe9ea97ec51eb');
-insert into `userData` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '2', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '1111111111', 1, 'CB.EN.U4CSE22240', 'CSE', 'naganathan1555@gmail.com', 2, 'Naganathan', '21736c95b1e682f7abdee53019fd7e0ec7890bfee1a52be50cf024187fe7a0f4');
+insert into `userData` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '2', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '1234567895', 1, 'CB.EN.U4CSE22240', 'CSE', 'naganathan1555@gmail.com', 2, 'Naganathan', '21736c95b1e682f7abdee53019fd7e0ec7890bfee1a52be50cf024187fe7a0f4');
 insert into `userData` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2022, '2', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '5045678555', 1, 'CB.EN.U4AIE220', 'AIE', 'sarandharshanpushparaj@gmail.com',3, 'Saran', '63def6a9b1444d3a5906bdd5b0e62334350402cfb344131b76270fc85f6eb383');
 insert into `userData` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2021, '2', 'Coimbatore', 'Amrita', 'B.Tech', 1, 0, 0, NULL, '0000000011', 1, 'CB.EN.U4CSE21008', 'CSE', 'ash@admin.pragati', 4, 'Ashwin', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8');
 insert into `userData` (`academicYear`, `accountStatus`, `collegeCity`, `collegeName`, `degree`, `isAmrita`, `needAccommodationDay1`, `needAccommodationDay2`, `needAccommodationDay3`, `phoneNumber`, `roleID`, `rollNumber`, `userDepartment`, `userEmail`, `userID`, `userName`, `userPassword`) values (2024, '2', 'Coimbatore', 'Amrita', 'MBA', 1, 0, 0, NULL, '5045678555', 1, 'CB.BU.P2ASB24118', 'MBA', 'cb.bu.p2asb24118@cb.students.amrita.edu',5, 'Venkatesh', '7acb757ff67d2c9acfe682972bc0716599c8d6d568ab2c3962c677b74c7a9015');
@@ -155,8 +155,8 @@ CREATE TABLE IF NOT EXISTS `registrationData` (
 -- 7 -> EVENT WAS CANCELLED, refund also rejected.
 
 INSERT INTO `registrationData` (`eventID`, `txnID`, `amountPaid`, `totalMembers`, `teamName`, `userID`, `registrationStatus`, `createdAt`, `updatedAt`) VALUES 
-(1, 'TXN001', 500, 2, 'Code Masters', 2, '2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'TXN002', 200, 1, NULL, 3, '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(1, 'TXN-2-1-1739608418732', 500, 2, 'Code Masters', 2, '2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'TXN-1-2-1739608433882', 200, 1, NULL, 3, '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 -- table for group information ----------------------------------------------------------------------

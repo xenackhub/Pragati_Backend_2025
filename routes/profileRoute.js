@@ -6,7 +6,7 @@ const profileRouter = Router();
 
 /**
  * @swagger
- * /api/profile/{userID}:
+ * /api/profile:
  *   get:
  *     summary: Get user profile details.
  *     description: Fetches the profile information of a user by their user ID. Requires authentication.
@@ -14,13 +14,6 @@ const profileRouter = Router();
  *       - Profile
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: userID
- *         required: true
- *         schema:
- *           type: integer
- *         description: The ID of the user whose profile is to be retrieved.
  *     responses:
  *       200:
  *         description: Successfully fetched user profile.
@@ -34,7 +27,7 @@ const profileRouter = Router();
  *         description: Internal server error.
  */
 profileRouter.get(
-    "/:userID(\\d+)",
+    "/",
     tokenValidator("JWT"),
     profileController.getUserProfile,
 );

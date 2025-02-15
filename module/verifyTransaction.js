@@ -120,9 +120,10 @@ export const verifyTransaction = async function (
                 );
             }
 
-            transactionResponse = setResponseBadRequest(
-                "Transaction Failed !!",
-            );
+            transactionResponse = response.status(202).json({
+                MESSAGE: "Transaction Failed !!",
+                DATA: {}
+            });
         } else {
             transactionResponse = setResponseInternalError(
                 "Unable to Verify Transaction !!",

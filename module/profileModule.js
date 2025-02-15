@@ -50,7 +50,7 @@ const profileModule = {
                 )
                 FROM registrationData
                 JOIN groupDetail ON groupDetail.registrationID = registrationData.registrationID
-                WHERE groupDetail.userID = userData.userID
+                WHERE groupDetail.userID = userData.userID AND registrationData.registrationStatus = '2'
                 ) AS registrations
             FROM 
                 userData 

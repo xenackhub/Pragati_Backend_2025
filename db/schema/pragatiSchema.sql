@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `groupDetail` (
   `registrationID` INT NOT NULL,
   `userID` INT NOT NULL,
   `eventID` INT NOT NULL,
-  `roleDescription` VARCHAR(255) DEFAULT NULL,
+  `roleDescription` VARCHAR(255) DEFAULT "Participant",
   `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (`registrationID`, `userID`),

@@ -19,6 +19,8 @@ export const verifyTransaction = async function (
     const db = await pragatiDb.promise().getConnection();
     const transactionDB = await transactionsDb.promise().getConnection();
 
+    // console.log("[INFO]: Verify Transaction Controller Called");
+
     try {
         var transactionStarted = 0;
 
@@ -44,6 +46,11 @@ export const verifyTransaction = async function (
             );
         }
 
+        // console.log(
+        //     "[INFO]: Transaction Verification Started for Transaction ID: ",
+        //     txnID,
+        // );
+
         const hash = generateVerifyHash({
             command: "verify_payment",
             var1: txnID,
@@ -61,12 +68,18 @@ export const verifyTransaction = async function (
 
         const transactionDetails = responseData.transaction_details[txnID];
 
+        // console.log(
+        //     "[INFO]: PayU Transaction Details for Transaction ID: ",
+        //     txnID,
+        // );
+        // console.log(transactionDetails);
+
         await db.beginTransaction();
         await transactionDB.beginTransaction();
 
         transactionStarted = 1;
 
-        if (transactionDetails[0].status === "success") {
+        if (transactionDetails.status === "success") {
             await transactionDB.query(
                 "UPDATE transactionData SET transactionStatus = '2' WHERE txnID = ?",
                 [txnID],
@@ -80,7 +93,7 @@ export const verifyTransaction = async function (
             transactionResponse = setResponseOk(
                 "Transaction Verified Succussfully",
             );
-        } else if (transactionDetails[0].status === "failed") {
+        } else if (transactionDetails.status === "failed") {
             await transactionDB.query(
                 "UPDATE transactionData SET transactionStatus = '1' WHERE txnID = ?",
                 [txnID],

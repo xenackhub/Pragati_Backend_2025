@@ -76,6 +76,8 @@ const profileModule = {
             return setResponseInternalError();
         } finally {
             await db.query("UNLOCK TABLES");
+            await transactionDB.query("UNLOCK TABLES");
+            transactionDB.release();
             db.release();
         }
     },

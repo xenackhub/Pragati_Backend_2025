@@ -48,6 +48,7 @@ const getEventQueryFormatter = function (
         ) AS tags,
         c.clubID,
         c.clubName,
+        c.godName,
         CASE 
            WHEN EXISTS (
                 SELECT 1 

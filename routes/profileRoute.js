@@ -26,11 +26,7 @@ const profileRouter = Router();
  *       500:
  *         description: Internal server error.
  */
-profileRouter.get(
-    "/",
-    tokenValidator("JWT"),
-    profileController.getUserProfile,
-);
+profileRouter.get("/", tokenValidator("JWT"), profileController.getUserProfile);
 
 /**
  * @swagger

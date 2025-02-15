@@ -65,12 +65,11 @@ const profileModule = {
             await transactionDB.query("LOCK TABLES transactionData READ");
             const [userTransactions] = await transactionDB.query(
                 "SELECT * FROM transactionData WHERE userID = ?",
-                [userID]
+                [userID],
             );
 
             result[0].transactions = userTransactions;
             return setResponseOk("Records fetched successfully", result[0]);
-            
         } catch (error) {
             logError(error, "profileModule:getUserProfile", "db");
             return setResponseInternalError();

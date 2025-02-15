@@ -70,11 +70,9 @@ const profileModule = {
                 [userID],
             );
 
-            console.log(userTransactions[0]);
             userTransactions.forEach(async (transaction) => {
                 await db.query("LOCK TABLES eventData READ");
                 const [eventData] = await db.query("SELECT eventName FROM eventData");
-                console.log(eventData[0].eventName);
                 transaction.eventName = eventData[0].eventName;
             })
             result[0].transactions = userTransactions;

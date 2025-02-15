@@ -6,6 +6,7 @@ import {
 import fetch from "node-fetch";
 import { appConfig } from "../config/config.js";
 import { generateVerifyHash } from "../utilities/payU.js";
+import { appendFileSync } from "fs";
 
 const { payUKey, payUVerifyURL } = appConfig;
 
@@ -93,9 +94,9 @@ export const verifyTransaction = async function (
             transactionResponse = setResponseOk(
                 "Transaction Verified Succussfully",
             );
-        } else if (transactionDetails.status === "failed") {
+        } else if (transactionDetails.status === "failure") {
             await transactionDB.query(
-                "UPDATE transactionData SET transactionStatus = '1' WHERE txnID = ?",
+                "UPDATE transactionData SET transactionStatus = '0' WHERE txnID = ?",
                 [txnID],
             );
 
@@ -120,10 +121,7 @@ export const verifyTransaction = async function (
                 );
             }
 
-            transactionResponse = response.status(202).json({
-                MESSAGE: "Transaction Failed !!",
-                DATA: {}
-            });
+            transactionResponse = setResponseBadRequest("Transaction Failed !!");
         } else {
             transactionResponse = setResponseInternalError(
                 "Unable to Verify Transaction !!",

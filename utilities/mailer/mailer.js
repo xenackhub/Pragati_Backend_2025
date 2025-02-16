@@ -8,6 +8,7 @@ import TEMPLATE_ANNOUNCEMENT from "./template_announcement.js";
 import TEMPLATE_EVENT_ANNOUNCEMENT from "./template_event_announcement.js";
 import TEMPLATE_FORGOT_PASSWORD_OTP from "./template_forgot_password_otp.js";
 import TEMPLATE_EVENT_REGISTRATION_OTP from "./template_event_registration_complete.js";
+import TEMPLATE_WELCOME from "./template_welcome.js"
 
 const mailTransporter = nodemailer.createTransport(appConfig.mailer.obj);
 const massMailerTransporter = nodemailer.createTransport(
@@ -59,6 +60,17 @@ const sendBulkMail = async (mailOption, logContext) => {
         }
     });
 };
+
+export const sendWelcomeMail = async (userName, userEmail) => {
+    const mailSubject = 
+        "Welcome to Pragati 2025";
+    const welcomeMailOptions = new mailOptions(
+        userEmail,
+        mailSubject,
+        TEMPLATE_WELCOME(userName),
+    )
+    await sendMail(welcomeMailOptions, "Welcome Mail")
+}
 
 export const sendRegistrationOTP = async (userName, OTP, userEmail) => {
     const mailSubject =

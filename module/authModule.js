@@ -13,6 +13,7 @@ import { checkValidUser } from "../utilities/dbUtilities/userUtilities.js";
 import {
     sendForgotPasswordOtp,
     sendRegistrationOTP,
+    sendWelcomeMail,
 } from "../utilities/mailer/mailer.js";
 import { pragatiDb } from "../db/poolConnection.js";
 
@@ -228,10 +229,17 @@ const authModule = {
 
             // Updated the accountStatus field to ['2' - Active] for the user.
             await db.query("LOCK TABLES userData WRITE;");
-            await db.query(
-                "UPDATE userData SET accountStatus = ? WHERE userID = ?",
-                ["2", userID],
+            const [updated] = await db.query(
+                "UPDATE userData SET accountStatus = ? WHERE userID = ? AND accountStatus = ?",
+                ["2", userID, "1"],
             );
+            if (updated.affectedRows == 1) {
+                const [userData] = await db.query(
+                    "SELECT userEmail, userName FROM userData WHERE userID = ?",
+                    [userID],
+                );
+                await sendWelcomeMail(userData[0].userName, userData[0].userEmail);
+            }
             return setResponseOk("Account Verified Succussfully");
         } catch (error) {
             // Transaction  Rolledback only if there is error and the server has entered the Transaction.

@@ -96,7 +96,7 @@ const TEMPLATE_OTP = (otp, userName) => {
         <div class="header">Pragati 2025</div>
         <div class="sub-header">Voyage Through the Neo-Renaissance</div>
 
-        <img class="hero-image" src="pragati-icon.png" alt="Pragati Logo" />
+        <img class="hero-image" src="https://b4ia3y8s78.ufs.sh/f/1rBJ3VmOgbeLRTo2PP4BcQ9dJivoLyXlq4CzWHZ8eSAR130p" alt="Pragati Logo" />
 
         <p>Hello <strong>${userName}</strong>,</p>
 

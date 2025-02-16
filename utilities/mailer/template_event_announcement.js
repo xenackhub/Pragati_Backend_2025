@@ -95,7 +95,7 @@ const TEMPLATE_EVENT_ANNOUNCEMENT = (eventName, announcement) => {
 <body>
     <div class="container">
         <div class="logo-container">
-            <img class="logo" src="pragati-icon.png" alt="Pragati Logo">
+            <img class="logo" src="https://b4ia3y8s78.ufs.sh/f/1rBJ3VmOgbeLRTo2PP4BcQ9dJivoLyXlq4CzWHZ8eSAR130p" alt="Pragati Logo">
         </div>
         <div class="header">${eventName} - Announcement</div>
         <div class="content">

@@ -13,6 +13,7 @@ import { checkValidUser } from "../utilities/dbUtilities/userUtilities.js";
 import {
     sendForgotPasswordOtp,
     sendRegistrationOTP,
+    sendWelcomeMail,
 } from "../utilities/mailer/mailer.js";
 import { pragatiDb } from "../db/poolConnection.js";
 
@@ -149,6 +150,7 @@ const authModule = {
 
             // Mailer Module called to send Registration Verification OTP.
             await sendRegistrationOTP(userName, OTP, userEmail);
+            await sendWelcomeMail(userName, userEmail);
 
             // Insert OTP value into otpTable.
             await db.query("LOCK TABLES otpTable WRITE;");

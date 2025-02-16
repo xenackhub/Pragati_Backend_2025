@@ -26,7 +26,7 @@ const transactionController = {
                 pragatiDb,
                 transactionsDb,
             );
-            
+
             return res
                 .status(moduleResponse.responseCode)
                 .json(moduleResponse.responseBody);

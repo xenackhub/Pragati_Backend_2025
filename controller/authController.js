@@ -91,7 +91,7 @@ const authController = {
             isAmrita,
             needAccommodationDay1,
             needAccommodationDay2,
-            needAccommodationDay3
+            needAccommodationDay3,
         } = req.body;
         // Validate input data
         const validationErrors = validateSignupData(req.body);

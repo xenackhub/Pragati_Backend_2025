@@ -100,7 +100,7 @@ const registrationModule = {
                 paymentAmount =
                     eventData[0].eventFee +
                     Math.ceil(eventData[0].eventFee * 0.18);
-                productInfo = `ERI-${userID.toString()}-${eventID.toString()}-${totalMembers.toString()}-${paymentAmount.toString()}-${(eventData[0].eventName).toString()}`;
+                productInfo = `ERI-${userID.toString()}-${eventID.toString()}-${totalMembers.toString()}-${paymentAmount.toString()}-${eventData[0].eventName.toString()}`;
 
                 // Checking if the txnID is present in the Table.
                 const checkDuplicateTransactionResponse =
@@ -196,11 +196,7 @@ const registrationModule = {
 
                 const [insertGroupDetailRecord] = await db.query(
                     "INSERT INTO groupDetail (registrationID, userID, eventID) VALUES (?, ?, ?)",
-                    [
-                        insertRegistrationRecord.insertId,
-                        userID,
-                        eventID
-                    ]
+                    [insertRegistrationRecord.insertId, userID, eventID],
                 );
 
                 if (insertGroupDetailRecord.affectedRows !== 1) {

@@ -70,5 +70,5 @@ export {
     setResponseInternalError,
     setResponseTimedOut,
     setResponseTransactionFailed,
-    setResponseServiceFailure
+    setResponseServiceFailure,
 };

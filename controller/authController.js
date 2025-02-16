@@ -89,6 +89,9 @@ const authController = {
             academicYear,
             degree,
             isAmrita,
+            needAccommodationDay1,
+            needAccommodationDay2,
+            needAccommodationDay3
         } = req.body;
         // Validate input data
         const validationErrors = validateSignupData(req.body);
@@ -112,6 +115,9 @@ const authController = {
                 academicYear,
                 degree,
                 isAmrita,
+                needAccommodationDay1,
+                needAccommodationDay2,
+                needAccommodationDay3,
             });
             return res
                 .status(response.responseCode)

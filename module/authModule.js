@@ -81,6 +81,9 @@ const authModule = {
             academicYear,
             degree,
             isAmrita,
+            needAccommodationDay1,
+            needAccommodationDay2,
+            needAccommodationDay3,
         } = userData;
 
         const db = await pragatiDb.promise().getConnection();
@@ -102,9 +105,9 @@ const authModule = {
 
             const query = `
         INSERT INTO userData 
-          (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita)
+          (userEmail, userPassword, userName, rollNumber, phoneNumber, collegeName, collegeCity, userDepartment, academicYear, degree, isAmrita, needAccommodationDay1, needAccommodationDay2, needAccommodationDay3)
         VALUES 
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
             const values = [
@@ -119,6 +122,9 @@ const authModule = {
                 academicYear,
                 degree,
                 isAmrita,
+                needAccommodationDay1,
+                needAccommodationDay2,
+                needAccommodationDay3,
             ];
 
             // Denotes that server entered the Transaction -> Needs rollback incase of error.

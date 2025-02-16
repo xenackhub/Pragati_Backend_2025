@@ -1,7 +1,9 @@
 import {
     setResponseOk,
+    setResponseTransactionFailed,
     setResponseBadRequest,
     setResponseInternalError,
+    setResponseServiceFailure
 } from "../utilities/response.js";
 import fetch from "node-fetch";
 import { appConfig } from "../config/config.js";
@@ -67,6 +69,9 @@ export const verifyTransaction = async function (
 
         const responseData = await response.json();
 
+        if (responseData.status === 0) {
+            return setResponseServiceFailure("Payment Gateway Failed ! Try again later.");
+        }
         const transactionDetails = responseData.transaction_details[txnID];
 
         // console.log(
@@ -121,7 +126,7 @@ export const verifyTransaction = async function (
                 );
             }
 
-            transactionResponse = setResponseBadRequest("Transaction Failed !!");
+            transactionResponse = setResponseTransactionFailed("Transaction Failed !!");
         } else {
             transactionResponse = setResponseInternalError(
                 "Unable to Verify Transaction !!",

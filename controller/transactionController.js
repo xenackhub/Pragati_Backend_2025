@@ -26,10 +26,6 @@ const transactionController = {
                 pragatiDb,
                 transactionsDb,
             );
-
-            if (moduleResponse.responseBody.MESSAGE === "Transaction Failed !!") {
-                moduleResponse.responseCode = 202;
-            }
             
             return res
                 .status(moduleResponse.responseCode)

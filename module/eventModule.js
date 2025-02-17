@@ -193,6 +193,30 @@ const eventModule = {
             if (event.length == 0) {
                 return setResponseNotFound("No events found!");
             }
+            await db.query("UNLOCK TABLES");
+            if (event[0].isRegistered == "1") {
+                await db.query("LOCK TABLES userData AS u READ, registrationData AS rg READ, groupDetail AS g READ, groupDetail AS g2 READ");
+                const [teamDetails] = await db.query(`
+                    SELECT COALESCE(JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'userID', u.userID,
+                            'userName', u.userName,
+                            'userEmail', u.userEmail,
+                            'roleDescription', g.roleDescription,
+                            'teamName', rg.teamName
+                        )
+                    ), '[]') AS teamDetails
+                    FROM userData u
+                    JOIN groupDetail g ON u.userID = g.userID
+                    JOIN registrationData rg ON g.registrationID = rg.registrationID
+                    JOIN groupDetail g2 ON g.registrationID = g2.registrationID 
+                        AND g2.userID = ${userID} 
+                        AND g2.eventID = ${event[0].eventID}
+                    WHERE g.eventID = ${event[0].eventID};
+                `);
+                const team = JSON.parse(teamDetails[0].teamDetails)
+                event[0].teamDetails = team;
+            }
             return setResponseOk("Event selected", event);
         } catch (err) {
             logError(err, "eventModule:getEventDetailsByID", "db");

@@ -189,6 +189,20 @@ const adminController = {
                 .json(response.responseBody);
         }
     },
+    getAllUsers: async (req, res) => {
+        try {
+            const response = await adminModule.getAllUsers();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        } catch (error) {
+            logError(error, "adminController:getAllUsers", "db");
+            const response = setResponseInternalError();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
 };
 
 export default adminController;

@@ -184,4 +184,22 @@ adminRouter.post("/addUserRole", adminController.addNewUserRole);
  */
 adminRouter.get("/studentsOfEvent/:eventID(\\d+)", adminController.getStudentsOfEvent);
 
+
+/**
+ * @swagger
+ * /api/admin/all:
+ *   get:
+ *     summary: Retrieve all users with their registered events(if present).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Users retrieved successfully
+ *       500:
+ *         description: A problem from our side :(
+ */
+adminRouter.get("/all", adminController.getAllUsers);
+
 export default adminRouter;

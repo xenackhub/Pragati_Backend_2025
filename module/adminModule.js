@@ -190,27 +190,74 @@ const adminModule = {
     getStudentsOfEvent: async (eventID) => {
         const db = await pragatiDb.promise().getConnection();
         try {
-            await db.query("LOCK TABLES userData READ, groupDetail READ");
-            const query = `SELECT 
-            groupDetail.userID,
-            groupDetail.eventID,
-            userData.userEmail,
-            userData.userName,
-            userData.rollNumber,
-            userData.phoneNumber,
-            userData.collegeName,
-            userData.collegeCity,
-            userData.userDepartment,
-            userData.academicYear,
-            userData.degree,
-            userData.needAccommodationDay1,
-            userData.needAccommodationDay2,
-            userData.isAmrita
-            FROM userData JOIN groupDetail
-            ON userData.userID = groupDetail.userID
-            WHERE groupDetail.eventID = ?
-            AND userData.accountStatus = 2
+            await db.query("LOCK TABLES eventData READ");
+            const [data] = await db.query(
+                "SELECT isGroup FROM eventData WHERE eventID = ?",
+                [eventID],
+            );
+            if (data.length == 0) {
+                return setResponseBadRequest("No event with id found!");
+            }
+            let query;
+            if (data[0].isGroup == 1) {
+                await db.query(
+                    "LOCK TABLES userData AS ud READ, groupDetail AS gd READ, registrationData AS rd READ",
+                );
+                query = `SELECT 
+                    gd.registrationID,
+                    rd.teamName,
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'userID', gd.userID,
+                            'eventID', gd.eventID,
+                            'role', gd.roleDescription,
+                            'userEmail', ud.userEmail,
+                            'userName', ud.userName,
+                            'rollNumber', ud.rollNumber,
+                            'phoneNumber', ud.phoneNumber,
+                            'collegeName', ud.collegeName,
+                            'collegeCity', ud.collegeCity,
+                            'userDepartment', ud.userDepartment,
+                            'academicYear', ud.academicYear,
+                            'degree', ud.degree,
+                            'needAccommodationDay1', ud.needAccommodationDay1,
+                            'needAccommodationDay2', ud.needAccommodationDay2,
+                            'isAmrita', ud.isAmrita
+                        )
+                    ) AS teamMembers
+                FROM groupDetail gd
+                JOIN userData ud ON gd.userID = ud.userID
+                JOIN registrationData rd ON gd.registrationID = rd.registrationID
+                WHERE gd.eventID = ?
+                AND ud.accountStatus = '2'
+                GROUP BY gd.registrationID, rd.teamName
             `;
+            } else {
+                await db.query("LOCK TABLES groupDetail READ, userData READ");
+                query = `
+                SELECT 
+                groupDetail.registrationID,
+                groupDetail.userID,
+                groupDetail.eventID,
+                userData.userEmail,
+                userData.userName,
+                userData.rollNumber,
+                userData.phoneNumber,
+                userData.collegeName,
+                userData.collegeCity,
+                userData.userDepartment,
+                userData.academicYear,
+                userData.degree,
+                userData.needAccommodationDay1,
+                userData.needAccommodationDay2,
+                userData.isAmrita
+                FROM userData JOIN groupDetail
+                ON userData.userID = groupDetail.userID
+                WHERE groupDetail.eventID = ?
+                AND userData.accountStatus = 2
+            `;
+            }
+
             const [studentList] = await db.query(query, [eventID]);
             if (studentList.length == 0) {
                 return setResponseOk("No students found for given event!");

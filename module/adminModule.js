@@ -187,6 +187,46 @@ const adminModule = {
             db.release();
         }
     },
+    getStudentsOfEvent: async (eventID) => {
+        const db = await pragatiDb.promise().getConnection();
+        try {
+            await db.query("LOCK TABLES userData READ, groupDetail READ");
+            const query = `SELECT 
+            groupDetail.userID,
+            groupDetail.eventID,
+            userData.userEmail,
+            userData.userName,
+            userData.rollNumber,
+            userData.phoneNumber,
+            userData.collegeName,
+            userData.collegeCity,
+            userData.userDepartment,
+            userData.academicYear,
+            userData.degree,
+            userData.needAccommodationDay1,
+            userData.needAccommodationDay2,
+            userData.isAmrita
+            FROM userData JOIN groupDetail
+            ON userData.userID = groupDetail.userID
+            WHERE groupDetail.eventID = ?
+            AND userData.accountStatus = 2
+            `;
+            const [studentList] = await db.query(query, [eventID]);
+            if (studentList.length == 0) {
+                return setResponseOk("No students found for given event!");
+            }
+            return setResponseOk(
+                "Students selected successfully.",
+                studentList,
+            );
+        } catch (err) {
+            logError(err, "adminModule.getStudentsOfEvent", "db");
+            return setResponseInternalError();
+        } finally {
+            await db.query("UNLOCK TABLES");
+            db.release();
+        }
+    },
 };
 
 export default adminModule;

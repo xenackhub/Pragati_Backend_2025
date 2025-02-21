@@ -70,10 +70,13 @@ export const verifyTransaction = async function (
         const responseData = await response.json();
 
         if (responseData.status === 0) {
-            return setResponseServiceFailure(
-                "Payment Gateway Failed ! Try again later.",
-            );
+            if (!responseData.transaction_details) {
+                return setResponseServiceFailure(
+                    "Payment Gateway Failed ! Try again later.",
+                );
+            }
         }
+
         const transactionDetails = responseData.transaction_details[txnID];
 
         // console.log(
@@ -86,22 +89,7 @@ export const verifyTransaction = async function (
         await transactionDB.beginTransaction();
 
         transactionStarted = 1;
-
-        if (transactionDetails.status === "success") {
-            await transactionDB.query(
-                "UPDATE transactionData SET transactionStatus = '2' WHERE txnID = ?",
-                [txnID],
-            );
-
-            await db.query(
-                "UPDATE registrationData SET registrationStatus = '2' WHERE txnID = ?",
-                [txnID],
-            );
-
-            transactionResponse = setResponseOk(
-                "Transaction Verified Succussfully",
-            );
-        } else if (transactionDetails.status === "failure") {
+        if (transactionDetails.status === "Not Found" || transactionDetails.status === "failure") {
             await transactionDB.query(
                 "UPDATE transactionData SET transactionStatus = '0' WHERE txnID = ?",
                 [txnID],
@@ -130,6 +118,20 @@ export const verifyTransaction = async function (
 
             transactionResponse = setResponseTransactionFailed(
                 "Transaction Failed !!",
+            );
+        } else if (transactionDetails.status === "success") {
+            await transactionDB.query(
+                "UPDATE transactionData SET transactionStatus = '2' WHERE txnID = ?",
+                [txnID],
+            );
+
+            await db.query(
+                "UPDATE registrationData SET registrationStatus = '2' WHERE txnID = ?",
+                [txnID],
+            );
+
+            transactionResponse = setResponseOk(
+                "Transaction Verified Succussfully",
             );
         } else {
             transactionResponse = setResponseInternalError(

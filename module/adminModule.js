@@ -198,47 +198,65 @@ const adminModule = {
             if (data.length == 0) {
                 return setResponseBadRequest("No event with id found!");
             }
-            let query;
+            let query = "";
+            let flag = 0;
             if (data[0].isGroup == 1) {
                 await db.query(
-                    "LOCK TABLES userData AS ud READ, groupDetail AS gd READ, registrationData AS rd READ",
+                    "LOCK TABLES userData AS ud READ, groupDetail AS gd READ, registrationData AS rd READ, groupDetail AS gd1 READ, userData AS ud1 READ",
                 );
-                query = `SELECT 
-                    gd.registrationID,
-                    rd.teamName,
-                    JSON_ARRAYAGG(
+                query = `
+                SELECT 
+                gd.registrationID,
+                rd.teamName,
+                (
+                    SELECT JSON_ARRAYAGG(
                         JSON_OBJECT(
-                            'userID', gd.userID,
-                            'eventID', gd.eventID,
-                            'role', gd.roleDescription,
-                            'userEmail', ud.userEmail,
-                            'userName', ud.userName,
-                            'rollNumber', ud.rollNumber,
-                            'phoneNumber', ud.phoneNumber,
-                            'collegeName', ud.collegeName,
-                            'collegeCity', ud.collegeCity,
-                            'userDepartment', ud.userDepartment,
-                            'academicYear', ud.academicYear,
-                            'degree', ud.degree,
-                            'needAccommodationDay1', ud.needAccommodationDay1,
-                            'needAccommodationDay2', ud.needAccommodationDay2,
-                            'isAmrita', ud.isAmrita
+                            'userID', gd1.userID,
+                            'eventID', gd1.eventID,
+                            'role', gd1.roleDescription,
+                            'userEmail', ud1.userEmail,
+                            'userName', ud1.userName,
+                            'rollNumber', ud1.rollNumber,
+                            'phoneNumber', ud1.phoneNumber,
+                            'collegeName', ud1.collegeName,
+                            'collegeCity', ud1.collegeCity,
+                            'userDepartment', ud1.userDepartment,
+                            'academicYear', ud1.academicYear,
+                            'degree', ud1.degree,
+                            'needAccommodationDay1', ud1.needAccommodationDay1,
+                            'needAccommodationDay2', ud1.needAccommodationDay2,
+                            'isAmrita', ud1.isAmrita
                         )
-                    ) AS teamMembers
-                FROM groupDetail gd
-                JOIN userData ud ON gd.userID = ud.userID
-                JOIN registrationData rd ON gd.registrationID = rd.registrationID
-                WHERE gd.eventID = ?
-                AND ud.accountStatus = '2'
-                GROUP BY gd.registrationID, rd.teamName
+                    ) 
+                    FROM groupDetail gd1
+                    JOIN userData ud1 ON gd1.userID = ud1.userID
+                    WHERE gd1.registrationID = gd.registrationID
+                    AND gd1.eventID = ?
+                    AND ud1.accountStatus = '2'
+                ) AS teamMembers
+            FROM groupDetail gd
+            JOIN registrationData rd ON gd.registrationID = rd.registrationID
+            WHERE gd.eventID = ?
+            GROUP BY gd.registrationID, rd.teamName
             `;
             } else {
-                await db.query("LOCK TABLES groupDetail READ, userData READ");
+                flag = 1;
+                await db.query("LOCK TABLES groupDetail READ, userData READ, eventData READ");
                 query = `
                 SELECT 
                 groupDetail.registrationID,
                 groupDetail.userID,
                 groupDetail.eventID,
+                eventData.eventName,
+                eventData.eventFee,
+                eventData.imageUrl,
+                eventData.isGroup,
+                eventData.eventDate,
+                eventData.eventStatus,
+                eventData.numRegistrations,
+                eventData.maxRegistrations,
+                eventData.isPerHeadFee,
+                eventData.godName,
                 userData.userEmail,
                 userData.userName,
                 userData.rollNumber,
@@ -251,14 +269,22 @@ const adminModule = {
                 userData.needAccommodationDay1,
                 userData.needAccommodationDay2,
                 userData.isAmrita
-                FROM userData JOIN groupDetail
-                ON userData.userID = groupDetail.userID
+                FROM userData 
+                JOIN groupDetail
+                    ON userData.userID = groupDetail.userID
+                JOIN eventData 
+                    ON groupDetail.eventID = eventData.eventID
                 WHERE groupDetail.eventID = ?
                 AND userData.accountStatus = 2
             `;
             }
-
-            const [studentList] = await db.query(query, [eventID]);
+            let params;
+            if(flag == 0){
+                params = [eventID, eventID];
+            } else {
+                params = [eventID];
+            }
+            const [studentList] = await db.query(query, params);
             if (studentList.length == 0) {
                 return setResponseOk("No students found for given event!");
             }

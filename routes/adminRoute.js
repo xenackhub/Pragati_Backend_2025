@@ -157,4 +157,49 @@ adminRouter.put("/changeUserRole", adminController.changeUserRole);
  */
 adminRouter.post("/addUserRole", adminController.addNewUserRole);
 
+
+/**
+ * @swagger
+ * /api/admin/studentsOfEvent/{eventID}:
+ *   get:
+ *     summary: Get the list of students registered for an event.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: eventID
+ *         schema:
+ *            type: integer
+ *         required: true
+ *         description: ID of the event to fetch details
+ *     responses:
+ *       200:
+ *         description: Students fetched successfully
+ *       400:
+ *         description: Bad or Invalid eventID sent
+ *       500:
+ *         description: A problem from our side :(
+ */
+adminRouter.get("/studentsOfEvent/:eventID(\\d+)", adminController.getStudentsOfEvent);
+
+
+/**
+ * @swagger
+ * /api/admin/all:
+ *   get:
+ *     summary: Retrieve all users with their registered events(if present).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Users retrieved successfully
+ *       500:
+ *         description: A problem from our side :(
+ */
+adminRouter.get("/all", adminController.getAllUsers);
+
 export default adminRouter;

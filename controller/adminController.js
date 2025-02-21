@@ -9,6 +9,7 @@ import {
     validateEditUserRoleData,
     validateNewUserRoleData,
 } from "../utilities/dataValidator/admin.js";
+import { isValidID } from "../utilities/dataValidator/common.js";
 
 const adminController = {
     getAllTransactions: async (req, res) => {
@@ -161,6 +162,41 @@ const adminController = {
                 .json(response.responseBody);
         } catch (error) {
             logError(error, "adminController.addNewUserRole", "db");
+            const response = setResponseInternalError();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
+    getStudentsOfEvent: async (req, res) => {
+        const { eventID } = req.params;
+        if (!isValidID(eventID)) {
+            const response = setResponseBadRequest("event ID is not valid!");
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+        try {
+            const response = await adminModule.getStudentsOfEvent(eventID);
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        } catch (error) {
+            logError(error, "adminController:getStudentsOfEvent", "db");
+            const response = setResponseInternalError();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        }
+    },
+    getAllUsers: async (req, res) => {
+        try {
+            const response = await adminModule.getAllUsers();
+            return res
+                .status(response.responseCode)
+                .json(response.responseBody);
+        } catch (error) {
+            logError(error, "adminController:getAllUsers", "db");
             const response = setResponseInternalError();
             return res
                 .status(response.responseCode)

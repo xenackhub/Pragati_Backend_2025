@@ -301,7 +301,9 @@ const registrationModule = {
                 // await db.query("LOCK TABLES userData READ, registrationData READ, groupDetail READ");
 
                 // Accumulating the userID's of the Email's present in teamMembers.
-                if(teamMembers.length > 0) {
+                let userIDs = [];
+                if (teamMembers.length > 0) {
+                    // Accumulating the userID's of the Email's present in teamMembers.
                     const [userTeamDataCheck] = await db.query(
                         "SELECT * FROM userData WHERE accountStatus = '2' AND userEmail IN (?)",
                         [teamMembers],
@@ -313,11 +315,12 @@ const registrationModule = {
                         );
                     }
 
-                    let userIDs = [];
                     for (let i = 0; i < userTeamDataCheck.length; i++) {
                         userIDs.push(userTeamDataCheck[i].userID);
                     }
+                }
 
+                if (userIDs.length > 0) {
                     // Checking if any of the Team Member has already Registered for the Event.
                     const [eventRegistrationGroupCheck] = await db.query(
                         "SELECT * FROM groupDetail WHERE eventID = ? AND userID IN (?)",

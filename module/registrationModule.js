@@ -301,32 +301,34 @@ const registrationModule = {
                 // await db.query("LOCK TABLES userData READ, registrationData READ, groupDetail READ");
 
                 // Accumulating the userID's of the Email's present in teamMembers.
-                const [userTeamDataCheck] = await db.query(
-                    "SELECT * FROM userData WHERE accountStatus = '2' AND userEmail IN (?)",
-                    [teamMembers],
-                );
-
-                if (userTeamDataCheck.length !== teamMembers.length) {
-                    return setResponseBadRequest(
-                        "Failed to Register. Invalid Email, one of the Team Member Has not Registered for Pragati 2025.",
+                if(teamMembers.length > 0) {
+                    const [userTeamDataCheck] = await db.query(
+                        "SELECT * FROM userData WHERE accountStatus = '2' AND userEmail IN (?)",
+                        [teamMembers],
                     );
-                }
 
-                let userIDs = [];
-                for (let i = 0; i < userTeamDataCheck.length; i++) {
-                    userIDs.push(userTeamDataCheck[i].userID);
-                }
+                    if (userTeamDataCheck.length !== teamMembers.length) {
+                        return setResponseBadRequest(
+                            "Failed to Register. Invalid Email, one of the Team Member Has not Registered for Pragati 2025.",
+                        );
+                    }
 
-                // Checking if any of the Team Member has already Registered for the Event.
-                const [eventRegistrationGroupCheck] = await db.query(
-                    "SELECT * FROM groupDetail WHERE eventID = ? AND userID IN (?)",
-                    [eventID, userIDs],
-                );
+                    let userIDs = [];
+                    for (let i = 0; i < userTeamDataCheck.length; i++) {
+                        userIDs.push(userTeamDataCheck[i].userID);
+                    }
 
-                if (eventRegistrationGroupCheck.length > 0) {
-                    return setResponseBadRequest(
-                        "Failed to Register. One of Teammates is already part of Another Team",
+                    // Checking if any of the Team Member has already Registered for the Event.
+                    const [eventRegistrationGroupCheck] = await db.query(
+                        "SELECT * FROM groupDetail WHERE eventID = ? AND userID IN (?)",
+                        [eventID, userIDs],
                     );
+
+                    if (eventRegistrationGroupCheck.length > 0) {
+                        return setResponseBadRequest(
+                            "Failed to Register. One of Teammates is already part of Another Team",
+                        );
+                    }
                 }
 
                 // await db.query("UNLOCK TABLES");

